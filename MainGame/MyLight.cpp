@@ -31,7 +31,7 @@ void MyLight::Update()
 	D3DXVECTOR3 pos = trans->GetPosition();
 	D3DXVECTOR3 forwardPos = pos + trans->GetForward();
 	D3DXVECTOR3 lookAtPos =
-		(LightLookAt->TargetTransform == nullptr ? forwardPos : LightLookAt->TargetTransform->GetPosition());
+		(LightLookAt->m_TargetTransform == nullptr ? forwardPos : LightLookAt->m_TargetTransform->GetPosition());
 	D3DXVECTOR3 up = V3_AXIS_Y;
 	D3DXMatrixLookAtLH(
 		&LightData.ViewMatrix, 

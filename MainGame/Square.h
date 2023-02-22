@@ -3,6 +3,8 @@
 #include "State.h"
 #include "SquareObject.h"
 
+#include "SquareType.h"
+
 class Piece;
 
 #pragma region ========== enum definition ==========
@@ -25,9 +27,40 @@ class Square:
 	public StateOwner
 {
 public:
-	int ID;
-	Square* Neighbors[DIR_MAX];
-	
-	Piece* Piece;
-	SquareObject* TargetSquareObject;
+	enum class Type
+	{
+		NORMAL,
+		GOAL,
+	};
+public:
+	//id
+	int m_ID;
+
+	//type
+	Type m_Type = Type::NORMAL;
+
+	//up, right, down, left square
+	Square* m_Neighbors[DIR_MAX] = {nullptr};
+
+	//the piece on this square
+	Piece* m_Piece;
+
+	//square object
+	SquareObject* m_SquareObject;
+
+
+	/*********************************************************
+	* @brief	çsà◊
+	********************************************************/
+public:
+	//result for show ui
+	enum class EnterResult
+	{
+		CAN_NOT_ENTER,
+
+		NORMAL_ENTER,
+		CATCH_BAD,
+		ESCAPE,
+	};
+	EnterResult CheckEnter(Piece* enterPiece)const;
 };

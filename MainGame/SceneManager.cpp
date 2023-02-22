@@ -160,7 +160,7 @@ void Scene::UpdateDraw()
 		Renderer::Begin();
 
 		Renderer::SetCamera(
-			CameraManager::GetMainCamera()->CameraData);
+			CameraManager::GetMainCamera()->m_CameraData);
 
 		//メインカメラの行列をセット
 		CameraManager::SelectMainCameraView();

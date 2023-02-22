@@ -35,9 +35,9 @@ LineCollisionTester::LineCollisionTester()
 
 LineCollisionTester::~LineCollisionTester()
 {
-	m_StartHint->SetState(DEAD);
-	m_EndHint->SetState(DEAD);
-	m_CollisionHint->SetState(DEAD);
+	//m_StartHint->SetState(DEAD);
+	//m_EndHint->SetState(DEAD);
+	//m_CollisionHint->SetState(DEAD);
 }
 
 void LineCollisionTester::UpdateGameObject()

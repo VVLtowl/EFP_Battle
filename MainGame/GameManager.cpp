@@ -15,11 +15,17 @@
 #include "ClientBehaviour.h"
 #include "NetworkManager.h"
 
+#include "imgui/imgui.h"
+
 std::list<class Executor*> GameManager::m_Executors;
 
-std::list<class Player*> GameManager::Players;
-std::list<class Piece*> GameManager::Pieces;
+std::unordered_map<int,class Player*> GameManager::m_Players;
+std::unordered_map<int,class Piece*> GameManager::m_Pieces;
+std::list<class Piece*> GameManager::m_Goods;
+std::list<class Piece*> GameManager::m_Bads;
 
+
+/*
 void GameManager::SetUpGameScene()
 {
 	//test
@@ -119,17 +125,72 @@ void GameManager::CleanGameScene()
 	//board reset
 	Board::Instance()->Uninit();
 }
-
+*/
 
 void GameManager::Init()
 {
 	//init singleton
-	Judgement::Instance();
-	Board::Instance();
+	//Judgement::Instance();
+	//Board::Instance();
+	m_Executors.clear();
+
+	//test
+	//show executor info block
+	//test
+	DebugInfo::TestBlocks.emplace(TESTBLOCKID_EXECUTORSINFO, []()
+		{
+			ImGui::Begin("Executor Info");
+
+			for (auto exec : m_Executors)
+			{
+				std::string executorName = exec->Name()+": ";
+				std::string currentBHName = "";
+				std::string currentBHState = "";
+				std::string nextBHName = "";
+				std::string endEventInfo = "";
+				if (exec->GetBH())
+				{
+					//set currentBHName
+					currentBHName=exec->GetBH()->Name();
+
+					//set currentBHState
+					currentBHState = "[" + exec->GetBH()->GetStateName() + "] ";
+
+					//set nextBHName
+					if (exec->GetBH()->GetNext())
+					{
+						nextBHName = " (next: [" + exec->GetBH()->GetNext()->Name() + "])";
+					}
+
+					//set endEventInfo
+					if (exec->GetBH()->HasEndEvent())
+					{
+						endEventInfo = " (end event: [" + exec->GetBH()->GetEndEventInfo() + "])";
+					}
+				}
+				
+				std::string rowInfo =
+					executorName +
+					currentBHState + currentBHName +
+					nextBHName +
+					endEventInfo;
+
+				ImGui::Text("%s", rowInfo.c_str());
+			}
+
+			ImGui::End();
+		});
 }
 
 void GameManager::Uninit()
 {
+	//close info panel before clear objs
+	DebugInfo::CloseBlock(TESTBLOCKID_EXECUTORSINFO);
+
+	//clear
+	Clear();
+
+	/*
 	//clear new objects
 	{
 		for (auto player : Players)
@@ -148,6 +209,17 @@ void GameManager::Uninit()
 	//check network close
 	{
 		NetworkManager::Instance()->Close();
+	}
+	*/
+}
+
+void GameManager::Clear()
+{
+	//clear executors
+	while (m_Executors.empty() == false)
+	{
+		//tips: exec quit in Executor::~()
+		delete m_Executors.back();
 	}
 }
 

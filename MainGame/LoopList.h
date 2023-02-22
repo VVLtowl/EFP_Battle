@@ -67,7 +67,7 @@ inline T& LoopList<T>::Next()
 template<typename T>
 inline void LoopList<T>::Clear()
 {
-	m_List.clear();
 	m_Iterator = m_List.end();
+	m_List.clear();
 }
 

@@ -1,8 +1,7 @@
 #pragma once
 #include "Collider.h"
 
-// @brief	衝突ボックスのヒントを表示
-//#define HINT_BOX_COLLIDER
+
 
 /*********************************************************
 * @brief	ボックスコライダーを作るための説明

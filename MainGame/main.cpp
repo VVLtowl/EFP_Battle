@@ -89,7 +89,6 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		strcpy(g_CaptureName, WINDOW_NAME);
 		strcat(g_CaptureName, g_SubName);
 
-
 		g_Window = CreateWindowEx(0,
 			CLASS_NAME,
 			g_CaptureName,
@@ -111,10 +110,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 #pragma endregion
 
 #pragma region ========== main cycle ==========
-
 		//main init 
 		Init();
-
 
 		//time init
 		DWORD dwExecLastTime;
@@ -126,45 +123,74 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		dwCurrentTime = 0;
 		dwFrameCount = 0;
 
-
+		//create msg instance
 		MSG msg;
-		while (1)
+		try
 		{
-			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+			while (1)
 			{
-				if (msg.message == WM_QUIT)
+				if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 				{
-					break;
+					if (msg.message == WM_QUIT)
+					{
+						throw std::exception("normal test exception");
+						//make log
+
+						//DebugInfo::WriteInfoToLog("..\\MainGame\\TestLog.txt");
+						if (NetworkManager::Instance()->TargetClient)
+						{
+							DebugInfo::WriteInfoToLog("..\\MainGame\\ClientLog.txt");
+						}
+						if (NetworkManager::Instance()->TargetServer)
+						{
+							DebugInfo::WriteInfoToLog("..\\MainGame\\ServerLog.txt");
+						}
+						break;
+					}
+					else
+					{
+						TranslateMessage(&msg);
+						DispatchMessage(&msg);
+					}
 				}
 				else
 				{
-					TranslateMessage(&msg);
-					DispatchMessage(&msg);
-				}
-			}
-			else
-			{
-				dwCurrentTime = timeGetTime();
+					dwCurrentTime = timeGetTime();
 
-				if ((dwCurrentTime - dwFPSLastTime) >= 1000)	// 1秒ごとに実行
-				{
-					dwFPSLastTime = dwCurrentTime;				// FPSを測定した時刻を保存
-					g_FrameRate = dwFrameCount;
-					dwFrameCount = 0;							// カウントをクリア
-				}
-
-				if ((dwCurrentTime - dwExecLastTime) >= (1000 / FPS))
-				{
-					//time update
+					if ((dwCurrentTime - dwFPSLastTime) >= 1000)	// 1秒ごとに実行
 					{
-						dwFrameCount++;
-						dwExecLastTime = dwCurrentTime;
+						dwFPSLastTime = dwCurrentTime;				// FPSを測定した時刻を保存
+						g_FrameRate = dwFrameCount;
+						dwFrameCount = 0;							// カウントをクリア
 					}
 
-					//update
-					Update();
-				}
+					if ((dwCurrentTime - dwExecLastTime) >= (1000 / FPS))
+					{
+						//time update
+						{
+							dwFrameCount++;
+							dwExecLastTime = dwCurrentTime;
+						}
 
+						//update
+						Update();
+					}
+
+				}
+			}
+		}
+		catch (const std::exception& m)
+		{
+			DebugInfo::Print("exception：" + std::string(m.what()));
+
+			//make log
+			if (NetworkManager::Instance()->TargetClient)
+			{
+				DebugInfo::WriteInfoToLog("..\\MainGame\\ClientLog.txt");
+			}
+			if (NetworkManager::Instance()->TargetServer)
+			{
+				DebugInfo::WriteInfoToLog("..\\MainGame\\ServerLog.txt");
 			}
 		}
 
@@ -173,6 +199,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 		timeEndPeriod(1);
 #pragma endregion
+
+		
 
 	UnregisterClass(CLASS_NAME, wcex.hInstance);
 
@@ -192,7 +220,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	switch (uMsg)
 	{
 	case WM_DESTROY:
-		NetworkManager::Instance()->Close();
 		PostQuitMessage(0);
 		break;
 
@@ -275,35 +302,37 @@ void Init()
 }
 void Update()
 {
-	//input update
-	Input::Update();
+	
+		//input update
+		Input::Update();
 
-	//scene update
-	SceneManager::Update();
+		//scene update
+		SceneManager::Update();
 
-	//draw imgui
-	{
-		ImGui_ImplDX11_NewFrame();
-		ImGui_ImplWin32_NewFrame();
-		ImGui::NewFrame();
+		//draw imgui
+		{
+			ImGui_ImplDX11_NewFrame();
+			ImGui_ImplWin32_NewFrame();
+			ImGui::NewFrame();
 
-		DebugInfo::Update();
+			DebugInfo::Update();
 
 
-		ImGui::Render();
-		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-	}
+			ImGui::Render();
+			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+		}
 
-	//static int x = 0;
-//x++;
-//draw over
-	Renderer::End(true);
+		//draw over
+		Renderer::End(true);
 
-	//scene change
-	SceneManager::CheckChange();
+		//scene change
+		SceneManager::CheckChange();
+
 }
 void Uninit() 
 {
+	GameManager::Uninit();
+
 	//scene unload
 	SceneManager::Uninit();
 
@@ -322,7 +351,5 @@ void Uninit()
 
 	//input uninit
 	Input::Uninit();
-
-
 }
 #pragma endregion

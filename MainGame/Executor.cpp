@@ -26,21 +26,28 @@ void Executor::Execute()
 	}
 };
 
+
+void Executor::Stop()
+{
+	m_ExecuteBehaviour = nullptr;
+}
+
 void Executor::JumpToBH(Behaviour* bh)
 {
-	bh->SetNext(m_ExecuteBehaviour);
-	m_ExecuteBehaviour = bh;
+	if (bh)
+	{
+		bh->m_Next = m_ExecuteBehaviour;
+		m_ExecuteBehaviour = bh;
+	}
 }
 
 void Executor::StartBH(Behaviour* bh)
 {
-	if (m_ExecuteBehaviour != nullptr)
+	//set execute behaviour and reset
+	m_ExecuteBehaviour = bh;
+	if (m_ExecuteBehaviour)
 	{
-		m_ExecuteBehaviour->SwitchToNext(bh);
-	}
-	else
-	{
-		m_ExecuteBehaviour = bh;
+		m_ExecuteBehaviour->ResetState();
 	}
 }
 ;

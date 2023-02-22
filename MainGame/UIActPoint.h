@@ -16,13 +16,13 @@ public:
 	* @brief	コンポネント
 	********************************************************/
 public:
-	class UIFollowWorldObject* FollowWorldObject;
+	class UIFollowWorldObject* m_FollowWorldObject;
 
 	/*********************************************************
 	* @brief	customize
 	********************************************************/
 public:
-	class UINumbers* OwnUINumbers;
+	class UINumbers* m_OwnUINumbers;
 public:
 	void StartNumberChangeAnime(int num);
 };

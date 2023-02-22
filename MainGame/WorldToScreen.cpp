@@ -33,7 +33,7 @@ D3DXVECTOR2& WorldPositionToScreenPosition::operator()(const D3DXVECTOR3& worldP
 	Camera* cmr = CameraManager::GetMainCamera();
 	D3DXVECTOR2 screenPos = { SCREEN_WIDTH_HALF,SCREEN_HEIGHT_HALF };
 
-	if (cmr->IsOrtho == true)
+	if (cmr->m_IsOrtho == true)
 	{
 		D3DXMATRIX worldTranslate,translate,rotate,scale;
 		D3DXMATRIX viewTranslate;
@@ -48,8 +48,8 @@ D3DXVECTOR2& WorldPositionToScreenPosition::operator()(const D3DXVECTOR3& worldP
 		D3DXMatrixInverse(&cmrWorldInv, NULL, &cmrWorld);
 		viewTranslate =  worldTranslate * cmrWorldInv;
 		D3DXVECTOR2 viewPos = { viewTranslate._41 ,viewTranslate._42 };
-		float tx = viewPos.x / cmr->Width + 0.5f;
-		float ty = -viewPos.y / cmr->Height  + 0.5f;
+		float tx = viewPos.x / cmr->m_Width + 0.5f;
+		float ty = -viewPos.y / cmr->m_Height  + 0.5f;
 		screenPos = { SCREEN_WIDTH * tx,SCREEN_HEIGHT * ty };
 	}
 	else
@@ -64,8 +64,8 @@ D3DXVECTOR2& WorldPositionToScreenPosition::operator()(const D3DXVECTOR3& worldP
 		cmrWorldTranslate = worldTranslate * cmrWorldInv;
 
 		float zFar = cmrWorldTranslate._43;
-		float zHeight = tanf(cmr->Fovy / 2 * PI / 180) * zFar * 2;
-		float zWidth = zHeight * cmr->Width / cmr->Height;
+		float zHeight = tanf(cmr->m_Fovy / 2 * PI / 180) * zFar * 2;
+		float zWidth = zHeight * cmr->m_Width / cmr->m_Height;
 		D3DXVECTOR2 cmrWorldPos = { cmrWorldTranslate._41 ,cmrWorldTranslate._42 };
 		float tx = cmrWorldPos.x / zWidth + 0.5f;
 		float ty = -cmrWorldPos.y / zHeight + 0.5f;

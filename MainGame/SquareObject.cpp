@@ -14,7 +14,7 @@ SquareObject::SquareObject()
 	//desc.DrawObjDesc.PixelShaderName = "DepthShadowMappingPS.cso";
 	//desc.DrawObjDesc.VertexShaderName = "DepthShadowMappingVS.cso";
 	desc.DrawObjDesc.Shader = SHADER_SHADOW;
-	desc.ModelID = MDLID_CUBE;
+	desc.ModelID = MDLID_SQUARE_NORMAL;
 	m_Polygon3D = new Polygon3D(this, desc);
 }
 

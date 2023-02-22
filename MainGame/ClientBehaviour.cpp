@@ -3,6 +3,7 @@
 #include "Piece.h"
 #include "Player.h"
 #include "Client.h"
+#include "Server.h"
 #include "ClientBehaviour.h"
 
 #include "NetworkManager.h"
@@ -19,7 +20,10 @@
 #include "UITurnStart.h"
 #include "UIRPSStart.h"
 #include "UIActStart.h"
+#include "UIGameOver.h"
 
+#include <iostream>
+#include <thread>
 
 ClientBehaviour::ClientBehaviour(Client* c, bool isOnce) :
 	m_OwnerClient(c),
@@ -34,13 +38,11 @@ void ClientInit::Start()
 {
 	//set default val
 	{
-		m_OwnerClient->IsConnected = false;
-		m_OwnerClient->JoinedClientNum = 0;
-		m_OwnerClient->TargetClientNum = 0;
-		m_OwnerClient->JoinSuccess = false;
-		m_OwnerClient->ServerPort = 5555;
-		sprintf_s(m_OwnerClient->Name, "nameless");
-		sprintf_s(m_OwnerClient->ServerIP, "127.0.0.1");
+		m_OwnerClient->m_IsConnected = false;
+		m_OwnerClient->m_JoinSuccess = false;
+		m_OwnerClient->m_ServerPort = 5555;
+		sprintf_s(m_OwnerClient->m_Name, "nameless");
+		sprintf_s(m_OwnerClient->m_ServerIP, "127.0.0.1");
 	}
 
 	//init network manager
@@ -51,11 +53,11 @@ void ClientInit::Start()
 		{
 			ImGui::Begin("Client Working...");
 			{
-				if (m_OwnerClient->JoinSuccess)
+				if (m_OwnerClient->m_JoinSuccess)
 				{
 					//show port num
 					ImGui::Text("port: %d",
-						m_OwnerClient->ServerPort);
+						m_OwnerClient->m_ServerPort);
 
 					//show server address
 					ImGui::Text("ip: %s",
@@ -63,19 +65,19 @@ void ClientInit::Start()
 
 					//show connected clients number
 					ImGui::Text("connected clients num: %d",
-						m_OwnerClient->JoinedClientNum);
+						m_OwnerClient->m_ClientInfos.size());
 
 					//show self id
 					ImGui::Text("id: %d",
-						m_OwnerClient->ID);
+						m_OwnerClient->m_ID);
 
 					//show self name
 					ImGui::Text("name: %s",
-						m_OwnerClient->Name);
+						m_OwnerClient->m_Name);
 
 
 					//input name
-					ImGui::InputText("Test Msg:\n", m_OwnerClient->Chat, 128);
+					ImGui::InputText("Test Msg:\n", m_OwnerClient->m_Chat, 128);
 
 					//send test msg
 					if (ImGui::Button("Send Test Msg"))
@@ -104,21 +106,15 @@ void ClientInit::Start()
 
 void ClientUninit::Start()
 {
-	//set default val
+	if(	m_OwnerClient->m_IsConnected)
 	{
-		m_OwnerClient->JoinedClientNum = 0;
-		m_OwnerClient->TargetClientNum = 0;
-	}
-
-	if(	m_OwnerClient->IsConnected)
-	{
-		m_OwnerClient->IsConnected = false;
+		m_OwnerClient->m_IsConnected = false;
 		//NetworkManager::Instance()->Client_RequestDisconnect();
 	}
 
-	if (m_OwnerClient->JoinSuccess)
+	if (m_OwnerClient->m_JoinSuccess)
 	{
-		m_OwnerClient->JoinSuccess = false;
+		m_OwnerClient->m_JoinSuccess = false;
 		NetworkManager::Instance()->Client_RequestDisconnect();
 	}
 
@@ -134,9 +130,10 @@ void ClientSelectServer::Start()
 {
 	//init val
 	{
-		JoinServer = false;
-		m_OwnerClient->State =
-			(int)Client::Client::State_SelectServer::SELECT_SERVER;
+		m_JoinServer = false;
+
+		//m_OwnerClient->State =(int)Client::Client::State_SelectServer::SELECT_SERVER;
+		m_SelectState = State::SELECT_SERVER;
 	}
 
 	//test 
@@ -144,28 +141,26 @@ void ClientSelectServer::Start()
 		{
 			ImGui::Begin("Select Server");
 
-			if (m_OwnerClient->State == 
-				(int)Client::State_SelectServer::SELECT_SERVER)
+			if (m_SelectState == State::SELECT_SERVER)
 			{
 				//input port input port
-				ImGui::InputInt("Port:", &m_OwnerClient->ServerPort, 0, 65535);
+				ImGui::InputInt("Port:", &m_OwnerClient->m_ServerPort, 0, 65535);
 
 				//input server ip
-				ImGui::InputText("RoomServerIP:", m_OwnerClient->ServerIP, 16);
+				ImGui::InputText("RoomServerIP:", m_OwnerClient->m_ServerIP, 16);
 
-				//input name
-				ImGui::InputText("Name:", m_OwnerClient->Name, 64);
+				//input client user name
+				ImGui::InputText("Name:", m_OwnerClient->m_Name, 64);
 
 				if (ImGui::Button("Join Server"))
 				{
-					if (!JoinServer)
+					if (!m_JoinServer)
 					{
-						JoinServer = true;
+						m_JoinServer = true;
 					}
 				}
 			}
-			else if (m_OwnerClient->State ==
-				(int)Client::State_SelectServer::WAIT_SERVER_CHECK_JOINABLE)
+			else if (m_SelectState == State::TRY_JOIN)
 			{
 				ImGui::Text("wait server check...");
 			}
@@ -176,80 +171,189 @@ void ClientSelectServer::Start()
 
 void ClientSelectServer::Update()
 {
-	switch ((Client::State_SelectServer)m_OwnerClient->State)
+	switch (m_SelectState)
 	{
-	case Client::State_SelectServer::SELECT_SERVER:
+	case State::SELECT_SERVER:
 	{
-		if (JoinServer)
-		{
-			//set state
-			m_OwnerClient->State = 
-				(int)Client::State_SelectServer::WAIT_SERVER_CHECK_JOINABLE;
+		PrintUpdateState("select server");
 
+		if (m_JoinServer)
+		{
 			//init socket and start asynselect
 			NetworkManager::Instance()->SetConnectServerInfo(
-				m_OwnerClient->ServerPort,
-				m_OwnerClient->ServerIP,
-				true
-			);
+				m_OwnerClient->m_ServerPort,
+				m_OwnerClient->m_ServerIP,
+				true);
 
 			//set up server addr
 			SOCKADDR_IN serverAddr;
 			memset(&serverAddr, 0, LEN_ADDRIN);
 			serverAddr.sin_family = AF_INET;
-			serverAddr.sin_port = htons(m_OwnerClient->ServerPort);
+			serverAddr.sin_port = htons(m_OwnerClient->m_ServerPort);
 			serverAddr.sin_addr.s_addr =
 				*((unsigned long*)NetworkManager::Instance()->HostEnt->h_addr);
-			memcpy(&m_OwnerClient->ServerAddr, &serverAddr, LEN_ADDRIN);
+			memcpy(&m_OwnerClient->m_ServerAddr, &serverAddr, LEN_ADDRIN);
 
 			//jump behaviour
-			JumpTo(new ClientRequestJoinServer(m_OwnerClient));
+			//JumpToBH(new ClientRequestJoinServer(m_OwnerClient));
+			
+			//when connect success, set wait server check and request ID
+			m_SelectState = State::TRY_JOIN;
 		}
 		break;
 	}
 
-	case Client::State_SelectServer::WAIT_SERVER_CHECK_JOINABLE:
+	case State::TRY_JOIN:
 	{
+		PrintState("try join");
+
+		//check connect at first or request directly
+		m_OwnerClient->TryJoinServer();
+
+		//next to wait
+		m_SelectState = State::WAIT_SERVER_CHECK;
 
 		break;
 	}
 
-	case Client::State_SelectServer::FINISH_JOIN:
+	case State::WAIT_SERVER_CHECK:
+	{
+		PrintUpdateState("wait server check");
+		break;
+	}
+
+	case State::FINISH_JOIN:
 	{
 		//finish
-		SwitchToNext(nullptr);
+		NextState();
+
+		//close panel
+		DebugInfo::CloseBlock(TESTBLOCKID_CLIENT_SELECTSERVER);
+
+		break;
+	}
+	
+	case State::FINISH_EXIT:
+	{
+		//finish
+		NextState();
+
+		//close panel
+		DebugInfo::CloseBlock(TESTBLOCKID_CLIENT_SELECTSERVER);
 
 		break;
 	}
 	}
 }
 
-void ClientSelectServer::End()
-{
-	//reset val
-	m_OwnerClient->State =
-		(int)Client::Client::State_SelectServer::NONE;
-	JoinServer = false;
 
-	//close panel
-	DebugInfo::CloseBlock(TESTBLOCKID_CLIENT_SELECTSERVER);
+#pragma endregion
+
+#pragma region ========== tcp try connect ==========
+
+void ClientTryConnectServer::Reset(std::function<void()> onSuccess, std::function<void()> onFail, DWORD timeOut)
+{
+	//set time out
+	m_TimeOut = timeOut;
+
+	//set up event
+	OnConnectSuccess = onSuccess;
+	OnConnectFail = onFail;
+
+	if (NetworkManager::Instance()->IsTCP)
+		//tcp try connect server
+	{
+		//start communication after connected
+		if (!m_OwnerClient->m_IsConnected)
+		{
+			//reset time count
+			m_TimeStamp = GetTickCount();
+
+			//non-blocking connect
+			NetworkManager::Instance()->Client_TryConnectServer();
+			//std::thread thread1(&NetworkManager::Client_TryConnectServer, NetworkManager::Instance());
+			//thread1.detach();
+
+			//set state
+			m_ConnectState = State::WAIT_CONNECT;
+		}
+		else
+		{
+			//todo
+			//set state
+			m_ConnectState = State::NONE;
+		}
+	}
+	else
+		//udp dont need connect
+	{
+		//todo
+		//set state
+		m_ConnectState = State::NONE;
+	}
 }
+
+void ClientTryConnectServer::Update()
+{
+	switch (m_ConnectState)
+	{
+	case State::WAIT_CONNECT:
+	{
+		m_TimeCount = GetTickCount() - m_TimeStamp;
+		PrintUpdateState("wait connect(" + std::to_string(m_TimeCount) + ")");
+
+		break;
+	}
+
+	case State::CHECK_CONNECT:
+	{
+		PrintState("check connect");
+
+		//use time out to check connect successfully
+		m_TimeCount = GetTickCount()-m_TimeStamp;
+		if (m_TimeCount < m_TimeOut)
+		{
+			DebugInfo::Print("connect success");
+
+			//event
+			OnConnectSuccess();
+			
+			//connect
+			m_OwnerClient->m_IsConnected = true;
+
+			//set state for check end event
+			m_ConnectState = State::CONNECT_SUCCEED;
+		}
+		else
+		{
+			DebugInfo::Print("connect time out");
+
+			//event
+			OnConnectFail(); 
+
+			//set state for check end event
+			m_ConnectState = State::CONNECT_TIME_OUT;
+		}
+
+		//finish
+		NextState();
+		break;
+	}
+	}
+}
+
 #pragma endregion
 
 #pragma region ========== request join server ==========
 
 void ClientRequestJoinServer::Start()
 {
-	//send to server
+	//request server check joinable
 	if (NetworkManager::Instance()->IsTCP)
 		//tcp
 	{
 		//start communication after connected
-		if (!m_OwnerClient->IsConnected)
-		{
-			NetworkManager::Instance()->Client_TryConnectServer();
-		}
-		else
+		if (m_OwnerClient->m_IsConnected)
 		{
 			NetworkManager::Instance()->Client_RequestJoinServer();
 		}
@@ -263,9 +367,99 @@ void ClientRequestJoinServer::Start()
 
 #pragma endregion
 
+#pragma region ========== wait room ==========
+
+void ClientWaitRoom::Start()
+{
+	//reset val
+	{
+		m_Ready = false;
+		m_WaitState = State::INPUT_READY;
+	}
+
+	//test
+	//start room info panel
+	DebugInfo::TestBlocks.emplace(TESTBLOCKID_CLIENT_WAITROOM, [this]()
+		{
+			ImGui::Begin("Wait Room");
+			{
+				//show waiting clients num
+				ImGui::Text("num of player: %d / %d",
+					m_OwnerClient->m_ClientInfos.size(),
+					m_OwnerClient->m_TargetClientNum);
+				ImGui::Text("");
+
+				//show player ready
+				for (auto idMem : m_OwnerClient->m_ClientInfos)
+				{
+					int id = idMem.first;
+					ClientMember* mem = idMem.second;
+					ImGui::Text("%s [%s]",
+						std::string("[" + std::to_string(id) + "]" + mem->Name).c_str(),
+						mem->Ready ? std::string("ready").c_str() : std::string("wait").c_str());
+				}
+
+				//set ready
+				ImGui::Text("-------------------------");
+				if (m_WaitState == ClientWaitRoom::State::INPUT_READY)
+				{
+					if (ImGui::Button("Ready"))
+					{
+						if (!m_Ready)
+						{
+							m_Ready = true;
+						}
+					}
+				}
+				else if(m_WaitState == ClientWaitRoom::State::WAIT_START)
+				{
+					ImGui::Text("wait game start...");
+				}
+			}
+			ImGui::End();
+		});
+}
+
+void ClientWaitRoom::Update()
+{
+	switch (m_WaitState)
+	{
+	case State::INPUT_READY:
+	{
+		PrintUpdateState("input ready");
+
+		if (m_Ready)
+		{
+			NetworkManager::Instance()->Client_RequestSetReady(true);
+
+			//when connect success, set wait server check and request ID
+			m_WaitState = State::WAIT_START;
+		}
+		break;
+	}
+
+	case State::WAIT_START:
+	{
+		PrintUpdateState("wait start");
+		break;
+	}
+
+	case State::FINISH:
+	{
+		DebugInfo::TestBlocks.erase(TESTBLOCKID_CLIENT_WAITROOM);
+		NextState();
+		break;
+	}
+	}
+}
+#pragma endregion
+
+
+
+
 #pragma region ========== wait all pieces finish ==========
 
-void ClientWaitPiecesFinish::Reset(int targetNum,std::function<void()> endEvent)
+void ClientWaitPiecesFinish::Reset(int targetNum, std::string endIndo, std::function<void()> endEvent)
 {
 	if (Working)
 	{
@@ -277,7 +471,7 @@ void ClientWaitPiecesFinish::Reset(int targetNum,std::function<void()> endEvent)
 		Working = true;
 		PrintRowID = -1;
 
-		SetEndEvent(endEvent);
+		SetEndEvent(endIndo,endEvent);
 		
 		FinishPieceNum = 0;
 		TargetPieceNum= targetNum;
@@ -337,7 +531,7 @@ ClientShowStep::~ClientShowStep()
 void ClientShowStep::Start()
 {
 	//init anime
-	if(ShowHelper->UIObject)
+	if(ShowHelper->m_UIObject)
 	{
 		ShowHelper->Start();
 	}
@@ -348,20 +542,20 @@ void ClientShowStep::Update()
 	if (ShowHelper->UpdateCheckFinish())
 	{
 		//delete step ui
-		ShowHelper->UIObject->SetState(GameObject::DEAD);
+		ShowHelper->m_UIObject->SetState(GameObject::DEAD);
 
 		//finish
 		NextState();
 	}
 }
 
-void ClientShowStep::Reset(int stepType, std::function<void()> endEvent)
+void ClientShowStep::Reset(int stepType, std::string endInfo, std::function<void()> endEvent)
 {
 	switch ((Judgement::ShowStepType)stepType)
 	{
 	case Judgement::ShowStepType::GAME_START:
 	{
-		ShowHelper->UIObject = new UIGameStart();
+		ShowHelper->m_UIObject = new UIGameStart();
 		break;
 	}
 
@@ -369,7 +563,7 @@ void ClientShowStep::Reset(int stepType, std::function<void()> endEvent)
 	{
 		//test
 		//update piece ui
-		for (auto idPiece : m_OwnerClient->Pieces)
+		for (auto idPiece : GameManager::m_Pieces)
 		{
 			Piece* piece = idPiece.second;
 			piece->SetUIHands(false);
@@ -380,37 +574,93 @@ void ClientShowStep::Reset(int stepType, std::function<void()> endEvent)
 		}
 
 		UITurnStart* uiTurnStart = new UITurnStart();
-		uiTurnStart->SetNumber(m_OwnerClient->TurnCount);
-		ShowHelper->UIObject = uiTurnStart;
+		uiTurnStart->SetNumber(m_OwnerClient->m_TurnCount);
+		ShowHelper->m_UIObject = uiTurnStart;
 		break;
 	}
 
 	case Judgement::ShowStepType::RPS_START:
 	{
-		ShowHelper->UIObject = new UIRPSStart();
+		ShowHelper->m_UIObject = new UIRPSStart();
 		break;
 	}
 
 	case Judgement::ShowStepType::ACT_START:
 	{
-		ShowHelper->UIObject = new UIActStart();
+		ShowHelper->m_UIObject = new UIActStart();
 		break;
 	}
 
 	case Judgement::ShowStepType::TURN_END:
 	{
 
-		ShowHelper->UIObject = nullptr;
+		ShowHelper->m_UIObject = nullptr;
 		break;
 	}
 	}
 
-	if (ShowHelper->UIObject)
+	if (ShowHelper->m_UIObject)
 	{
 		//dont show at first
-		ShowHelper->UIObject->GetTransform()->SetPosition(0, -10000, 0);
+		ShowHelper->m_UIObject->GetTransform()->SetPosition(0, -10000, 0);
 	}
-	SetEndEvent(endEvent);
+	SetEndEvent(endInfo, endEvent);
 }
 #pragma endregion
 
+#pragma region ========== show game over ==========
+
+ClientShowGameOver::ClientShowGameOver(Client* c):
+	ClientBehaviour(c)
+{
+	m_ShowHelper = new ShowGameOverUIHelper();
+}
+ClientShowGameOver::~ClientShowGameOver()
+{
+	delete m_ShowHelper;
+}
+void ClientShowGameOver::Start()
+{
+	//init anime
+	if (m_ShowHelper->m_UIObject)
+	{
+		m_ShowHelper->Start();
+	}
+}
+void ClientShowGameOver::Update()
+{
+	if (m_ShowHelper->UpdateCheckFinish())
+	{
+		//delete game over ui
+		m_ShowHelper->m_UIObject->SetState(GameObject::DEAD);
+
+		//finish
+		NextState();
+	}
+}
+void ClientShowGameOver::Reset(ResultType result, std::string endInfo, std::function<void()> endEvent)
+{
+	//set game over ui
+	switch (result)
+	{
+	case ResultType::BAD_WIN:
+	{
+		m_ShowHelper->m_UIObject = new UIGameOver(UIGameOver::ResultType::BAD_WIN);
+		break;
+	}
+
+	case ResultType::GOOD_WIN:
+	{
+		m_ShowHelper->m_UIObject = new UIGameOver(UIGameOver::ResultType::GOOD_WIN);
+		break;
+	}
+	}
+
+	if (m_ShowHelper->m_UIObject)
+	{
+		//dont show at first
+		m_ShowHelper->m_UIObject->GetTransform()->SetPosition(0, -10000, 0);
+	}
+	SetEndEvent(endInfo, endEvent);
+}
+#pragma endregion

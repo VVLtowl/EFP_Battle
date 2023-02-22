@@ -6,11 +6,14 @@
 const int BDEBUG_INFO_MAX = 200;
 
 
+
+
 /*********************************************************
 * @brief	test block id
 ********************************************************/
 enum TestBlockID
 {
+	TESTBLOCKID_EXECUTORSINFO,
 	TESTBLOCKID_MAINCAMERA,
 	TESTBLOCKID_DEPTHUI,
 
@@ -19,12 +22,14 @@ enum TestBlockID
 	TESTBLOCKID_CLIENT_WORK,
 	TESTBLOCKID_CLIENT_SELECTSERVER,
 	TESTBLOCKID_CLIENT_WAITROOM,
+	TESTBLOCKID_CLIENT_CHECKGAMEOVERFINISH,
 
 	TESTBLOCKID_SERVER_WORK,
 	TESTBLOCKID_SERVER_INPUTGAMEROOM,
 	TESTBLOCKID_SERVER_WAITCLIENTINROOM,
 
 	TESTBLOCKID_JUDGEMENT_INPUTPLAYMODE,
+	TESTBLOCKID_JDUGEMENT_PIECEINFO,
 };
 
 class DebugInfo
@@ -39,10 +44,13 @@ public:
 	static void Update();
 	static const int Print(std::string info);
 	static void PrintRow(int rowID, std::string info);
+	static int WriteInfoToLog(std::string fileName);
 
 	//network chat
 	static std::string m_NetMsg[BDEBUG_INFO_MAX];
 	static void DrawNetMsg();
 	static const int PrintNetMsg(std::string info);
 };
+
+
 

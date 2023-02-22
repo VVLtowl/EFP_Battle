@@ -1,7 +1,7 @@
 #include "main.h"
 #include "UIActStart.h"
 
-const D3DXVECTOR2 UI_GAME_ACT_SIZE = { 1280.0f / 3.0f, 720.0f / 3.0f };
+const D3DXVECTOR2 UI_GAME_ACT_SIZE = { 1280.0f / 3.0f, 1280.0f / 3.0f };
 
 UIActStart::UIActStart()
 {	
@@ -10,7 +10,7 @@ UIActStart::UIActStart()
 		PolygonUIDescription desc;
 		desc.DrawObjDesc.Layer = LAYER_SCREEN_START_UI;
 		desc.Size = UI_GAME_ACT_SIZE;
-		desc.TextureID = TEXID_CIRCLE_0;//default
+		desc.TextureID = TEXID_UI_ACT_START;//default
 		m_PolygonUI = new PolygonUI(this, desc);
 	}
 }

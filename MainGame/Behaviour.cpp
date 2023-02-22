@@ -4,40 +4,75 @@
 #include "Behaviour.h"
 
 
-void Behaviour::Print(std::string info)
+void Behaviour::PrintState(std::string info)
 {
+	SetStateName(info);
+
+	std::string str =
+		"[" +
+		info +
+		"] BH-" +
+		Name() +
+		(m_Next ? "(next[" + m_Next->Name() + "])" : "") +
+		(HasEndEvent() ? "(end event[" + GetEndEventInfo() + "])" : "");
+
+	DebugInfo::Print(str);
+#if 0
 	if (m_PrintRowID == -1)
 	{
-		m_PrintRowID = DebugInfo::Print(
-			"[" +
-			info +
-			"] BH-" +
-			Name());
+		m_PrintRowID = DebugInfo::Print(str);
 	}
 	else
 	{
-		DebugInfo::PrintRow(m_PrintRowID,
-			"[" +
-			info +
-			"] BH-" +
-			Name());
+		DebugInfo::PrintRow(m_PrintRowID, str);
+	}
+#endif
+}
+
+void Behaviour::PrintUpdateState(std::string info)
+{
+	SetStateName(info);
+
+	std::string str =
+		"[" +
+		info +
+		"] BH-" +
+		Name() +
+		(m_Next ? "(next[" + m_Next->Name() + "])" : "") +
+		(HasEndEvent() ? "(end event[" + GetEndEventInfo() + "])" : "");
+
+	//when different state info, reset row id
+	if (info != m_StateName)
+	{
+		m_PrintRowID = -1;
+	}
+
+	//check if need new print on another row
+	if (m_PrintRowID == -1)
+	{
+		m_PrintRowID = DebugInfo::Print(str);
+	}
+	else
+	{
+		DebugInfo::PrintRow(m_PrintRowID, str);
 	}
 }
 
-void Behaviour::SwitchToNext(Behaviour* bh)
-{
-	m_State = END;
-	m_Next = bh;
-}
+//void Behaviour::SwitchToNext(Behaviour* bh)
+//{
+//	m_State = State::END;
+//	m_Next = bh;
+//}
+//
+//void Behaviour::JumpTo(Behaviour* jump)
+//{ 
+//	m_Executor->JumpToBH(jump); 
+//}
 
-void Behaviour::JumpTo(Behaviour* jump)
-{ 
-	m_Executor->JumpToBH(jump); 
-}
-
-Behaviour::Behaviour(Executor* executor, bool isOnce)
+Behaviour::Behaviour(Executor* executor, bool isOnce):
+	m_Executor(executor)
 {
-	SetExecutor(executor);
+	//SetExecutor(executor);
 	
 	//old version
 	//BehaviourFactory::Register(this);
@@ -59,43 +94,40 @@ Behaviour::~Behaviour()
 void Behaviour::MainUpdate()
 {
 	//start and update in same frame
-	if (m_State == START)
+	if (m_State == State::START)
 	{
 		m_PrintRowID = -1;
-		Print("start");
+		PrintState("start");
 		Start();
 		NextState();
 	}
 
-	if (m_State == UPDATE)
+	if (m_State == State::UPDATE)
 	{
 		//need NextState() in Update()
-		Print("update");
+		PrintUpdateState("update"); 
 		Update();
 	}
 	
-	if (m_State == END)
+	if (m_State == State::END)
 	{
-		Print("finish");
+		PrintState("end");
 
 		//when m_Next is nullptr, executor do nothing next
 		m_Executor->SetExecuteBehaviour(m_Next);
+		//tips: BH_WaitPlayersFinish is constant, need to clear nextBH after set to executor's BH
+		m_Next = nullptr;
+
+		//reset state
+		ResetState();
 
 		//from this time, cant set next behaviour
 		m_EndEvent();
-		End();
 
+		//delete this should be at last
 		if (m_IsOnceBehaviour)
-			//delete this should be at last
 		{
 			delete this;
-		}
-		else
-		{
-			//todo
-			//tips: BH_WaitPlayersFinish is constant, need to clear nextBH after set to executor's BH
-			SetNext(nullptr);
-			ResetState();
 		}
 	}
 }

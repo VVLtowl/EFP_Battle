@@ -21,19 +21,19 @@ class Camera :
 	public Component
 {
 public:
-	CAMERA CameraData;
-	class LookAt* CmrLookAt;
-	bool IsOrtho;
-	float Fovy;
-	float Width;
-	float Height;
-	float ZNear;
-	float ZFar;
+	CAMERA m_CameraData;
+	class LookAt* m_CmrLookAt;
+	bool m_IsOrtho;
+	float m_Fovy;
+	float m_Width;
+	float m_Height;
+	float m_ZNear;
+	float m_ZFar;
 
-	ID3D11DepthStencilView* MainDSV;
-	ID3D11Texture2D* MainTex;
-	ID3D11RenderTargetView* MainRT;
-	ID3D11ShaderResourceView* MainSRV;
+	ID3D11DepthStencilView* m_MainDSV;
+	ID3D11Texture2D* m_MainTex;
+	ID3D11RenderTargetView* m_MainRT;
+	ID3D11ShaderResourceView* m_MainSRV;
 
 public:
 	Camera(

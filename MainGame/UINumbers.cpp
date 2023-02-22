@@ -8,11 +8,11 @@ UINumbers::UINumbers(LayerType layer):
 
 UINumbers::~UINumbers()
 {
-	for (auto ui : m_NumberUIs)
-	{
-		ui->SetState(GameObject::DEAD);
-	}
-	m_NumberUIs.clear();
+	//for (auto ui : m_NumberUIs)
+	//{
+	//		ui->SetState(GameObject::DEAD);
+	//}
+	//m_NumberUIs.clear();
 }
 
 void UINumbers::UpdateGameObject()
@@ -45,7 +45,7 @@ void UINumbers::SetNumber(int num)
 		for (int i = 0; i < delta; i++)
 		{
 			UINumber* ui = new UINumber(m_LayerType);
-			ui->GetTransform()->SetParent(m_Transform3D);
+			ui->SetParent(this);
 			m_NumberUIs.emplace_back(ui);
 		}
 	}

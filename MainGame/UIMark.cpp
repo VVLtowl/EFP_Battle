@@ -50,15 +50,16 @@ void UIMark::UpdateGameObject()
 {
 }
 
-void UIMark::SetMark(int type)
+void UIMark::SetMark(Type type)
 {
-	MarkType = type;
-	float x = type % (int)(X_NUM)*TEXCOORD_W;
-	float y = type / (int)(Y_NUM)*TEXCOORD_H;
+	m_Type = type;
+	float x = (int)type % (int)(X_NUM)*TEXCOORD_W;
+	float y = (int)type / (int)(Y_NUM)*TEXCOORD_H;
 	m_MarkUI->Texcoord = { x,y,TEXCOORD_W,TEXCOORD_H };
 
 
-	if (type==MarkType::MARK_THINK)
+	//special process
+	if (type==Type::THINK)
 	{
 		m_Animator->SetState(Component::ACTIVE);
 	}

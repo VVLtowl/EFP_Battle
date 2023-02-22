@@ -17,8 +17,8 @@ public:
 	* @brief	コンポネント
 	********************************************************/
 public:
-	class Polygon2D* PieceImage;
-	class LookAtCamera* LookAtCmr;
+	class Polygon2D* m_Polygon2D;
+	class LookAtCamera* m_LookAtCmr;
  
 	/*********************************************************
 	* @brief	customize

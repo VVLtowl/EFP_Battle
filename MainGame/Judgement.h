@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 #include <vector>
 #include <list>
 #include "Executor.h"
@@ -26,6 +27,9 @@ class Judgement:
 	public Executor
 {
 public:
+	std::string Name() override { return "judgement"; };
+
+public:
 	PlayMode Mode;
 
 	/*********************************************************
@@ -36,10 +40,12 @@ public:
 	void Init();
 	void Uninit();
 	void GameStart();//in game scene
+	void GameEnd();//in game scene
 
 	void ShuffleAndSetPiecesToPlayers();//after client num ready
-	void PrepareBoard();
-	void CheckPiecesActpoint();
+	void SetPiecesInfoBlocks(bool show);
+	void CalculatePiecesActpoint();
+	void PrepareBoardAndPieces();
 
 	void StartWaitClientsCreatePlayer();
 	void StartWaitClientsSetTargetPieceNum();
@@ -65,48 +71,46 @@ public:
 	void StartCommandShowPiecesHand();
 	void StartIteratePiecesShowCheckActpoint();
 	void StartIteratePiecesInputAct();
-	void StartCommandPiecesClearActpoint();
+	void StartCommandPiecesClearActpoint();//instead by StartIteratePiecesClearActpoint
+	void StartIteratePiecesClearActpoint();
+	void StartIteratePiecesClearHand();
 
 	void StartWaitClientsPieceFinishAct(int pieceID);
-	void StartCheckPieceMove(int pieceID);
-	void StartWaitClientsPieceMove(int pieceID);
-	void StartCheckPieceEscape(int pieceID);
-	void StartWaitClientsPieceEscape(int pieceID);
-	void StartCheckPieceCaught(int pieceID);
-	void StartWaitClientsPieceCaught(int pieceID);
+	void CheckPieceMove(int pieceID, int squareID);
+	void StartWaitClientsPieceMove(int pieceID, int squareID, std::string endEventInfo, std::function<void()> endEvent= []() {; });
+	void CheckPieceEscape(int pieceID);
+	void StartWaitClientsPieceEscape(int pieceID,int escapeSquareID , std::string endEventInfo, std::function<void()> endEvent = []() {; });
+	void CheckPieceCaught(int movePieceID, int caughtPieceID);
+	void StartWaitClientsPieceCaught(int movePieceID, int caughtPieceID, int prisonRoomSquareID, std::string endEventInfo, std::function<void()> endEvent = []() {; });
 
 
 	void StartWaitClientsShowPiecesEntry();
 	void StartWaitClientsShowPiecesHandResult();
 
+	void StartWaitClientsGameOver(int result);
 
 	class JudgementInputPlayMode* BH_InputPlayMode;
 	class JudgementWaitPlayersFinish* BH_WaitPlayersFinish;
 	class JudgementCommandShowPieces* BH_CommandShowPieces;
 	class JudgementWaitPiecesFinishCommand* BH_WaitPiecesFinishCmd;
 
-	std::vector<class JudgementBehaviour*> m_MainLoopBehaviours;
-	std::list<class JudgementBehaviour*> m_SpecialBehaviours;
+	//std::vector<class JudgementBehaviour*> m_MainLoopBehaviours;
+	//std::list<class JudgementBehaviour*> m_SpecialBehaviours;
 
 	/*********************************************************
 	* @brief	ゲームの進行を制御するための変数
 	********************************************************/
 public:
 	//factory
-	std::unordered_map<int,class Player*> Players;
-	std::unordered_map<int,class Piece*> Pieces;
-	std::list<class Piece*> Bads;
-	std::list<class Piece*> Goods;
+	//std::unordered_map<int,class Player*> m_Players;
+	//std::unordered_map<int,class Piece*> m_Pieces;
+	//std::list<class Piece*> m_Bads;
+	//std::list<class Piece*> m_Goods;
+	std::unordered_map<int, class GameObject*> m_PieceScreenPosHints;//for calculate piece info pos
 
-	//std::unordered_map<int, class Piece*>::iterator PieceIterator;
-	//std::unordered_map<int, class Piece*>::iterator PieceEnd;
 
 	//for count turn
-	int TurnCount = 0;
-	
-	//for count finish players
-	//int FinishedPlayerNum=0;
-	//int TargetPlayerNum=0;
+	int m_TurnCount = 0;
 
 //	/*********************************************************
 //	* @brief	プレイヤー全員を操作するとき使う

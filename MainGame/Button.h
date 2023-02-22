@@ -49,7 +49,7 @@ public:
     };
 public:
     virtual void ChangeState(State state);
-    State& GetButtonState() const { return m_State; };
+    State& GetButtonState() { return m_State; };
 private:
     State m_State;
 };

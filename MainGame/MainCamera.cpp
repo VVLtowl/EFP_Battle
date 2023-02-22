@@ -8,7 +8,7 @@
 
 MainCamera::MainCamera():
 	m_TestBlockID(0),
-	m_CanMove(false),
+	m_CanMove(false),//test
 	m_MoveSpeedMouse(20),
 	m_MoveSpeedKeyboard(0.5f)
 {
@@ -45,14 +45,13 @@ MainCamera::MainCamera():
 
 	//test add edit block
 	{
-		m_CanMove = false;
 		DebugInfo::TestBlocks.emplace(
 			TESTBLOCKID_MAINCAMERA,
 			[this]()
 			{
 				ImGui::Begin("Edit Main Camera");
-				ImGui::SliderFloat("Fovy", &(m_Camera->Fovy), 0.1f, 45.0f);
-				ImGui::Checkbox("IsOrtho", &(m_Camera->IsOrtho));
+				ImGui::SliderFloat("Fovy", &(m_Camera->m_Fovy), 0.1f, 45.0f);
+				ImGui::Checkbox("IsOrtho", &(m_Camera->m_IsOrtho));
 				ImGui::Checkbox("Move", &(m_CanMove));
 				ImGui::InputFloat("MoveSpeed-Keyboard", &m_MoveSpeedKeyboard);
 				ImGui::InputFloat("MoveSpeed-Mouse", &m_MoveSpeedMouse);

@@ -39,6 +39,75 @@
 
 #include "imgui/imgui.h"
 
+#pragma region ========== data for network ==========
+/*********************************************************
+* @brief    network data structure and data size
+********************************************************/
+//len+=0
+const size_t LEN_ZERO = 0;
+
+//len+=128
+const size_t LEN_CLIENT_NAME = 64;
+const size_t LEN_CLIENT_IP = 64;
+struct Data_Client
+{
+	int ID;
+	bool Ready;
+	char Name[LEN_CLIENT_NAME];
+	char IP[LEN_CLIENT_IP];
+};
+const size_t LEN_DATA_CLIENT = sizeof(Data_Client);
+
+//len+=256
+struct Data_Char256
+{
+	char Sentence[256] = "test msg";
+};
+const size_t LEN_DATA_CHAR256 = sizeof(Data_Char256);
+
+//lent+=4
+struct Data_Int
+{
+	int Data;
+};
+const size_t LEN_DATA_INT = sizeof(Data_Int);
+
+//len+=16
+struct Data_Int4
+{
+	int Data[4];
+};
+const size_t LEN_DATA_INT4 = sizeof(Data_Int4);
+
+//len+=16
+typedef PlayerDesc Data_PlayerDesc;
+const size_t LEN_DATA_PLAYERDESC = sizeof(Data_PlayerDesc);
+
+//len+=16
+typedef PieceDesc Data_PieceDesc;
+const size_t LEN_DATA_PIECEDESC = sizeof(Data_PieceDesc);
+
+/*********************************************************
+* @brief	SendMsgを便利に作る
+********************************************************/
+void MakeTCPSendMsg_Char(bool broadcast, int tcpSockID=-1, std::string data="",std::string info="send")
+{
+
+}
+void MakeTCPSendMsg_Int(bool broadcast, int tcpSockID = -1, std::string data = "", std::string info = "send")
+{
+
+}
+void MakeTCPSendMsg_Int4(bool broadcast, int tcpSockID = -1, std::string data = "", std::string info = "send")
+{
+
+}
+void MakeTCPSendMsg_Client(bool broadcast, int tcpSockID = -1, std::string data = "", std::string info = "send")
+{
+
+}
+#pragma endregion
+
 #pragma region ========== msg structure definition ==========
 
 SendMsg::SendMsg(const char* msg)
@@ -277,6 +346,12 @@ void NetworkManager::TryLaunchServer(int port,bool isTcp)
 	}
 }
 
+void NetworkManager::CloseTCPSock(int id)
+{
+	TCPSockets[id].IsUsed = false;
+	closesocket(TCPSockets[id].Socket);
+}
+
 void NetworkManager::StartAsClient()
 {
 	if (Running)
@@ -322,11 +397,11 @@ void NetworkManager::SetConnectServerInfo(int port, std::string serverIP, bool i
 	{
 		//set port
 		Port = port;
-		TargetClient->ServerPort = port;
+		TargetClient->m_ServerPort = port;
 
 		//set HostEnt
 		unsigned int IP = inet_addr(serverIP.c_str());
-		HostEnt = gethostbyaddr(serverIP.c_str(), 4, AF_INET);
+		//HostEnt = gethostbyaddr(serverIP.c_str(), 4, AF_INET);
 		HostEnt = gethostbyname(serverIP.c_str());
 		if (HostEnt == nullptr)
 		{
@@ -397,7 +472,7 @@ void NetworkManager::InitChatPanel()
 		{
 			if (TargetClient)
 			{
-				if (TargetClient->JoinSuccess)
+				if (TargetClient->m_JoinSuccess)
 				{
 					DebugInfo::DrawNetMsg();
 				}
@@ -405,7 +480,7 @@ void NetworkManager::InitChatPanel()
 
 			if (TargetServer)
 			{
-				if (TargetServer->OpenGameRoom)
+				if (TargetServer->m_OpenGameRoom)
 				{
 					DebugInfo::DrawNetMsg();
 				}
@@ -487,7 +562,7 @@ void NetworkManager::Client_SendTestMsgToBroadcast(const char* sentence)
 		else
 		{
 			send = new SendMsg(
-				TargetClient->ServerAddr,
+				TargetClient->m_ServerAddr,
 				EncodeMsgContent(msg));
 		}
 
@@ -513,14 +588,9 @@ void NetworkManager::Client_RequestDisconnect()
 {
 	if (TargetClient)
 	{
-		if (!TargetClient->IsConnected)
-		{
-			return;
-		}
-
 		//data for serilize
 		Data_Int data;
-		data.Data = TargetClient->ID;
+		data.Data = TargetClient->m_ID;
 		MsgContent msg = { MsgContent::SERVER_SET_CLIENT_DISCONNECT,
 			LEN_DATA_INT, &data };
 
@@ -528,6 +598,11 @@ void NetworkManager::Client_RequestDisconnect()
 		SendMsg* send = nullptr;
 		if (IsTCP)
 		{
+			if (!TargetClient->m_IsConnected)
+			{
+				return;
+			}
+
 			send = new SendMsg(EncodeMsgContent(msg));
 			send->PrintRowID = DebugInfo::Print("send");
 			send->Comment = "request disconnect";
@@ -535,7 +610,7 @@ void NetworkManager::Client_RequestDisconnect()
 		else
 		{
 			send = new SendMsg(
-				TargetClient->ServerAddr,
+				TargetClient->m_ServerAddr,
 				EncodeMsgContent(msg));
 		}
 
@@ -561,7 +636,7 @@ void NetworkManager::Client_RequestJoinServer()
 	{
 		//data for serilize
 		Data_Client data;
-		memcpy(data.Name, TargetClient->Name, LEN_CLIENT_NAME);
+		memcpy(data.Name, TargetClient->m_Name, LEN_CLIENT_NAME);
 		memcpy(data.IP, HostIP, 64);
 		MsgContent msg = { MsgContent::SERVER_CHECK_CLIENT_JOIN,
 			LEN_DATA_CLIENT, &data };
@@ -577,7 +652,7 @@ void NetworkManager::Client_RequestJoinServer()
 		else
 		{
 			send = new SendMsg(
-				TargetClient->ServerAddr,
+				TargetClient->m_ServerAddr,
 				EncodeMsgContent(msg));
 		}
 
@@ -612,7 +687,6 @@ void NetworkManager::Client_TryConnectServer()
 			else
 			{
 				DebugInfo::Print("async select success");
-
 			}
 
 			// サーバーへ接続するための準備
@@ -622,18 +696,17 @@ void NetworkManager::Client_TryConnectServer()
 			addrin.sin_port = htons(Port);
 			addrin.sin_addr.s_addr = *((unsigned long*)HostEnt->h_addr);
 
+			//start non-blocking, need back to blocking in FD_CONNECT
+			//u_long nonBlock = 1;
+			//ioctlsocket(Socket, FIONBIO, &nonBlock);
 			nRtn = connect(Socket, (SOCKADDR*)&addrin, LEN_ADDRIN);
-			if (nRtn == SOCKET_ERROR)
+			if (nRtn < 0)
 			{
-				//int error = WSAGetLastError();
-				//MessageBox(GetWindow(), "connect server 接続エラー", WINDOW_NAME, MB_OK);
-				//DebugInfo::Print("try connect server failed");
-				//closesocket(Socket);
-				//return;
+				DebugInfo::Print("first connect server failed");
 			}
 			else
 			{
-				//DebugInfo::Print("try connect server succeed");
+				DebugInfo::Print("connect...");
 			}
 
 			//connect(Socket, (SOCKADDR*)&TargetClient->ServerAddr,LEN_ADDRIN);
@@ -645,10 +718,11 @@ void NetworkManager::Server_AgreeJoin(ClientMember* member)
 	if (TargetServer)
 	{
 		//data for serilize
-		Data_Int data;
-		data.Data = member->ID;
+		Data_Int4 data;
+		data.Data[0] = member->TCPSocketID;
+		data.Data[1] = TargetServer->m_TargetClientNum;
 		MsgContent msg = { MsgContent::CLIENT_JOIN_ROOM,
-			LEN_DATA_INT, &data };
+			LEN_DATA_INT4, &data };
 
 		//make sendmsg
 		SendMsg* send = nullptr;
@@ -675,19 +749,128 @@ void NetworkManager::Server_AgreeJoin(ClientMember* member)
 		SendMsgQueue.push(send);
 	}
 }
-void NetworkManager::Server_CommandUpdateJoinedNum()
+void NetworkManager::Server_DisagreeJoin(ClientMember* member)
 {
 	if (TargetServer)
 	{
 		//data for serilize
-		Data_Int4 data;
+		Data_Int data;
+		data.Data = member->TCPSocketID;
+		MsgContent msg = { MsgContent::CLIENT_JOIN_ROOM_FAIL,
+			LEN_DATA_INT, &data };
+
+		//make sendmsg
+		SendMsg* send = nullptr;
+		if (IsTCP)
+		{
+			send = new SendMsg(
+				member->TCPSocketID,
+				EncodeMsgContent(msg));
+
+			send->PrintRowID = DebugInfo::Print("send");
+			send->Comment =
+				"to client" +
+				std::string("[" + std::to_string(member->TCPSocketID) + "] ") +
+				"can't join";
+		}
+		else
+		{
+			send = new SendMsg(
+				member->Address,
+				EncodeMsgContent(msg));
+		}
+
+		//add to sendmsgqueue
+		SendMsgQueue.push(send);
+	}
+}
+void NetworkManager::Server_SendJoinedClientInfosToClient(ClientMember* member)
+{
+	if (TargetServer)
+	{
+		for (auto idMem : TargetServer->m_ClientMembers)
+		{
+			//data for serilize
+			Data_Client data;
+			ClientMember* memInfo = idMem.second;
+			memcpy(data.Name, memInfo->Name.c_str(), LEN_CLIENT_NAME);
+			data.ID = memInfo->TCPSocketID;
+			data.Ready = memInfo->Ready;
+			MsgContent msg = { MsgContent::CLIENT_UPDATE_JOINEDNUM,
+				LEN_DATA_CLIENT, &data };
+
+			//make sendmsg
+			SendMsg* send = nullptr;
+			if (IsTCP)
+			{
+				send = new SendMsg(
+					member->TCPSocketID,
+					EncodeMsgContent(msg));
+
+				send->PrintRowID = DebugInfo::Print("send");
+				send->Comment =
+					"to client" +
+					std::string("[" + std::to_string(member->TCPSocketID) + "] ") +
+					"client["+ std::to_string(member->TCPSocketID) + "]info";
+			}
+			else
+			{
+				send = new SendMsg(
+					member->Address,
+					EncodeMsgContent(msg));
+			}
+
+			//add to sendmsgqueue
+			SendMsgQueue.push(send);
+		}		
+	}
+}
+void NetworkManager::Server_CommandUpdateJoinedNum(ClientMember* member)
+{
+	if (TargetServer)
+	{
+		//data for serilize
+		Data_Client data;
 		//data0:joinedNum,data1:targetNum
-		data.Data[0] = TargetServer->JoinedClientNum;
-		data.Data[1] = TargetServer->TargetClientNum;
+		memcpy(data.Name, member->Name.c_str(), LEN_CLIENT_NAME);
+		memcpy(data.IP, inet_ntoa(member->Address.sin_addr), 64);
+		data.ID = member->TCPSocketID;
+		data.Ready = member->Ready;
 		MsgContent msg = { MsgContent::CLIENT_UPDATE_JOINEDNUM,
-			LEN_DATA_INT4,&data };
+			LEN_DATA_CLIENT,&data };
 		char* msgBuf = EncodeMsgContent(msg);
 		SentToAllClients(msgBuf,"command update joined num");
+	}
+}
+void NetworkManager::Client_RequestSetReady(bool ready)
+{
+	if (TargetClient)
+	{
+		//data for serilize
+		Data_Int4 data;
+		data.Data[0] = TargetClient->m_ID;
+		data.Data[1] = ready?1:0;//0:not ready, 1:ready
+		MsgContent msg = { MsgContent::SERVER_SET_CLIENT_READY,
+			LEN_DATA_INT4,&data };
+		char* msgBuf = EncodeMsgContent(msg);
+
+		//make sendmsg
+		SendMsg* send = nullptr;
+		if (IsTCP)
+		{
+			send = new SendMsg(EncodeMsgContent(msg));
+			send->PrintRowID = DebugInfo::Print("send");
+			send->Comment = "request set ready";
+		}
+		else
+		{
+			send = new SendMsg(
+				TargetClient->m_ServerAddr,
+				EncodeMsgContent(msg));
+		}
+
+		//add to sendmsgqueue
+		SendMsgQueue.push(send);
 	}
 }
 
@@ -695,22 +878,22 @@ void NetworkManager::Judgement_CommandCreatePlayer()
 {
 	if (TargetServer)
 	{
-		for (auto idPlayer : Judgement::Instance()->Players)
+		for (auto idPlayer : GameManager::m_Players)
 		{
 			Player* player = idPlayer.second;
 
 			//data for serilize
 			Data_PlayerDesc data{
 				false,
-				player->SelfPieces.GetList()->size(),
-				player->Camp,
-				player->ID
+				player->m_SelfPieces.GetList()->size(),
+				player->m_Camp,
+				player->m_ID
 			};
 			MsgContent msg = { MsgContent::CLIENT_CREATE_PLAYER,
 				LEN_DATA_PLAYERDESC,&data };
 
 			//make sendmsg
-			ClientMember* member = TargetServer->ClientMembers[player->ID];
+			ClientMember* member = TargetServer->m_ClientMembers[player->m_ID];
 			SendMsg* send = nullptr;
 			if (IsTCP)
 			{
@@ -741,7 +924,7 @@ void NetworkManager::Judgement_CommandSetPieceNum()
 	if (TargetServer)
 	{
 		//data for serilize
-		Data_Int data{ Judgement::Instance()->Pieces.size() };
+		Data_Int data{ GameManager::m_Pieces.size() };
 		MsgContent msg = { MsgContent::CLIENT_SET_PIECE_NUM,
 			LEN_DATA_INT,&data };
 		char* msgBuf = EncodeMsgContent(msg);
@@ -754,15 +937,15 @@ void NetworkManager::Judgement_CommandCreatePiece(Piece* piece)
 	{
 		//data for serilize
 		Data_PieceDesc data{
-			piece->CharaType,
-			piece->Camp,
-			piece->ID,
-			piece->OwnerPlayer->ID
+			piece->m_CharaType,
+			piece->m_Camp,
+			piece->m_ID,
+			piece->m_OwnerPlayer->m_ID
 		};
 		MsgContent msg = { MsgContent::CLIENT_CREATE_PIECE,
 			LEN_DATA_PIECEDESC,&data };
 		char* msgBuf = EncodeMsgContent(msg);
-		SentToAllClients(msgBuf, "command create piece " + std::to_string(piece->ID));
+		SentToAllClients(msgBuf, "command create piece " + std::to_string(piece->m_ID));
 	}
 }
 
@@ -782,13 +965,13 @@ void NetworkManager::Judgement_CommandPieceShowEntry(Piece* piece)
 	if (TargetServer)
 	{
 		//data for serilize
-		Data_Int4 data{ piece->ID, piece->FootOnSquare->ID };
+		Data_Int4 data{ piece->m_ID, piece->m_FootOnSquare->m_ID };
 		MsgContent msg = { MsgContent::CLIENT_SHOW_PIECE_ENTRY,
 			LEN_DATA_INT4,&data };
 		char* msgBuf = EncodeMsgContent(msg);
 		SentToAllClients(msgBuf,
 			"command show piece " +
-			std::to_string(piece->ID) +
+			std::to_string(piece->m_ID) +
 			" entry");
 	}
 }
@@ -802,7 +985,7 @@ void NetworkManager::Judgement_CommandShowStep(int showStepType)
 		data.Data[0] = showStepType;
 		if (showStepType == (int)Judgement::ShowStepType::TURN_START)
 		{
-			data.Data[1] = Judgement::Instance()->TurnCount;
+			data.Data[1] = Judgement::Instance()->m_TurnCount;
 		}
 		MsgContent msg = { MsgContent::CLIENT_SHOW_STEP,
 			LEN_DATA_INT4,&data };
@@ -855,15 +1038,15 @@ void NetworkManager::Judgement_CommandShowPieceHand(Piece* piece)
 	if (TargetServer)
 	{
 		//data for serilize
-		Data_Int data{ piece->ID };
+		Data_Int data{ piece->m_ID };
 		MsgContent msg = { MsgContent::CLIENT_SHOW_PIECE_HAND,
 			LEN_DATA_INT,&data };
 		char* msgBuf = EncodeMsgContent(msg);
 		SentToAllClients(msgBuf,
 			"command show piece " +
-			std::to_string(piece->ID) +
+			std::to_string(piece->m_ID) +
 			" hand[" +
-			Hand::HandName(*piece->Hands.begin()) +
+			Hand::HandName(*piece->m_Hands.begin()) +
 			"]");
 	}
 }
@@ -872,13 +1055,13 @@ void NetworkManager::Judgement_CommandPieceShowCheckActpoint(Piece* piece)
 	if (TargetServer)
 	{
 		//data for serilize
-		Data_Int data{ piece->ID };
+		Data_Int4 data{ piece->m_ID,piece->m_ActPoint };
 		MsgContent msg = { MsgContent::CLIENT_SHOW_CHECK_ACTPOINT,
-			LEN_DATA_INT,&data };
+			LEN_DATA_INT4,&data };
 		char* msgBuf = EncodeMsgContent(msg);
 		SentToAllClients(msgBuf,
 			"command piece " +
-			std::to_string(piece->ID) +
+			std::to_string(piece->m_ID) +
 			" show check actpoint");
 	}
 }
@@ -903,7 +1086,7 @@ void NetworkManager::Client_NotifyCountPlayerFinished()
 		else
 		{
 			send = new SendMsg(
-				TargetClient->ServerAddr,
+				TargetClient->m_ServerAddr,
 				EncodeMsgContent(msg));
 		}
 
@@ -930,7 +1113,7 @@ void NetworkManager::Client_NotifyCountPieceFinished()
 		else
 		{
 			send = new SendMsg(
-				TargetClient->ServerAddr,
+				TargetClient->m_ServerAddr,
 				EncodeMsgContent(msg));
 		}
 
@@ -961,7 +1144,7 @@ void NetworkManager::Piece_RequestSetHand(int pieceID, HandType handType)
 		else
 		{
 			send = new SendMsg(
-				TargetClient->ServerAddr,
+				TargetClient->m_ServerAddr,
 				EncodeMsgContent(msg));
 		}
 
@@ -994,14 +1177,14 @@ void NetworkManager::Judgement_CommandPieceInputAct(Piece* piece)
 	if (TargetServer)
 	{
 		//data for serilize
-		Data_Int data{ piece->ID };
+		Data_Int data{ piece->m_ID };
 		MsgContent msg = { MsgContent::CLIENT_INPUT_PIECE_ACT,
 			LEN_DATA_INT,&data };
 		char* msgBuf = EncodeMsgContent(msg);
 		SentToAllClients(msgBuf,
-			"command piece "+
-			std::to_string(piece->ID) + 
-			" input act");
+			"command piece["+
+			std::to_string(piece->m_ID) + 
+			"] input act");
 	}
 }
 void NetworkManager::Piece_RequestFinishAct(int pieceID)
@@ -1025,7 +1208,7 @@ void NetworkManager::Piece_RequestFinishAct(int pieceID)
 		else
 		{
 			send = new SendMsg(
-				TargetClient->ServerAddr,
+				TargetClient->m_ServerAddr,
 				EncodeMsgContent(msg));
 		}
 
@@ -1043,9 +1226,9 @@ void NetworkManager::Judgement_CommandPieceFinishAct(int pieceID)
 			LEN_DATA_INT,&data };
 		char* msgBuf = EncodeMsgContent(msg);
 		SentToAllClients(msgBuf, 
-			"command piece " +
+			"command piece[" +
 			std::to_string(pieceID) +
-			" finish act");
+			"] finish act");
 	}
 }
 void NetworkManager::Piece_RequestMoveAct(int pieceID, int squareID)
@@ -1070,7 +1253,7 @@ void NetworkManager::Piece_RequestMoveAct(int pieceID, int squareID)
 		else
 		{
 			send = new SendMsg(
-				TargetClient->ServerAddr,
+				TargetClient->m_ServerAddr,
 				EncodeMsgContent(msg));
 		}
 
@@ -1090,22 +1273,124 @@ void NetworkManager::Judgement_CommandPieceMove(int pieceID, int squareID)
 			LEN_DATA_INT4, &data };
 		char* msgBuf = EncodeMsgContent(msg);
 		SentToAllClients(msgBuf,
-			"command piece " +
+			"command piece[" +
 			std::to_string(pieceID) +
-			" move");
+			"] move to square[" +
+			std::to_string(squareID) +
+			"]");
 	}
 }
+void NetworkManager::Judgement_CommandPieceContinueMove(ClientMember* member, int pieceID)
+{
+	if (TargetServer)
+	{
+		//data for serilize
+		Data_Int data;
+		data.Data = pieceID;
+		MsgContent msg = { MsgContent::CLIENT_CONTINUE_INPUT_PIECE_MOVE,
+			LEN_DATA_INT, &data };
+
+		//make sendmsg
+		SendMsg* send = nullptr;
+		if (IsTCP)
+		{
+			send = new SendMsg(
+				member->TCPSocketID,
+				EncodeMsgContent(msg));
+
+			send->PrintRowID = DebugInfo::Print("send");
+			send->Comment =
+				"to client" +
+				std::string("[" + std::to_string(member->TCPSocketID) + "] ") +
+				"continue move";
+		}
+		else
+		{
+			send = new SendMsg(
+				member->Address,
+				EncodeMsgContent(msg));
+		}
+
+		//add to sendmsgqueue
+		SendMsgQueue.push(send);
+	}
+}
+void NetworkManager::Judgement_CommandPieceCaught(int movePieceID, int caughtPieceID, int prisonRoomSquareID)
+{
+	if (TargetServer)
+	{
+		//data for serilize
+		Data_Int4 data;
+		data.Data[0] = movePieceID;
+		data.Data[1] = caughtPieceID;
+		data.Data[2] = prisonRoomSquareID;
+		MsgContent msg = { MsgContent::CLIENT_SHOW_PIECE_CAUGHT,
+			LEN_DATA_INT4, &data };
+		char* msgBuf = EncodeMsgContent(msg);
+		SentToAllClients(msgBuf,
+			"command piece[" +
+			std::to_string(movePieceID) +
+			"] catch piece[" +
+			std::to_string(caughtPieceID) +
+			"]");
+	}
+}
+void NetworkManager::Judgement_CommandPieceEscape(int escapePieceID, int goalSquareID)
+{
+	if (TargetServer)
+	{
+		//data for serilize
+		Data_Int4 data;
+		data.Data[0] = escapePieceID;
+		data.Data[1] = goalSquareID;
+		MsgContent msg = { MsgContent::CLIENT_SHOW_PIECE_ESCAPE,
+			LEN_DATA_INT4, &data };
+		char* msgBuf = EncodeMsgContent(msg);
+		SentToAllClients(msgBuf,
+			"command piece[" +
+			std::to_string(escapePieceID) +
+			"] escape");
+	}
+}
+
 
 void NetworkManager::Judgement_CommandPiecesClearHandAndActpoint()
 {
 	if (TargetServer)
 	{
 		//data for serilize
-		Data_Int data{ Judgement::Instance()->Pieces.size() };
 		MsgContent msg = { MsgContent::CLIENT_CLEAR_PIECE_HAND_AND_ACTPOINT,
 			LEN_ZERO,nullptr };
 		char* msgBuf = EncodeMsgContent(msg);
-		SentToAllClients(msgBuf, "clear hand and actpoint ");
+		SentToAllClients(msgBuf, "command clear hand and actpoint ");
+	}
+}
+void NetworkManager::Judgement_CommandPieceClearActpoint(Piece* piece)
+{
+
+}
+void NetworkManager::Judgement_CommandPieceClearHand(Piece* piece)
+{
+
+}
+void NetworkManager::Client_RequestUpdatePieceActpoint(Piece* piece)
+{
+
+}
+void NetworkManager::Client_RequestUpdatePieceHand(Piece* piece)
+{
+
+}
+void NetworkManager::Judgement_CommandShowGameOver(int result)
+{
+	if (TargetServer)
+	{
+		//data for serilize
+		Data_Int data{ result };
+		MsgContent msg = { MsgContent::CLIENT_SHOW_GAME_OVER,
+			LEN_DATA_INT,&data };
+		char* msgBuf = EncodeMsgContent(msg);
+		SentToAllClients(msgBuf, "command show game over ");
 	}
 }
 #pragma endregion
@@ -1191,16 +1476,20 @@ void NetworkManager::UpdateNetProc(UINT uMsg, LPARAM lp)
 		case FD_ACCEPT:
 		{
 
-			DebugInfo::Print("has accept client socket...");
+			DebugInfo::Print("try make accept client socket...");
 
 			SOCKADDR_IN from;
 			int fromLen = sizeof(SOCKADDR);
-
 			int id = GetEnableTCPID();
 
+			//when id out of sockets' max, don't accept
+			if (id == -1)
+			{
+				DebugInfo::Print("sockets is full, can't accept");
+				break;
+			}
 
-
-			//accept
+			//accept, check if need to set up tcp socket
 			TCPSockets[id].Socket = accept(TCPListenSocket, (SOCKADDR*)&from, &fromLen);
 			if (TCPSockets[id].Socket == INVALID_SOCKET)
 			{
@@ -1235,15 +1524,9 @@ void NetworkManager::UpdateNetProc(UINT uMsg, LPARAM lp)
 		//client
 		case FD_CONNECT:
 		{
+			if (TargetClient)
 			{
-				if (TargetClient)
-				{
-					DebugInfo::Print("client to server connect finished");
-
-					//set connected success
-					TargetClient->IsConnected = true;
-					Client_RequestJoinServer();
-				}
+				TargetClient->CheckConnect();
 			}
 		}
 		}
@@ -1293,21 +1576,11 @@ void NetworkManager::Update()
 			}
 
 			case MsgContent::SERVER_CHECK_CLIENT_JOIN:
-				//just for udp
 			{
-				Data_Char256* clientNameData = (Data_Char256*)msg.Data;
-				std::string name(clientNameData->Sentence);
-
-				if (IsTCP)
-				{
-					TargetServer->JumpToBH(new ServerCheckClientJoin(
-						TargetServer, recv->TCPSockID, name));
-				}
-				else
-				{
-					TargetServer->JumpToBH(new ServerCheckClientJoin(
-						TargetServer, recv->From, name));
-				}
+				Data_Client* clientData = (Data_Client*)msg.Data;
+				std::string name = clientData->Name;
+				int id = recv->TCPSockID;//tips: tcpClientID=tcpSockID
+				TargetServer->StartCheckClientJoin(id, name);
 
 				break;
 			}
@@ -1316,29 +1589,18 @@ void NetworkManager::Update()
 			{
 				Data_Int* clientIDData = (Data_Int*)msg.Data;
 				int id = clientIDData->Data;
-				ClientMember* disconnectClient = TargetServer->ClientMembers[id];
-
-				//set quit info before quit
-				std::string info =
-					"- " +
-					std::string("[" + std::to_string(disconnectClient->ID) + "]") +
-					disconnectClient->Name +
-					" quit room";
-				DebugInfo::PrintNetMsg(info.c_str());
-
-				//close tcp sock
-				if (IsTCP)
-				{
-					int tcpSockID = disconnectClient->TCPSocketID;
-					TCPSockets[tcpSockID].IsUsed = false;
-					closesocket(TCPSockets[tcpSockID].Socket);
-				}
-
-				//update client members and notify other clients
-				TargetServer->QuitClientMember(id);
-				Server_CommandUpdateJoinedNum();
-				Server_BroadcastTestMsgToShow(info.c_str());
+				TargetServer->SetClientDisconnect(id);
 				
+				break;
+			}
+
+			case MsgContent::SERVER_SET_CLIENT_READY:
+			{
+				Data_Int4* clientData = (Data_Int4*)msg.Data;
+				int id = clientData->Data[0];
+				bool ready = clientData->Data[1] == 1 ? true : false;//0:not ready, 1:ready
+				TargetServer->SetClientReady(id, ready);
+
 				break;
 			}
 
@@ -1366,7 +1628,7 @@ void NetworkManager::Update()
 				HandType handType = (HandType)data->Data[1];
 
 				//save handtype data in judgement
-				Judgement::Instance()->Pieces[pieceID]->AddHand(handType);
+				GameManager::m_Pieces[pieceID]->AddHand(handType);
 
 				//broadcast to client
 				Judgement_CommandSetHand(pieceID, handType);
@@ -1380,30 +1642,7 @@ void NetworkManager::Update()
 				int pieceID = data->Data[0];
 				int squareID = data->Data[1];
 
-
-				//change piece and square data in judgement at first
-				Piece* piece = Judgement::Instance()->Pieces[pieceID];
-				Square* oldSqr = piece->FootOnSquare;
-				Square* newSqr = Board::Instance()->Squares[squareID];
-				{
-					//piece event: out square
-					piece->FootOnSquare = nullptr;
-
-					//square event: piece out 
-					oldSqr->Piece = nullptr;
-
-					//piece event: in square
-					piece->FootOnSquare = newSqr;
-
-					//square event: piece in
-					newSqr->Piece = piece;
-				}		
-
-				//todo
-				//check move event!!!
-
-				//broadcast to client
-				Judgement_CommandPieceMove(pieceID, squareID);
+				Judgement::Instance()->CheckPieceMove(pieceID, squareID);
 
 				break;
 			}
@@ -1434,19 +1673,21 @@ void NetworkManager::Update()
 
 			case MsgContent::CLIENT_JOIN_ROOM:
 			{
-				Data_Int* clientIDData = (Data_Int*)msg.Data;
-				int id = clientIDData->Data;
-				TargetClient->JoinRoomAndSetID(id);
+				Data_Int4* clientIDData = (Data_Int4*)msg.Data;
+				int id = clientIDData->Data[0];
+				int targetClientNum = clientIDData->Data[1];
+				TargetClient->JoinRoom(id, targetClientNum);
 
 				break;
 			}
 
 			case MsgContent::CLIENT_UPDATE_JOINEDNUM:
 			{
-				Data_Int4* memberNumberData = (Data_Int4*)msg.Data;
-				int joinedNum = memberNumberData->Data[0];
-				int targetNum = memberNumberData->Data[1];
-				TargetClient->UpdateNum(joinedNum, targetNum);
+				Data_Client* memberData = (Data_Client*)msg.Data;
+				TargetClient->UpdateClientInfo(
+					memberData->ID,
+					memberData->Name,
+					memberData->Ready);
 
 				break;
 			}
@@ -1487,7 +1728,7 @@ void NetworkManager::Update()
 				Data_PieceDesc* pieceDescData = (Data_PieceDesc*)msg.Data;
 				PieceDesc desc = *pieceDescData;
 				TargetClient->CreatePiece(desc);
-				if (TargetClient->Pieces.size() == 
+				if (GameManager::m_Pieces.size() ==
 					TargetClient->BH_WaitPiecesFinish->TargetPieceNum)
 				{
 					Client_NotifyCountPlayerFinished();
@@ -1521,7 +1762,7 @@ void NetworkManager::Update()
 				int stepType = stepTypeData->Data[0];
 				if (stepType == (int)Judgement::ShowStepType::TURN_START)
 				{
-					TargetClient->TurnCount = stepTypeData->Data[1];
+					TargetClient->m_TurnCount = stepTypeData->Data[1];
 				}
 				TargetClient->StartWaitShowStep(stepType);
 
@@ -1531,7 +1772,7 @@ void NetworkManager::Update()
 			case MsgContent::CLIENT_INPUT_RPS:
 			{
 				TargetClient->ShowPiecesThinkMark();
-				TargetClient->MainPlayer->StartIterateSelfPiecesInputHand();
+				TargetClient->m_MainPlayer->StartIterateSelfPiecesInputHand();
 				
 				break;
 			}
@@ -1541,7 +1782,7 @@ void NetworkManager::Update()
 				Data_Int4* data = (Data_Int4*)msg.Data;
 				int pieceID = data->Data[0];
 				HandType handType = (HandType)data->Data[1];
-				Piece* piece = TargetClient->Pieces[pieceID];
+				Piece* piece = GameManager::m_Pieces[pieceID];
 				{
 					//save handtype data in client for check actpoint show
 					piece->FinishSetHand(handType);
@@ -1568,9 +1809,10 @@ void NetworkManager::Update()
 				//DebugInfo::Print("[get] show check piece actpoint");
 
 				//test
-				Data_Int* pieceIDData = (Data_Int*)msg.Data;
-				int pieceID = pieceIDData->Data;
-				TargetClient->StartPieceShowCheckActpoint(pieceID);
+				Data_Int4* data = (Data_Int4*)msg.Data;
+				int pieceID = data->Data[0];
+				int actPoint = data->Data[1];
+				TargetClient->StartPieceShowCheckActpoint(pieceID, actPoint);
 
 				break;
 			}
@@ -1601,10 +1843,61 @@ void NetworkManager::Update()
 
 			case MsgContent::CLIENT_CLEAR_PIECE_HAND_AND_ACTPOINT:
 			{
-				//start wait once
 				TargetClient->StartWaitPiecesFinish();
-
 				TargetClient->StartPiecesClearHandAndActpoint();
+
+				break;
+			}
+
+
+			case MsgContent::CLIENT_SHOW_PIECE_MOVE:
+			{
+				Data_Int4* moveData = (Data_Int4*)msg.Data;
+				int pieceID = moveData->Data[0];
+				int squareID = moveData->Data[1];
+				TargetClient->StartPieceShowMove(pieceID, squareID);
+
+				break;
+			}
+
+			case MsgContent::CLIENT_CONTINUE_INPUT_PIECE_MOVE:
+			{
+				Data_Int* moveData = (Data_Int*)msg.Data;
+				int pieceID = moveData->Data;
+
+				Piece* piece = GameManager::m_Pieces[pieceID];
+				piece->StartInputMove();
+
+				break;
+			}
+
+			case MsgContent::CLIENT_SHOW_PIECE_CAUGHT:
+			{
+				Data_Int4* caughtData = (Data_Int4*)msg.Data;
+				int movePieceID = caughtData->Data[0];
+				int caughtPieceID = caughtData->Data[1];
+				int prisonRoomSquareID = caughtData->Data[2];
+				TargetClient->StartPieceShowCaught(movePieceID, caughtPieceID, prisonRoomSquareID);
+
+				break;
+			}
+
+			case MsgContent::CLIENT_SHOW_PIECE_ESCAPE:
+			{
+				Data_Int4* escapeData = (Data_Int4*)msg.Data;
+				int escapePieceID = escapeData->Data[0];
+				int escapeSquareID = escapeData->Data[1];
+				TargetClient->StartPieceShowEscape(escapePieceID, escapeSquareID);
+
+				break;
+			}
+
+			case MsgContent::CLIENT_SHOW_GAME_OVER:
+			{
+				Data_Int* gameOverData = (Data_Int*)msg.Data;
+				int result = gameOverData->Data;
+				TargetClient->StartShowGameOver(result);
+
 				break;
 			}
 #pragma endregion
@@ -1626,6 +1919,14 @@ void NetworkManager::Update()
 				if (TargetServer)
 				{
 					int tcpSockID = sendMsg->TCPSockID;
+
+					if (TCPSockets[tcpSockID].IsUsed == false)
+					{
+						//don't send
+						SendMsgQueue.pop();
+						continue;
+					}
+
 					nRtn = send(
 						TCPSockets[tcpSockID].Socket,
 						sendMsg->MsgBuffer,
@@ -1633,9 +1934,11 @@ void NetworkManager::Update()
 						0
 					);
 
-					if (nRtn == SOCKET_ERROR) {
+					if (nRtn == SOCKET_ERROR) 
+					{
 						MessageBox(GetWindow(), "送信失敗です", WINDOW_NAME, MB_OK);
 						closesocket(TCPSockets[tcpSockID].Socket);
+						TCPSockets[tcpSockID].IsUsed = false;
 						DebugInfo::Print("tcp send failed");
 					}
 					else
@@ -1657,7 +1960,8 @@ void NetworkManager::Update()
 					);
 
 
-					if (nRtn == SOCKET_ERROR) {
+					if (nRtn == SOCKET_ERROR) 
+					{
 						MessageBox(GetWindow(), "送信失敗です", WINDOW_NAME, MB_OK);
 						closesocket(Socket);
 						DebugInfo::Print("tcp send failed");
@@ -1747,7 +2051,7 @@ void NetworkManager::SentToAllClients(const char* msgBuf,const std::string& comm
 {
 	if (TargetServer)
 	{
-		for (auto mem : TargetServer->ClientMembers)
+		for (auto mem : TargetServer->m_ClientMembers)
 		{
 			//make sendmsg
 			SendMsg* send = nullptr;

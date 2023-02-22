@@ -16,7 +16,7 @@ Camera* CameraManager::GetMainCamera()
 
 void CameraManager::SelectMainCameraView()
 {
-	CAMERA camera = m_MainCamera->CameraData;
+	CAMERA camera = m_MainCamera->m_CameraData;
 	Renderer::SetViewMatrix(&camera.ViewMatrix);
 	Renderer::SetProjectionMatrix(&camera.ProjectionMatrix);
 }
@@ -41,7 +41,7 @@ void CameraManager::UpdateCameraDraw()
 {
 	for (auto cmr : m_Cameras)
 	{
-		Renderer::SetCamera(cmr->CameraData);
+		Renderer::SetCamera(cmr->m_CameraData);
 		cmr->Draw();
 	}
 }

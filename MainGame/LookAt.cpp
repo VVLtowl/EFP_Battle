@@ -3,7 +3,7 @@
 
 LookAt::LookAt(GameObject* owner, Transform3D* target, int order):
 	Component(owner,order),
-	TargetTransform(target)
+	m_TargetTransform(target)
 {
 }
 
@@ -13,7 +13,7 @@ LookAt::~LookAt()
 
 void LookAt::Update()
 {
-	if (TargetTransform == nullptr)
+	if (m_TargetTransform == nullptr)
 	{
 		return;
 	}
@@ -24,7 +24,7 @@ void LookAt::Update()
 	D3DXMATRIX rot;
 	D3DXMatrixIdentity(&rot);
 	D3DXVECTOR3 eye = m_Owner->GetTransform()->GetWorldPosition();
-	D3DXVECTOR3 lookAt = TargetTransform->GetWorldPosition();
+	D3DXVECTOR3 lookAt = m_TargetTransform->GetWorldPosition();
 	D3DXMatrixLookAtLH(&rot, &eye, &lookAt, &V3_AXIS_Y);
 
 	D3DXMatrixInverse(&rot, nullptr, &rot);

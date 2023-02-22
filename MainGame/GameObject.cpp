@@ -132,8 +132,8 @@ void GameObject::SetState(GameObject::State state)
 		{
 			if (m_ParentObject)
 			{
-				m_Transform3D->SetParent(nullptr);
 				m_ParentObject->QuitChild(this);
+				m_Transform3D->SetParent(nullptr);
 			}
 		}
 
@@ -160,5 +160,19 @@ void GameObject::SetParent(GameObject* parent)
 	else
 	{
 		m_Transform3D->SetParent(nullptr);
+	}
+}
+
+void GameObject::SetPositionIncludeChilds(const D3DXVECTOR3& pos)
+{
+	m_Transform3D->SetPosition(pos);
+	m_Transform3D->DisableUpdateThisFrame();
+	m_Transform3D->UpdateTransform();//calculate parent's world matrix at first
+
+	//update childs pos
+	for (auto child : m_ChildObjects)
+	{
+		child->GetTransform()->UpdateTransform();
+		child->GetTransform()->DisableUpdateThisFrame();
 	}
 }

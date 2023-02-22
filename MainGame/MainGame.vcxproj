@@ -230,7 +230,9 @@
     <ClCompile Include="ServerBehaviour.cpp" />
     <ClCompile Include="ShowUIHelper.cpp" />
     <ClCompile Include="Sphere.cpp" />
+    <ClCompile Include="Square.cpp" />
     <ClCompile Include="SquareObject.cpp" />
+    <ClCompile Include="SquareType.cpp" />
     <ClCompile Include="TestScene.cpp" />
     <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="Torus.cpp" />
@@ -245,6 +247,7 @@
     <ClCompile Include="UIActStart.cpp" />
     <ClCompile Include="UIAnimeHelper.cpp" />
     <ClCompile Include="UIFinishMark.cpp" />
+    <ClCompile Include="UIGameOver.cpp" />
     <ClCompile Include="UIGameStart.cpp" />
     <ClCompile Include="UIGroupControl.cpp" />
     <ClCompile Include="UIHand.cpp" />
@@ -255,6 +258,7 @@
     <ClCompile Include="UIRPS.cpp" />
     <ClCompile Include="UIRPSStart.cpp" />
     <ClCompile Include="UISelect.cpp" />
+    <ClCompile Include="UISquareSelection.cpp" />
     <ClCompile Include="uiSystem.cpp" />
     <ClCompile Include="UIThinkMark.cpp" />
     <ClCompile Include="UITurnStart.cpp" />
@@ -356,10 +360,9 @@
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="Square.h" />
     <ClInclude Include="SquareObject.h" />
-    <ClInclude Include="SquareState.h" />
-    <ClInclude Include="SquareState_Goal.h" />
+    <ClInclude Include="SquareType.h" />
+    <ClInclude Include="SquareType_Goal.h" />
     <ClInclude Include="State.h" />
-    <ClInclude Include="StateFactory.h" />
     <ClInclude Include="TestScene.h" />
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="Torus.h" />
@@ -375,6 +378,7 @@
     <ClInclude Include="UIActStart.h" />
     <ClInclude Include="UIAnimeHelper.h" />
     <ClInclude Include="UIFinishMark.h" />
+    <ClInclude Include="UIGameOver.h" />
     <ClInclude Include="UIGameStart.h" />
     <ClInclude Include="UIGroupControl.h" />
     <ClInclude Include="UIHand.h" />
@@ -385,6 +389,7 @@
     <ClInclude Include="UIRPS.h" />
     <ClInclude Include="UIRPSStart.h" />
     <ClInclude Include="UISelect.h" />
+    <ClInclude Include="UISquareSelection.h" />
     <ClInclude Include="uiSystem.h" />
     <ClInclude Include="UIThinkMark.h" />
     <ClInclude Include="UITurnStart.h" />

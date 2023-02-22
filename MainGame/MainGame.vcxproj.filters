@@ -49,9 +49,6 @@
     <Filter Include="GameWork\GameLogic\State">
       <UniqueIdentifier>{13ee5b48-f2e5-462a-ad16-18c40ab03573}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameWork\GameLogic\State\SquareState">
-      <UniqueIdentifier>{1744f1c7-3b1e-4477-8c10-fe0ab600808d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameWork\FrameWorkCustomize">
       <UniqueIdentifier>{75333966-10e0-4cba-8af0-6638b5c97c04}</UniqueIdentifier>
     </Filter>
@@ -207,6 +204,15 @@
     </Filter>
     <Filter Include="GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIActSelection">
       <UniqueIdentifier>{4bb83c01-3abe-4199-b7f4-49fdff3c857a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\GameLogic\ObjectPrefab\UIObject\Image\UISquare">
+      <UniqueIdentifier>{773e4c6e-2863-49af-a9bc-0615aca9d814}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\GameLogic\State\SquareType">
+      <UniqueIdentifier>{1744f1c7-3b1e-4477-8c10-fe0ab600808d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIGameOver">
+      <UniqueIdentifier>{85c8ef2d-34b7-40bb-90fc-fa8038f81248}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -549,6 +555,18 @@
     <ClCompile Include="UIActSelection.cpp">
       <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIActSelection</Filter>
     </ClCompile>
+    <ClCompile Include="UISquareSelection.cpp">
+      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UISquare</Filter>
+    </ClCompile>
+    <ClCompile Include="SquareType.cpp">
+      <Filter>GameWork\GameLogic\State\SquareType</Filter>
+    </ClCompile>
+    <ClCompile Include="Square.cpp">
+      <Filter>GameWork\GameLogic\Board</Filter>
+    </ClCompile>
+    <ClCompile Include="UIGameOver.cpp">
+      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIGameOver</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -683,14 +701,11 @@
     <ClInclude Include="State.h">
       <Filter>GameWork\GameLogic\State</Filter>
     </ClInclude>
-    <ClInclude Include="SquareState_Goal.h">
-      <Filter>GameWork\GameLogic\State\SquareState</Filter>
+    <ClInclude Include="SquareType_Goal.h">
+      <Filter>GameWork\GameLogic\State\SquareType</Filter>
     </ClInclude>
-    <ClInclude Include="SquareState.h">
-      <Filter>GameWork\GameLogic\State\SquareState</Filter>
-    </ClInclude>
-    <ClInclude Include="StateFactory.h">
-      <Filter>GameWork\GameLogic\State</Filter>
+    <ClInclude Include="SquareType.h">
+      <Filter>GameWork\GameLogic\State\SquareType</Filter>
     </ClInclude>
     <ClInclude Include="Transform.h">
       <Filter>FrameWork\ECS\Component\Transform</Filter>
@@ -919,6 +934,12 @@
     </ClInclude>
     <ClInclude Include="UIActSelection.h">
       <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIActSelection</Filter>
+    </ClInclude>
+    <ClInclude Include="UISquareSelection.h">
+      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UISquare</Filter>
+    </ClInclude>
+    <ClInclude Include="UIGameOver.h">
+      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIGameOver</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

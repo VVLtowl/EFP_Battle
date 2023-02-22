@@ -71,7 +71,7 @@ protected:
 	virtual void MainEnd();
 	void NextState();
 protected:
-	void Print(string info);
+	void PrintState(string info);
 
 public:
 	int m_ID;
@@ -172,7 +172,7 @@ class JBH_Insert :public JudgementBehaviour
 private:
 	void Update()override
 	{
-		Print("test: Insert");
+		PrintState("test: Insert");
 		NextState();
 	}
 public:

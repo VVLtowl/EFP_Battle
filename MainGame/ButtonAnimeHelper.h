@@ -41,6 +41,9 @@ public:
 	~ButtonHelper();
 
 public:
+	ButtonAnimeDescripition m_ButtonAniDesc;
+
+public:
 	class GameObject* UIObject;
 	class Button* UIButton;
 	class Polygon2D* UIPolygon2D;

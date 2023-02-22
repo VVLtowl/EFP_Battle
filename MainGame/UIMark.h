@@ -26,14 +26,14 @@ public:
 	* @brief	customize
 	********************************************************/
 public:
-	enum MarkType
+	enum class Type
 	{
-		MARK_FINISH,
-		MARK_ACT,
-		MARK_THINK,
+		FINISH,
+		ACT,
+		THINK,
 
-		MARK_MAX,
+		MAX,
 	};
-	void SetMark(int type);
-	int MarkType = MARK_THINK;
+	void SetMark(Type type);
+	Type m_Type = Type::THINK;
 };

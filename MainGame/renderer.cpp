@@ -58,6 +58,17 @@ void Renderer::Init()
 {
 	HRESULT hr = S_OK;
 
+	//デバイス列挙
+	IDXGIFactory* factory;
+	CreateDXGIFactory(__uuidof(IDXGIFactory),
+		(void**)(&factory));
+	IDXGIAdapter* adapter;
+	factory->EnumAdapters(0, &adapter);//tips: try auto get the one which has most memory
+
+	factory->Release();
+
+
+
 	// デバイス、スワップチェーン作成
 	DXGI_SWAP_CHAIN_DESC swapChainDesc{};
 	swapChainDesc.BufferCount = 1;
@@ -73,8 +84,8 @@ void Renderer::Init()
 	swapChainDesc.Windowed = TRUE;
 
 	hr = D3D11CreateDeviceAndSwapChain(
-		NULL,
-		D3D_DRIVER_TYPE_HARDWARE,
+		adapter,D3D_DRIVER_TYPE_UNKNOWN,
+		//NULL,D3D_DRIVER_TYPE_HARDWARE,
 		NULL,
 		0,
 		NULL,
@@ -591,17 +602,17 @@ void Renderer::Begin()
 {
 	//デフォルトのバックバッファと深度バッファへ復帰させておく
 	m_DeviceContext->OMSetRenderTargets(1, &m_RenderTargetView, m_DepthStencilView);
-	float clearColor[4] = { 0.3f, 0.7f, 0.1f, 1.0f };//背景の色
+	float clearColor[4] = { 0.7f, 0.7f, 0.7f, 1.0f };//背景の色
 	m_DeviceContext->ClearRenderTargetView(m_RenderTargetView, clearColor);
 	m_DeviceContext->ClearDepthStencilView(m_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
 void Renderer::Begin(Camera* cameraComp)
 {
-	m_DeviceContext->OMSetRenderTargets(1, &cameraComp->MainRT, cameraComp->MainDSV);
+	m_DeviceContext->OMSetRenderTargets(1, &cameraComp->m_MainRT, cameraComp->m_MainDSV);
 	float clearColor[4] = { 0.2f, 0.2f, 1.0f, 1.0f };//背景の色
-	m_DeviceContext->ClearRenderTargetView(cameraComp->MainRT, clearColor);
-	m_DeviceContext->ClearDepthStencilView(cameraComp->MainDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	m_DeviceContext->ClearRenderTargetView(cameraComp->m_MainRT, clearColor);
+	m_DeviceContext->ClearDepthStencilView(cameraComp->m_MainDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
 void Renderer::Begin(MyLight* lightComp)

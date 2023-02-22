@@ -4,6 +4,10 @@
 #include <queue>
 //#pragma pack(8) //x86 default
 
+
+/*********************************************************
+* @brief    definition
+********************************************************/
 //net package definition
 const unsigned short LEN_MSG = 1024;
 
@@ -13,6 +17,10 @@ const size_t LEN_ADDRIN = sizeof(SOCKADDR_IN);
 //tcp socket max num
 const size_t MAX_TCPSOCK = 10;
 
+
+/*********************************************************
+* @brief    socket for connect
+********************************************************/
 //check tcp socket usable
 struct TCPSocket
 {
@@ -20,7 +28,9 @@ struct TCPSocket
     SOCKET Socket;
 };
 
-
+/*********************************************************
+* @brief    for send and recv by queue
+********************************************************/
 //for sendto
 class SendMsg
 {
@@ -54,6 +64,9 @@ public:
     char MsgBuffer[LEN_MSG];
 };
 
+/*********************************************************
+* @brief    network manager
+********************************************************/
 class NetworkManager :
     public Singleton<NetworkManager>
 {
@@ -67,6 +80,7 @@ public:
     SOCKET TCPListenSocket;//for tcp listen accept
     TCPSocket TCPSockets[MAX_TCPSOCK];//for tcp
     int GetEnableTCPID();
+    void CloseTCPSock(int id);
     int Port;
     char HostIP[64];
     HOSTENT* HostEnt;
@@ -105,7 +119,10 @@ public:
     void Client_RequestJoinServer();
     void Client_TryConnectServer();
     void Server_AgreeJoin(class ClientMember* member);
-    void Server_CommandUpdateJoinedNum();
+    void Server_SendJoinedClientInfosToClient(class ClientMember* member);
+    void Server_DisagreeJoin(class ClientMember* member);
+    void Server_CommandUpdateJoinedNum(class ClientMember* member);
+    void Client_RequestSetReady(bool ready);
 
 
     void Server_CommandLoadGameScene();
@@ -130,11 +147,18 @@ public:
     void Piece_RequestFinishAct(int pieceID);
     void Judgement_CommandPieceFinishAct(int pieceID);
     void Judgement_CommandPieceMove(int pieceID, int squareID);
-    void Judgement_CommandPieceCaught(int pieceID);
-    void Judgement_CommandPieceEscape(int pieceID);
-    void Judgement_CommandPieceContinueMove(int clientID, int pieceID);
+    void Judgement_CommandPieceCaught(int movePieceID,int caughtPieceID, int prisonRoomSquareID);
+    void Judgement_CommandPieceEscape(int pieceID, int goalSquareID);
+    void Judgement_CommandPieceContinueMove(class ClientMember* member, int pieceID);
 
-    void Judgement_CommandPiecesClearHandAndActpoint();
+    void Judgement_CommandPiecesClearHandAndActpoint();//give up
+    void Judgement_CommandPieceClearActpoint(class Piece* piece);
+    void Client_RequestUpdatePieceActpoint(class Piece* piece);
+    void Judgement_CommandPieceClearHand(class Piece* piece);
+    void Client_RequestUpdatePieceHand(class Piece* piece);
+
+
+    void Judgement_CommandShowGameOver(int result);
 
     //execute on multi thread
     /*********************************************************
@@ -155,4 +179,3 @@ public:
     void UpdateNetProc(UINT uMsg, LPARAM lp);
     void Update();
 };
-

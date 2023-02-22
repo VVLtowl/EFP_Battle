@@ -31,17 +31,18 @@ class ShowUIHelper
 {
 public:
 	ShowUIHelper() {};
-	~ShowUIHelper() { UIObject = nullptr; };
+	~ShowUIHelper() { m_UIObject = nullptr; };
 
 	void Start();
 	bool UpdateCheckFinish();
 
 public:
-	ShowUIDescripition ShowUIDesc;
+	ShowUIDescripition m_ShowUIDesc;
 
 private:
 	virtual void StartUIIn();
 	virtual void StartUIWait();
+	virtual void UpdateWait() {};
 	virtual void StartUIOut();
 
 public:
@@ -55,11 +56,11 @@ public:
 		UI_OUT,
 		END,
 	};
-	int State;
+	int m_State;
 
 	// @brief	スタートUIオブジェクト
 	// @details	演出終わったとき消える
-	class GameObject* UIObject;
+	class GameObject* m_UIObject;
 };
 #pragma endregion
 
@@ -119,4 +120,19 @@ public:
 	int State;
 };
 
+#pragma endregion
+
+#pragma region ========== game over ui ==========
+class ShowGameOverUIHelper :
+	public ShowUIHelper
+{
+public:
+	//void StartUIIn()override;
+	void StartUIWait()override;
+	void UpdateWait()override;//mouse button down for finish game
+	//void StartUIOut()override;
+
+public:
+	bool m_Finish = false;
+};
 #pragma endregion

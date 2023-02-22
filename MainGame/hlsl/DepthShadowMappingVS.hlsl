@@ -24,10 +24,9 @@ void main(in VS_IN In, out PS_IN Out)
 	//光源処理
 	float light = -dot(worldNormal, Light.Direction.xyz);
 	light = saturate(light);
-	Out.Diffuse = In.Diffuse * light;
+	Out.Diffuse.rgb = In.Diffuse.rgb * light;
 	Out.Diffuse.a = In.Diffuse.a;
 	Out.Position = mul(In.Position, wvp); //頂点座標をワールド変換して出力
-	Out.Normal = worldNormal; //法線を出力
 	Out.TexCoord = In.TexCoord; //テクスチャ座標を出力
 
 

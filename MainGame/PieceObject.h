@@ -21,8 +21,8 @@ private:
 	/*********************************************************
 	* @brief	customize
 	********************************************************/
-private:
-	class Pawn_Normal* m_Pawn;
+public:
+	class Pawn_Normal* m_PawnImage;
 public:
 	//ui transform object id
 	enum class UITID

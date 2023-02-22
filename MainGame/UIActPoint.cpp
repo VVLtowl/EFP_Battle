@@ -11,15 +11,15 @@ UIActPoint::UIActPoint()
 {
 	//create follow world object
 	{
-		FollowWorldObject = new UIFollowWorldObject(this);
+		m_FollowWorldObject = new UIFollowWorldObject(this);
 	}
 
 	//create ui numbers
 	{
-		OwnUINumbers = GameObjectManager::Create<UINumbers>();
-		OwnUINumbers->SetParent(this);
-		OwnUINumbers->GetTransform()->SetScale(V3_ONE * UI_ACTPOINT_SIZE_RATIO_ORIGINAL);
-		OwnUINumbers->SetNumber(0);
+		m_OwnUINumbers = GameObjectManager::Create<UINumbers>();
+		m_OwnUINumbers->SetParent(this);
+		m_OwnUINumbers->GetTransform()->SetScale(V3_ONE * UI_ACTPOINT_SIZE_RATIO_ORIGINAL);
+		m_OwnUINumbers->SetNumber(0);
 		//StartNumberChangeAnime(0);
 	}
 }
@@ -36,15 +36,16 @@ void UIActPoint::UpdateGameObject()
 void UIActPoint::StartNumberChangeAnime(int num)
 {
 	//first turn bigger
+	if(m_OwnUINumbers)
 	{
-		Animator* animator1 = new Animator(OwnUINumbers);
+		Animator* animator1 = new Animator(m_OwnUINumbers);
 		animator1->AddEndEvent([num,this]()
 			{
-				OwnUINumbers->SetNumber(num);
+				m_OwnUINumbers->SetNumber(num);
 
 				//second turn back original 
 				{
-					Animator* animator2 = new Animator(OwnUINumbers);
+					Animator* animator2 = new Animator(m_OwnUINumbers);
 
 					//posAnime
 					AniDesc_Vec3StartEnd posDesc;

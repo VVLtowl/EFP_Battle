@@ -73,7 +73,7 @@ public:
 
 	void Start()override;
 public:
-	class ClientMember* CheckMember = nullptr;
+	class ClientMember* m_CheckMember = nullptr;
 
 };
 

@@ -12,6 +12,6 @@ public:
     void Update()override;
 
 public:
-    class Transform3D* TargetTransform;
+    class Transform3D* m_TargetTransform;
 };
 

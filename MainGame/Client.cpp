@@ -5,6 +5,7 @@
 #include "Piece.h"
 #include "Player.h"
 #include "Client.h"
+#include "Server.h"
 #include "Judgement.h"
 
 #include "PieceBehaviour.h"
@@ -13,21 +14,27 @@
 #include "SceneManager.h"
 
 #include "UIThinkMark.h"
+
+#include"TransformAnime.h"
 #include "WorldToScreen.h"
+#include "LookAt.h"
 
 Client::Client()
 {
 	//reset room data
-	JoinedClientNum = 0;
-	TargetClientNum = 0;
-	memset(&ServerAddr, 0, LEN_ADDRIN);
+	memset(&m_ServerAddr, 0, LEN_ADDRIN);
+	m_TargetClientNum = 0;
 		
 	//create behaviour
 	BH_Init = new ClientInit(this);
 	BH_Uninit = new ClientUninit(this);
 	BH_SelectServer = new ClientSelectServer(this);
+	BH_TryConnectServer = new ClientTryConnectServer(this);
+	BH_WaitStartRoom = new ClientWaitRoom(this);
+
 	BH_WaitPiecesFinish = new ClientWaitPiecesFinish(this);
 	BH_ShowStep = new ClientShowStep(this);
+	BH_ShowGameOver = new ClientShowGameOver(this);
 }
 
 Client::~Client()
@@ -37,38 +44,167 @@ Client::~Client()
 
 void Client::SendChatMsg()
 {
-	if (!JoinSuccess)
+	if (!m_JoinSuccess)
 	{
 		return;
 	}
 
 	//send
 	std::string msg =
-		"[" + std::to_string(ID) + "]" +
-		Name + std::string(": ") +
-		Chat;
+		"[" + std::to_string(m_ID) + "]" +
+		m_Name + std::string(": ") +
+		m_Chat;
 	NetworkManager::Instance()->Client_SendTestMsgToBroadcast(msg.c_str());
 }
 
-void Client::JoinRoomAndSetID(int id)
+void Client::StartInWaitRoomScene()
 {
-	if (!JoinSuccess)
+	if (m_JoinSuccess)
 	{
-		DebugInfo::Print("join room and get id" +
-			std::string("[" + std::to_string(id) + "]"));
+		//notify server judgement load wait room scene finish
+		NetworkManager::Instance()->Client_NotifyCountPlayerFinished();
 
-		JoinSuccess = true;
-		ID = id;
-		State = (int)Client::State_SelectServer::FINISH_JOIN;
+		//start wait room
+		StartWaitRoom();
+	}
+	else
+	{
+		StartSelectServer();
 	}
 }
 
-void Client::UpdateNum(int joinedNum, int targetNum)
+void Client::StartInGameScene()
 {
-	DebugInfo::Print("update joined and target player num");
+	//init board
+	Board::Instance()->Init();
 
-	JoinedClientNum = joinedNum;
-	TargetClientNum = targetNum;
+	//reset camera and light's look at
+	LightManager::GetMainLight()->LightLookAt->m_TargetTransform =
+		CameraManager::GetMainCamera()->m_CmrLookAt->m_TargetTransform =
+		Board::Instance()->m_BoardCenter->GetTransform();
+
+	//notify server judgement load gamescene finish
+	NetworkManager::Instance()->Client_NotifyCountPlayerFinished();
+
+	//wait server judgement command
+}
+
+void Client::StartSelectServer()
+{
+	//set up select server
+	BH_SelectServer->Reset();
+	BH_SelectServer->SetEndEvent("StartClientWaitRoom", 
+		[this]()
+		{
+			if (BH_SelectServer->m_SelectState == 
+				ClientSelectServer::State::FINISH_JOIN)
+			{
+				StartWaitRoom();
+			}
+			else if (BH_SelectServer->m_SelectState ==
+				ClientSelectServer::State::FINISH_EXIT)
+			{
+
+			}
+		});
+	StartBH(BH_SelectServer);
+}
+
+void Client::TryJoinServer()
+{
+	if (NetworkManager::Instance()->IsTCP)
+		//tcp need connect before send join request
+	{
+		BH_TryConnectServer->Reset();
+		BH_TryConnectServer->SetEndEvent("CheckConnect ToRequestOrBack",
+			[this]()
+			{
+				if (BH_TryConnectServer->m_ConnectState ==
+					ClientTryConnectServer::State::CONNECT_SUCCEED)
+				{
+					//BH_TryConnectServer back to BH_SelectServer
+					
+
+					//BH_SelectServer jump to ClientRequestJoinServer
+					JumpToBH(new ClientRequestJoinServer(this));
+				}
+				else if (BH_TryConnectServer->m_ConnectState ==
+					ClientTryConnectServer::State::CONNECT_TIME_OUT)
+				{
+					StartSelectServer();
+				}
+			});
+
+		//BH_SelectServer jump to BH_TryConnectServer
+		JumpToBH(BH_TryConnectServer);
+	}
+	else
+		//udp can send join request directly
+	{
+		//BH_SelectServer jump to ClientRequestJoinServer
+		JumpToBH(new ClientRequestJoinServer(this));
+	}
+}
+
+void Client::CheckConnect()
+{
+	if (m_ExecuteBehaviour == BH_TryConnectServer)
+	{
+		BH_TryConnectServer->m_ConnectState =
+			ClientTryConnectServer::State::CHECK_CONNECT;
+	}
+}
+
+void Client::JoinRoom(int id, int targetNum)
+{
+	if (!m_JoinSuccess)
+	{
+		DebugInfo::Print(
+			"join room set ID[" + std::to_string(id) + "]" +
+			"set target client num[" + std::to_string(targetNum) + "]");
+
+		//set value
+		m_JoinSuccess = true;
+		m_ID = id;
+		m_TargetClientNum = targetNum;
+
+		//set SelectServerBH state
+		BH_SelectServer->m_SelectState = ClientSelectServer::State::FINISH_JOIN;
+	}
+}
+
+void Client::StartWaitRoom()
+{
+	BH_WaitStartRoom->Reset();
+	BH_WaitStartRoom->SetEndEvent("ChangeScene ToGameScene",
+		[this]()
+		{
+			SceneManager::ChangeScene<GameScene>();
+		});
+	StartBH(BH_WaitStartRoom);
+}
+
+void Client::UpdateClientInfo(int checkMemID,std::string name,bool ready)
+{
+	DebugInfo::Print("update joined and target client info");
+
+	//check if contain member
+	if (m_ClientInfos.find(checkMemID) !=
+		m_ClientInfos.end())
+		//contain member
+	{
+		ClientMember* mem = m_ClientInfos[checkMemID];
+		mem->Ready = ready;
+	}
+	else
+		//new member
+	{
+		ClientMember* mem = new ClientMember(checkMemID, name);
+		mem->Ready = ready;
+
+		//add to list
+		m_ClientInfos.emplace(checkMemID, mem);
+	}
 }
 
 void Client::RequestDisconnect()
@@ -81,10 +217,9 @@ void Client::Disconnect()
 	DebugInfo::Print("server closed");
 
 	//set default val
-	JoinedClientNum = 0;
-	ServerPort = 5555;
-	State = (int)Client::State_SelectServer::NONE;
-	memcpy(ServerIP, std::string("127.0.0.1").c_str(), 16);
+	m_ServerPort = 5555;
+	BH_SelectServer->m_SelectState = ClientSelectServer::State::NONE;
+	memcpy(m_ServerIP, std::string("127.0.0.1").c_str(), 16);
 
 	//next bh
 	StartBH(BH_Uninit);
@@ -93,8 +228,28 @@ void Client::Disconnect()
 	//JoinSuccess = false;
 }
 
-void Client::InitGameSceneObjects()
+
+void Client::ResetCameraLookAt(float duration)
 {
+	//reset camera pos
+	{
+		Camera* cmr = CameraManager::GetMainCamera();
+		cmr->m_CmrLookAt->m_TargetTransform = Board::Instance()->m_BoardCenter->GetTransform();
+		cmr->m_IsOrtho = true;
+
+		//calculate end pos and look at
+		D3DXVECTOR3 endPos = { 10, 10, -10 };
+
+		Animator* animator = new Animator(cmr->GetGameObject());
+		AniDesc_Vec3StartEnd desc;
+		{
+			desc.Duration = duration;
+			desc.Start = cmr->GetGameObject()->GetTransform()->GetWorldPosition();
+			desc.End = endPos;
+		}
+		ComputeSlowLerpVec3 computeFunc;
+		new Anime_Position(animator, desc, computeFunc);
+	}
 }
 
 void Client::CreatePlayer(PlayerDesc desc)
@@ -103,9 +258,9 @@ void Client::CreatePlayer(PlayerDesc desc)
 		"create main player " +
 		std::string("[" + std::to_string(desc.ClientID) + "]") +
 		"...");
-	MainPlayer = new Player();
-	MainPlayer->Camp = desc.PlayerCamp;
-	MainPlayer->ID = desc.ClientID;
+	m_MainPlayer = new Player();
+	m_MainPlayer->m_Camp = desc.PlayerCamp;
+	m_MainPlayer->m_ID = desc.ClientID;
 }
 
 void Client::CreatePiece(PieceDesc desc)
@@ -118,48 +273,77 @@ void Client::CreatePiece(PieceDesc desc)
 
 	Piece* piece = new Piece();
 	{
-		piece->ID = desc.PieceID;
-		piece->Camp = desc.PieceCamp;
+		piece->m_ID = desc.PieceID;
+		piece->m_Camp = desc.PieceCamp;
 		{
 			//classify pieces by camp
-			if (piece->Camp == CampType::BAD)
+			if (piece->m_Camp == CampType::BAD)
 			{
-				Bads.emplace_back(piece);
+				GameManager::m_Bads.emplace_back(piece);
 			}
-			else if (piece->Camp == CampType::GOOD)
+			else if (piece->m_Camp == CampType::GOOD)
 			{
-				Goods.emplace_back(piece);
+				GameManager::m_Goods.emplace_back(piece);
 			}
 		}
-		piece->OwnCharacter = Character::Create(desc.CharaType);
+		piece->m_OwnCharacter = Character::Create(desc.CharaType);
 
-		if (desc.PlayerID == MainPlayer->ID)
+		if (desc.PlayerID == m_MainPlayer->m_ID)
 			//add self player's piecce
 		{
-			piece->OwnerPlayer = MainPlayer;
-			MainPlayer->AddSelfPiece(piece);
+			piece->m_OwnerPlayer = m_MainPlayer;
+			m_MainPlayer->AddSelfPiece(piece);
 			DebugInfo::PrintRow(printRowID, info+"[self]");
 		}
 	}
-	Pieces.emplace(piece->ID,piece);
+	GameManager::m_Pieces.emplace(piece->m_ID,piece);
 }
 
 void Client::ChangeToGameScene()
 {
-	SceneManager::ChangeScene<GameScene>();
+	if (m_ExecuteBehaviour == BH_WaitStartRoom)
+	{
+		BH_WaitStartRoom->m_WaitState =
+			ClientWaitRoom::State::FINISH;
+	}
 }
 
 void Client::ClearPiecesFinishMark()
 {
 	DebugInfo::Print("clear pieces finish mark...");
-	for (auto idPiece : Pieces)
+	for (auto idPiece : GameManager::m_Pieces)
 	{
 		Piece* piece = idPiece.second;
-		if (piece->FinishMark)
+		if (piece->m_FinishMark)
 		{
-			piece->FinishMark->SetState(GameObject::DEAD);
-			piece->FinishMark = nullptr;
+			piece->m_FinishMark->SetState(GameObject::DEAD);
+			piece->m_FinishMark = nullptr;
 		}
+	}
+}
+
+void Client::ClearDataInGameScene()
+{
+	//uninit board
+	Board::Instance()->Uninit();
+
+	//clear players
+	if (m_MainPlayer)
+	{
+		m_MainPlayer->ClearDataInGameScene();
+		delete m_MainPlayer;
+	}
+
+	//clear pieces list
+	{
+		GameManager::m_Goods.clear();
+		GameManager::m_Bads.clear();
+
+		for(auto idPiece: GameManager::m_Pieces)
+		{
+			delete idPiece.second;
+		}
+		GameManager::m_Pieces.clear();
 	}
 }
 
@@ -167,10 +351,10 @@ void Client::ShowPiecesThinkMark()
 {
 	//show rival piece's think mask directly
 	DebugInfo::Print("show pieces think mark...");
-	for (auto idPiece : Pieces)
+	for (auto idPiece : GameManager::m_Pieces)
 	{
 		Piece* piece = idPiece.second;
-		if (piece->OwnerPlayer)
+		if (piece->m_OwnerPlayer)
 			//self piece
 		{
 			piece->SetUISelect(true);
@@ -201,37 +385,49 @@ void Client::StartWaitPiecesFinish()
 		BH_WaitPiecesFinish->PrintCount("count");
 
 		BH_WaitPiecesFinish->Reset(
-			Pieces.size(),
-			[this]() {
+			GameManager::m_Pieces.size(),
+			"NotifyCountPlayerFinished",
+			[this]() 
+			{
 				DebugInfo::Print("- finish WaitPiecesFinish");
-				NetworkManager::Instance()->Client_NotifyCountPlayerFinished(); });
+				NetworkManager::Instance()->Client_NotifyCountPlayerFinished(); 
+			});
 		StartBH(BH_WaitPiecesFinish);
 	}
 }
 
 void Client::StartPieceShowEntry(int pieceID, int squareID)
 {
-	Piece* piece = Pieces[pieceID];
+	Piece* piece = GameManager::m_Pieces[pieceID];
 	Square* square = Board::Instance()->Squares[squareID];
 
 	//set piece and square
-	square->Piece = piece;
-	piece->FootOnSquare = square;
+	square->m_Piece = piece;
+	piece->m_FootOnSquare = square;
 
 	//create piece obj
 	piece->m_PieceObject = new PieceObject();
+	if (piece->m_Camp == CampType::BAD)
+	{
+		piece->m_PieceObject->m_PawnImage->m_Polygon2D->Texture =
+			DrawManager::Textures[TEXID_TEST_PIECE_NORMALBAD];
+	}
+	else if (piece->m_Camp == CampType::GOOD)
+	{
+		piece->m_PieceObject->m_PawnImage->m_Polygon2D->Texture =
+			DrawManager::Textures[TEXID_TEST_PIECE_NORMALGOOD];
+	}
 	//if is self piece, set color blue
 	piece->m_PieceObject->SetTexColor(
-		piece->OwnerPlayer!=nullptr?
-		D3DXVECTOR4(0, 0, 1, 1) :
+		piece->m_OwnerPlayer!=nullptr?
+		D3DXVECTOR4(1, 2, 1, 1) :
 		D3DXVECTOR4(1, 1, 1, 1)
 	);
 	piece->m_PieceObject->GetTransform()->SetPosition(0,1000,0);//dont show at first
 
 	//start show entry bh
 	PieceShowEntry* showEntry = new PieceShowEntry(piece);
-	showEntry->SetEndEvent(
-		[this]() 
+	showEntry->SetEndEvent("CountPieceFinish ShowEntry", [this]()
 		{
 			BH_WaitPiecesFinish->FinishPieceNum++;
 			BH_WaitPiecesFinish->PrintCount("piece show entry");
@@ -241,12 +437,11 @@ void Client::StartPieceShowEntry(int pieceID, int squareID)
 
 void Client::StartPieceShowHand(int pieceID)
 {
-	Piece* piece = Pieces[pieceID];
+	Piece* piece = GameManager::m_Pieces[pieceID];
 
 	//start show entry bh
 	PieceShowHand* showHand = new PieceShowHand(piece);
-	showHand->SetEndEvent(
-		[this]() 
+	showHand->SetEndEvent("CountPieceFinish ShowHand",[this]() 
 		{
 			BH_WaitPiecesFinish->FinishPieceNum++;
 			BH_WaitPiecesFinish->PrintCount(" piece show hand");
@@ -254,33 +449,22 @@ void Client::StartPieceShowHand(int pieceID)
 	piece->StartBH(showHand);
 }
 
-void Client::StartPieceShowCheckActpoint(int pieceID)
+void Client::StartPieceShowCheckActpoint(int pieceID,int actPoint)
 {
-	Piece* piece = Pieces[pieceID];
+	Piece* piece = GameManager::m_Pieces[pieceID];
 	DebugInfo::Print(
 		"piece " +
-		std::to_string(piece->ID) +
+		std::to_string(piece->m_ID) +
 		" [self] start input act...");
 
 	//create ui show actpoint
-	if (!piece->UIShowActpoint)
-	{ 
-		UIActPoint* uiActpoint = new UIActPoint();
-		Transform3D* follow = piece->m_PieceObject->
-			GetUITransform(PieceObject::UITID::PAWN_UP_RIGHT)->GetTransform();
-		uiActpoint->FollowWorldObject->SetTargetTransform(follow);
-
-		piece->UIShowActpoint = uiActpoint;
-	}
+	piece->SetUIActpoint(true);
 	
 	//start check actpoint bh
-	PieceShowCheckActpoint* showCheckActpoint = new PieceShowCheckActpoint(piece);
-	showCheckActpoint->SetEndEvent(
+	PieceShowCheckActpoint* showCheckActpoint = new PieceShowCheckActpoint(piece,actPoint);
+	showCheckActpoint->SetEndEvent("NotifyCountPlayerFinish CheckActpt",
 		[this]()
 		{
-			//wrong
-			//NetworkManager::Instance()->Client_NotifyCountPieceFinished();
-
 			NetworkManager::Instance()->Client_NotifyCountPlayerFinished();
 		});
 	piece->StartBH(showCheckActpoint);
@@ -288,23 +472,26 @@ void Client::StartPieceShowCheckActpoint(int pieceID)
 
 void Client::StartPieceInputAct(int pieceID)
 {
-	Piece* piece = Pieces[pieceID];
-	MainPlayer->CheckSelfPieceToInputAct(piece);
+	Piece* piece = GameManager::m_Pieces[pieceID];
+	m_MainPlayer->CheckSelfPieceToInputAct(piece);
 }
 
 void Client::StartPiecesClearHandAndActpoint()
 {
-	for (auto idPiece : Pieces)
+	//test
+	ResetCameraLookAt();
+
+	for (auto idPiece : GameManager::m_Pieces)
 	{
 		Piece* piece = idPiece.second;
 
 		//clear actpoint
 		PieceClearActPoint* clearActpoint = new PieceClearActPoint(piece);
-		clearActpoint->SetEndEvent([this,piece]()
+		clearActpoint->SetEndEvent("PieceClearHand", [this, piece]()
 			{
 				//cleat hand
 				PieceClearHand* clearHand = new PieceClearHand(piece);
-				clearHand->SetEndEvent([this]()
+				clearHand->SetEndEvent("CountPieceFinish ClearHandAndActpt",[this]()
 					{
 						BH_WaitPiecesFinish->FinishPieceNum++;
 						BH_WaitPiecesFinish->PrintCount(" piece clear hand and actpoint");
@@ -319,7 +506,9 @@ void Client::StartPiecesClearHandAndActpoint()
 
 void Client::StartPieceShowFinishAct(int pieceID)
 {
-	Piece* piece = Pieces[pieceID];
+	DebugInfo::Print("show piece[" + std::to_string(pieceID) + "] finish...");
+
+	Piece* piece = GameManager::m_Pieces[pieceID];
 
 	//update mark UI
 	{
@@ -334,18 +523,47 @@ void Client::StartPieceShowFinishAct(int pieceID)
 
 void Client::StartPieceShowMove(int pieceID, int squareID)
 {
-	Piece* piece = Pieces[pieceID];
+	//start piece move
+	Piece* piece = GameManager::m_Pieces[pieceID];
+	piece->StartMove(squareID);
+}
 
+void Client::StartPieceShowCaught(int movePieceID, int caughtPieceID, int prisonRoomSquareID)
+{
+	//start piece caught
+	Piece* movePiece = GameManager::m_Pieces[movePieceID];
+	Piece* caughtPiece = GameManager::m_Pieces[caughtPieceID];
+	caughtPiece->StartCaught(prisonRoomSquareID);
+}
+
+void Client::StartPieceShowEscape(int escapePieceID, int escapeSquareID)
+{
+	//start piece caught
+	Piece* escapePiece = GameManager::m_Pieces[escapePieceID];
+	escapePiece->StartEscape(escapeSquareID);
 }
 
 
 void Client::StartWaitShowStep(int stepType)
 {
-	BH_ShowStep->Reset(stepType,[]() 
+	BH_ShowStep->Reset(stepType,
+		"NotifyCountPlayerFinished",
+		[]() 
 		{
 			NetworkManager::Instance()->Client_NotifyCountPlayerFinished();
 		});
 	StartBH(BH_ShowStep);
+}
+
+void Client::StartShowGameOver(int result)
+{
+	BH_ShowGameOver->Reset((ClientShowGameOver::ResultType)result,
+		"ChangeScene ToClientWaitScene",
+		[]()
+		{
+			SceneManager::ChangeScene<ClientWaitScene>();
+		});
+	StartBH(BH_ShowGameOver);
 }
 
 

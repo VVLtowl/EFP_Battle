@@ -41,8 +41,7 @@ void UITurnStart::SetNumber(int num)
 		tempNum /= 10;
 		digitsCount++;
 	}
-	float offsetX = 
-		UI_TURN_START_SIZE.x / 2.0f + digitsCount / 2.0f * UI_NUMBER_INTERVAL;
+	float offsetX = digitsCount / 2.0f * UI_NUMBER_INTERVAL;
 
 	m_NumbersUI->GetTransform()->SetPosition(offsetX, 0, 0);
 	m_NumbersUI->SetNumber(num);

@@ -5,10 +5,13 @@
 #include "RPS.h"
 
 
+const D3DXVECTOR3 OFFSET_PIECE_ON_SQUARE = D3DXVECTOR3(0, 0.25f, 0);
+
 enum PieceType
 {
 	PIECE_NORMAL,
 };
+
 
 enum class CampType
 {
@@ -16,6 +19,7 @@ enum class CampType
 	BAD,
 	GOOD,
 };
+std::string CampTypeName(CampType type);
 
 
 struct PieceDesc
@@ -34,26 +38,34 @@ class Piece:
 public:
 	Piece();
 	~Piece();
+	std::string Name()override { return "piece"+std::to_string(m_ID); };
 
 	/*********************************************************
 	* @brief	コマの属性
 	********************************************************/
 public:
 	//piece id
-	int ID = -1;
+	int m_ID = -1;
 
 	//陣営
-	CampType Camp = CampType::NONE;
+	CampType m_Camp = CampType::NONE;
 
 	//Character
-	CharacterType CharaType = CharacterType::NORMALBAD;
-	class Character* OwnCharacter = nullptr;
+	CharacterType m_CharaType = CharacterType::NORMALBAD;
+	class Character* m_OwnCharacter = nullptr;
 
 	//コマの主
-	class Player* OwnerPlayer = nullptr;
+	class Player* m_OwnerPlayer = nullptr;
 	
 
 	//State
+	enum class State
+	{
+		NORMAL,
+		CAUGHT,
+		ESCAPE,
+	};
+	State m_State = State::NORMAL;
 	//State State;
 
 
@@ -61,13 +73,13 @@ public:
 	//bool IsOpenStatus = false;
 
 	//今いるマス
-	class Square* FootOnSquare = nullptr;
+	class Square* m_FootOnSquare = nullptr;
 
 	//Hand
-	std::list<HandType> Hands;
+	std::list<HandType> m_Hands;
 
 	//ActPoint
-	int ActPoint = 0;
+	int m_ActPoint = 0;
 
 	/*********************************************************
 	* @brief	piece data
@@ -79,18 +91,18 @@ public:
 	//panel for control button group
 	class ButtonsPanel* m_ButtonsPanel = nullptr;
 
-
+	//temp for next target square
+	class Square* m_MoveToSquare;
 
 	/*********************************************************
 	* @brief	ヒント用UIオブジェクト（状態フラグ）
 	********************************************************/
 public:
-	class UIFinishMark* FinishMark = nullptr;//finish flag
-	class UIThinkMark* ThinkMark = nullptr;
-	class UIActMark* ActMark = nullptr;
-	std::list<class UIHand*> UIShowHands;//for show hand result
-	class UIActPoint* UIShowActpoint = nullptr;//for check act point
-	class UISelect* SelectedMark = nullptr;//for selected or highlighted
+	class UIFinishMark* m_FinishMark = nullptr;//finish flag
+	class UIThinkMark* m_ThinkMark = nullptr;
+	std::list<class UIHand*> m_UIShowHands;//for show hand result
+	class UIActPoint* m_UIShowActpoint = nullptr;//for check act point
+	class UISelect* m_SelectedMark = nullptr;//for selected or highlighted
 
 	void SetUISelect(bool show);
 	void SetUIThink(bool show);
@@ -102,12 +114,20 @@ public:
 	* @brief	行為
 	********************************************************/
 public:
-	void StartInputHand(std::function<void()> endEvent = []() {; });//for player iterate
 	void AddHand(HandType handType);
 	void FinishSetHand(HandType handType);//for network command
+	void StartCameraLookAtThis(float duration = 45, std::function<void()> endEvent = []() {; });//reset in client
+
+	void StartInputHand(std::function<void()> endEvent = []() {; });//for player iterate
 	void StartInputSelectAct();
 	void StartInputMove();
 
+	void StartMove(int squareID);
+	void StartCatch() {};//todo pair with StartCaught()
+	void StartCaught(int prisonSquareID);
+	void StartEscape(int escapeSquareID);
+
 	class PieceInputHand* BH_InputHand;
 	class PieceInput* BH_Input;
+	class PieceCalculateCanGoSquare* BH_CalCanGoSquare;
 };

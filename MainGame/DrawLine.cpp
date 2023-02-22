@@ -67,7 +67,7 @@ void DrawLine::Draw()
 
 		D3DXVECTOR3 dir = end - start;
 		D3DXVec3Normalize(&dir, &dir);
-		D3DXVECTOR4 cmrDir = CameraManager::GetMainCamera()->CameraData.Direction;
+		D3DXVECTOR4 cmrDir = CameraManager::GetMainCamera()->m_CameraData.Direction;
 		D3DXVECTOR3 rotateAxis = { -cmrDir.x,-cmrDir.y,-cmrDir.z };
 		float lengthOnRotateAxis = D3DXVec3Dot(&rotateAxis, &dir);
 		D3DXVECTOR3 dirOnCmrViewPlane = dir - lengthOnRotateAxis * rotateAxis;

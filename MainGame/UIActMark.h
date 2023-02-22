@@ -9,18 +9,20 @@ class UIActMark :
 	* @brief	gameobject interface override
 	********************************************************/
 public:
-	UIActMark();
+	UIActMark(class Transform3D* targetTrans);
 	~UIActMark();
 	void UpdateGameObject()override;
 
 	/*********************************************************
 	* @brief	コンポネント
 	********************************************************/
-
+public:
+	class UIFollowWorldObject* m_FollowWorldObject;
+	
 	/*********************************************************
 	* @brief	customize
 	********************************************************/
 public:
-	class UISelect* OwnUISelect;
+	class UIMark* m_UIMark;
 };
 

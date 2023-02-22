@@ -9,18 +9,18 @@
 Camera::Camera(class GameObject* owner, CameraDescription cmrDesc, int order):
 	Component(owner,order)
 {
-	CameraData = cmrDesc.CameraData;
+	m_CameraData = cmrDesc.CameraData;
 	//LookAt = cmrDesc.LookAtTransform;
-	IsOrtho = cmrDesc.IsOrtho;
-	Fovy = cmrDesc.Fovy;
-	Width = cmrDesc.Width;
-	Height = cmrDesc.Height;
-	ZNear = cmrDesc.ZNear;
-	ZFar = cmrDesc.ZFar;
+	m_IsOrtho = cmrDesc.IsOrtho;
+	m_Fovy = cmrDesc.Fovy;
+	m_Width = cmrDesc.Width;
+	m_Height = cmrDesc.Height;
+	m_ZNear = cmrDesc.ZNear;
+	m_ZFar = cmrDesc.ZFar;
 
 	//add lookAt to owner
 	{
-		CmrLookAt = new LookAt(m_Owner);
+		m_CmrLookAt = new LookAt(m_Owner);
 	}
 
 	//画面を記録
@@ -42,7 +42,7 @@ Camera::Camera(class GameObject* owner, CameraDescription cmrDesc, int order):
 		td.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 		td.CPUAccessFlags = 0;
 		td.MiscFlags = 0;
-		device->CreateTexture2D(&td, NULL, &MainTex);
+		device->CreateTexture2D(&td, NULL, &m_MainTex);
 
 		// レンダーターゲットビュー作成
 		D3D11_RENDER_TARGET_VIEW_DESC rtvd;
@@ -50,9 +50,9 @@ Camera::Camera(class GameObject* owner, CameraDescription cmrDesc, int order):
 		rtvd.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 		rtvd.Texture2D.MipSlice = 0;
 		device->CreateRenderTargetView(
-			MainTex,
+			m_MainTex,
 			&rtvd,
-			&MainRT
+			&m_MainRT
 		);
 
 		ID3D11Texture2D* depthStencileTex = NULL;
@@ -79,7 +79,7 @@ Camera::Camera(class GameObject* owner, CameraDescription cmrDesc, int order):
 		device->CreateDepthStencilView(
 			depthStencileTex,
 			&dsvd,
-			&MainDSV
+			&m_MainDSV
 		);
 
 		//シェーダーリソースビュー作成
@@ -90,9 +90,9 @@ Camera::Camera(class GameObject* owner, CameraDescription cmrDesc, int order):
 		srvd.Texture2D.MostDetailedMip = 0;
 		srvd.Texture2D.MipLevels = 1;
 		device->CreateShaderResourceView(
-			MainTex,
+			m_MainTex,
 			&srvd,
-			&MainSRV
+			&m_MainSRV
 		);
 	}
 }
@@ -104,48 +104,48 @@ void Camera::Update()
 	D3DXVECTOR3 up = V3_AXIS_Y;
 	D3DXVECTOR3 forwardPos = pos + trans->GetForward() * 1.0f;
 	D3DXVECTOR3 lookAtPos =
-		(CmrLookAt->TargetTransform == nullptr ?
+		(m_CmrLookAt->m_TargetTransform == nullptr ?
 			forwardPos :
-			CmrLookAt->TargetTransform->GetWorldPosition());
+			m_CmrLookAt->m_TargetTransform->GetWorldPosition());
 	D3DXVECTOR3 dir = (lookAtPos - pos);
 	D3DXVec3Normalize(&dir, &dir);
 
 	//test
 	//pos -= dir * 4;
 
-	CameraData.Direction = D3DXVECTOR4(dir, 0);
-	CameraData.Position = D3DXVECTOR4(pos, 0);
+	m_CameraData.Direction = D3DXVECTOR4(dir, 0);
+	m_CameraData.Position = D3DXVECTOR4(pos, 0);
 	D3DXMatrixLookAtLH(
-		&CameraData.ViewMatrix,
+		&m_CameraData.ViewMatrix,
 		&pos,
 		&lookAtPos,
 		&up
 	);
 
 
-	if (IsOrtho==true)
+	if (m_IsOrtho==true)
 	{
 		//orthographic
 		D3DXMatrixOrthoLH(
-			&CameraData.ProjectionMatrix,
-			Width,//w
-			Height,//h
-			ZNear,//near 
-			ZFar//far
+			&m_CameraData.ProjectionMatrix,
+			m_Width,//w
+			m_Height,//h
+			m_ZNear,//near 
+			m_ZFar//far
 		);
 	}
 	else
 	{
 		//Perspective
-		D3DXMATRIX* cmrProjection = &CameraData.ProjectionMatrix;
+		D3DXMATRIX* cmrProjection = &m_CameraData.ProjectionMatrix;
 		float aspect = (float)SCREEN_WIDTH / SCREEN_HEIGHT;
-		float radian = Fovy * PI / 180.0f;
+		float radian = m_Fovy * PI / 180.0f;
 		D3DXMatrixPerspectiveFovLH(
-			&CameraData.ProjectionMatrix,
+			&m_CameraData.ProjectionMatrix,
 			radian,
 			aspect,
-			ZNear,
-			ZFar
+			m_ZNear,
+			m_ZFar
 		);
 	}
 
@@ -153,16 +153,16 @@ void Camera::Update()
 
 Camera::~Camera()
 {
-	MainDSV->Release();
-	MainRT->Release();
-	MainSRV->Release();
-	MainTex->Release();
+	m_MainDSV->Release();
+	m_MainRT->Release();
+	m_MainSRV->Release();
+	m_MainTex->Release();
 }
 
 void Camera::Draw()
 {
 	Renderer::Begin(this);
-	CAMERA camera = CameraData;
+	CAMERA camera = m_CameraData;
 	Renderer::SetViewMatrix(&camera.ViewMatrix);
 	Renderer::SetProjectionMatrix(&camera.ProjectionMatrix);
 

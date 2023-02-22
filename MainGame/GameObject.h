@@ -74,6 +74,7 @@ public:
 	void SetParent(GameObject* parent);
 	void RegisterChild(GameObject* child) { m_ChildObjects.emplace_back(child); };
 	void QuitChild(GameObject* child) { m_ChildObjects.remove(child); };
+	void SetPositionIncludeChilds(const D3DXVECTOR3& pos);
 };
 
 //template<typename ComponentType>

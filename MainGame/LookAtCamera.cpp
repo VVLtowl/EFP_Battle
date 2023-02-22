@@ -21,8 +21,8 @@ void LookAtCamera::Update()
 	{
 		D3DXMATRIX rot;
 		D3DXMatrixIdentity(&rot);
-		D3DXVECTOR4 pos4 = TargetCamera->CameraData.Position;
-		D3DXVECTOR4 dir4 = TargetCamera->CameraData.Direction;
+		D3DXVECTOR4 pos4 = TargetCamera->m_CameraData.Position;
+		D3DXVECTOR4 dir4 = TargetCamera->m_CameraData.Direction;
 		D3DXVECTOR3 pos3 = { pos4.x,pos4.y,pos4.z };
 		D3DXVECTOR3 dir = { dir4.x,dir4.y,dir4.z };
 		D3DXVECTOR3 eye = pos3;//pos;
@@ -60,11 +60,11 @@ D3DXMATRIX LookAtCameraMatrix::operator()(
 {
 	D3DXMATRIX rot;
 	D3DXMatrixIdentity(&rot);
-	D3DXVECTOR4 pos4 = cmr->CameraData.Position;
-	D3DXVECTOR4 dir4 = cmr->CameraData.Direction;
+	D3DXVECTOR4 pos4 = cmr->m_CameraData.Position;
+	D3DXVECTOR4 dir4 = cmr->m_CameraData.Direction;
 	D3DXVECTOR3 eye = { pos4.x,pos4.y,pos4.z };
 	D3DXVECTOR3 dir = { dir4.x,dir4.y,dir4.z };
-	D3DXVECTOR3 lookAt = eye + dir * cmr->ZNear;
+	D3DXVECTOR3 lookAt = eye + dir * cmr->m_ZNear;
 	D3DXMatrixLookAtLH(&rot, &eye, &lookAt, &V3_AXIS_Y);
 
 	D3DXMatrixInverse(&rot, nullptr, &rot);

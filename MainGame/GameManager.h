@@ -5,6 +5,7 @@
 //#include "Character_NormalBad.h"
 //#include "Character_NormalGood.h"
 #include <list>
+#include <unordered_map>
 
 
 /*********************************************************
@@ -27,17 +28,19 @@ private:
 public:
 	static void Init();
 	static void Uninit();
+	static void Clear();
 	static void Register(class Executor* executor) { m_Executors.emplace_back(executor); };
 	static void Quit(class Executor* executor) { m_Executors.remove(executor); };
 	static void UpdateExecutors();
-
 
 	/*********************************************************
 	* @brief	main executor
 	********************************************************/
 public:
-	static std::list<class Player*> Players;
-	static std::list<class Piece*> Pieces;
+	static std::unordered_map<int,class Player*> m_Players;
+	static std::unordered_map<int,class Piece*> m_Pieces;
+	static std::list<class Piece*> m_Bads;
+	static std::list<class Piece*> m_Goods;
 
 	//Server
 	//Client
@@ -46,8 +49,8 @@ public:
 
 public:
 	//game scene
-	static void SetUpGameScene();
-	static void CleanGameScene();
+	//static void SetUpGameScene();
+	//static void CleanGameScene();
 
 
 };

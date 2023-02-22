@@ -15,24 +15,21 @@ class Character
 	* @brief	プレイヤー行為
 	* @details	固定行為、行動行為、特殊追加行為
 	********************************************************/
-public:
-	enum FixedBHID
-	{
-		SHOW_BUTTON_HAND,// SHOW_FINISH,
-		INPUT_HAND,
-		CHECK_ACTPOINT,
-		//SELECT_ACT,
-
-
-		//CLEAR_POINT,
-		//UPDATE_STATE,
-
-		FIXED_BHID_MAX,
-	};
 public:	
-	class Behaviour* FixedBHs[FIXED_BHID_MAX] = {};
-	std::vector<class Behaviour*> ActBHs;
-	std::vector<class Behaviour*> SpecialBHs;
+	//todo
+	//make button hand panel
+	//make button actselection panel
+
+	class PieceClearActPoint* BH_ClearActpoint;
+	class PieceClearHand* BH_ClearHand;
+	class PieceCalculateCanGoSquare* BH_CalculateSquare;
+
+	//check move event
+	//check escape event
+	//check caught event
+	
+	std::vector<class Behaviour*> m_ActBHs;
+	std::vector<class Behaviour*> m_SpecialBHs;
 
 public:
 	Character(class Piece* piece = nullptr);
@@ -51,7 +48,7 @@ class Character_Bad :
 	public Character
 {
 public:
-	Character_Bad(class Piece* piece=nullptr);
+	Character_Bad(class Piece* piece = nullptr);
 };
 
 class NormalBad :

@@ -1,6 +1,9 @@
 #include "main.h"
 #include "BoxCollider.h"
 
+// @brief	衝突ボックスのヒントを表示
+#define HINT_BOX_COLLIDER
+
 BoxCollider::BoxCollider(GameObject* owner,
 	BoxColliderDescription boxColDesc,
 	int updateOrder):
@@ -38,33 +41,33 @@ void BoxCollider::Update()
 	//prepare draw box by line
 #ifdef HINT_BOX_COLLIDER 
 	{
-		m_DrawLine[0]->LineData.StartBH = m_BoxVertexLocalPos[0]; 
+		m_DrawLine[0]->LineData.Start = m_BoxVertexLocalPos[0]; 
 		m_DrawLine[0]->LineData.End = m_BoxVertexLocalPos[1];
-		m_DrawLine[1]->LineData.StartBH = m_BoxVertexLocalPos[1]; 
+		m_DrawLine[1]->LineData.Start = m_BoxVertexLocalPos[1]; 
 		m_DrawLine[1]->LineData.End = m_BoxVertexLocalPos[3];
-		m_DrawLine[2]->LineData.StartBH = m_BoxVertexLocalPos[3];
+		m_DrawLine[2]->LineData.Start = m_BoxVertexLocalPos[3];
 		m_DrawLine[2]->LineData.End = m_BoxVertexLocalPos[2];
-		m_DrawLine[3]->LineData.StartBH = m_BoxVertexLocalPos[2];
+		m_DrawLine[3]->LineData.Start = m_BoxVertexLocalPos[2];
 		m_DrawLine[3]->LineData.End = m_BoxVertexLocalPos[0];
 
 
-		m_DrawLine[4]->LineData.StartBH = m_BoxVertexLocalPos[0];
+		m_DrawLine[4]->LineData.Start = m_BoxVertexLocalPos[0];
 		m_DrawLine[4]->LineData.End = m_BoxVertexLocalPos[4];
-		m_DrawLine[5]->LineData.StartBH = m_BoxVertexLocalPos[1];
+		m_DrawLine[5]->LineData.Start = m_BoxVertexLocalPos[1];
 		m_DrawLine[5]->LineData.End = m_BoxVertexLocalPos[5];
-		m_DrawLine[6]->LineData.StartBH = m_BoxVertexLocalPos[3];
+		m_DrawLine[6]->LineData.Start = m_BoxVertexLocalPos[3];
 		m_DrawLine[6]->LineData.End = m_BoxVertexLocalPos[7];
-		m_DrawLine[7]->LineData.StartBH = m_BoxVertexLocalPos[2];
+		m_DrawLine[7]->LineData.Start = m_BoxVertexLocalPos[2];
 		m_DrawLine[7]->LineData.End = m_BoxVertexLocalPos[6];
 
 
-		m_DrawLine[8]->LineData.StartBH = m_BoxVertexLocalPos[4];
+		m_DrawLine[8]->LineData.Start = m_BoxVertexLocalPos[4];
 		m_DrawLine[8]->LineData.End = m_BoxVertexLocalPos[5];
-		m_DrawLine[9]->LineData.StartBH = m_BoxVertexLocalPos[5];
+		m_DrawLine[9]->LineData.Start = m_BoxVertexLocalPos[5];
 		m_DrawLine[9]->LineData.End = m_BoxVertexLocalPos[7];
-		m_DrawLine[10]->LineData.StartBH = m_BoxVertexLocalPos[7];
+		m_DrawLine[10]->LineData.Start = m_BoxVertexLocalPos[7];
 		m_DrawLine[10]->LineData.End = m_BoxVertexLocalPos[6];
-		m_DrawLine[11]->LineData.StartBH = m_BoxVertexLocalPos[6];
+		m_DrawLine[11]->LineData.Start = m_BoxVertexLocalPos[6];
 		m_DrawLine[11]->LineData.End = m_BoxVertexLocalPos[4];
 
 	}

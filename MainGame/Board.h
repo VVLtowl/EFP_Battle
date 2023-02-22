@@ -27,10 +27,13 @@ public:
 public:
 	std::list<Square*> BadStartSquare;
 	std::list<Square*> GoodStartSquare;
+	std::list<Square*> PrisonRoomSquare;
+	class GameObject* m_CameraOrientation;
+	class GameObject* m_BoardCenter;
 public:
 	void SetPieceOnBadStartSquare(class Piece* piece);
 	void SetPieceOnGoodStartSquare(class Piece* piece);
-private:
 	Square* GetBadStartSquare();
 	Square* GetGoodStartSquare();
+	Square* GetPrisonRoomSquare();
 };

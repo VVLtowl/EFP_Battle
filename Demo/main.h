@@ -94,7 +94,7 @@ public:
 	//Hand
 	list<int> m_Hands;
 
-	//Piece
+	//m_Piece
 	Piece m_Piece;
 
 	//ActPoint

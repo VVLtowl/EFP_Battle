@@ -2,7 +2,7 @@
 #include "Pawn_Normal.h"
 #include "LookAtCamera.h"
 
-const float X_NUM = 10.0f;
+const float X_NUM = 1.0f;// 10.0f;
 const float Y_NUM = 1.0f;
 const float TEXCOORD_W = 1.0f / X_NUM;
 const float TEXCOORD_H = 1.0f / Y_NUM;
@@ -18,13 +18,13 @@ Pawn_Normal::Pawn_Normal()
 		desc.DrawObjDesc.Texcoord = { 0,0,TEXCOORD_W ,TEXCOORD_H };
 		desc.Size = PIECE_IMAGE_SIZE;
 		desc.TextureID = TEXID_FIELD004;
-		PieceImage = new Polygon2D(this, desc);
+		m_Polygon2D = new Polygon2D(this, desc);
 	}
 
 	//create look at camera
 	{
-		LookAtCmr =
-			new LookAtCamera(this, CameraManager::GetMainCamera());
+		//m_LookAtCmr =
+			//new LookAtCamera(this, CameraManager::GetMainCamera());
 	}
 }
 

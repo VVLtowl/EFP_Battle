@@ -2,6 +2,7 @@
 #include "Character.h"
 #include "Piece.h"
 #include "Player.h"
+#include "Client.h"
 
 #include "PlayerBehaviour.h"
 #include "Judgement.h"
@@ -15,15 +16,21 @@ Player::Player()
 	BH_WaitSelfPiecesInputHand = new PlayerWaitSelfPiecesInputHand(this);
 }
 
+void Player::ClearDataInGameScene()
+{
+	m_SelfPieces.Clear();
+}
+
 void Player::AddSelfPiece(Piece* piece)
 {
-	SelfPieces.Add(piece);
+	m_SelfPieces.Add(piece);
 }
 
 void Player::StartIterateSelfPiecesInputHand()
 {
 	//set up and start wait bh
-	BH_WaitSelfPiecesInputHand->SetEndEvent([this]() {
+	BH_WaitSelfPiecesInputHand->SetEndEvent("NotifyCountPlayerFinished",
+		[this]() {
 		//next
 		NetworkManager::Instance()->Client_NotifyCountPlayerFinished();
 		});
@@ -32,12 +39,12 @@ void Player::StartIterateSelfPiecesInputHand()
 
 void Player::CheckSelfPieceToInputAct(Piece* piece)
 {
-	if (piece->OwnerPlayer)
+	if (piece->m_OwnerPlayer)
 		//is self piece
 	{
 		DebugInfo::Print(
 			"piece " +
-			std::to_string(piece->ID) +
+			std::to_string(piece->m_ID) +
 			" [self] start input act...");
 
 		//start piece input act
@@ -48,11 +55,14 @@ void Player::CheckSelfPieceToInputAct(Piece* piece)
 	{
 		DebugInfo::Print(
 			"piece " +
-			std::to_string(piece->ID) +
+			std::to_string(piece->m_ID) +
 			" start input act...");
 
 		//show think mark
 		piece->SetUIThink(true);
+
+		//reset camera pos
+		Client::Instance()->ResetCameraLookAt();
 	}
 }
 

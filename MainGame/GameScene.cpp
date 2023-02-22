@@ -7,6 +7,8 @@
 #include "Piece.h"
 #include "Player.h"
 #include "Judgement.h"
+#include "Client.h"
+#include "Board.h"
 
 #include "LookAt.h"
 #include "TransformAnime.h"
@@ -17,7 +19,7 @@
 void GameScene::MainLoad()
 {
 	//test game scene load object
-	if (1)
+	if (0)
 	{
 		//test plane
 		Plane* plane = GameObjectManager::Create<Plane>();
@@ -25,10 +27,10 @@ void GameScene::MainLoad()
 		plane->GetTransform()->SetPosition(0, 0, 0);
 
 		//test set main camera look at cubeCenter pos
-		CameraManager::GetMainCamera()->CmrLookAt->TargetTransform = plane->GetTransform();
+		CameraManager::GetMainCamera()->m_CmrLookAt->m_TargetTransform = plane->GetTransform();
 
 		//test set main light look at cubeCenter pos
-		LightManager::GetMainLight()->LightLookAt->TargetTransform = plane->GetTransform();
+		LightManager::GetMainLight()->LightLookAt->m_TargetTransform = plane->GetTransform();
 
 		//test light
 		//MainLight* lit = GameObjectManager::Create<MainLight>();
@@ -116,20 +118,20 @@ void GameScene::MainLoad()
 		}
 	}
 
-	//init game manager
-	GameManager::SetUpGameScene();
-
-	//notify server judgement load gamescene finish
-	NetworkManager::Instance()->Client_NotifyCountPlayerFinished();
+	//logic entrance
+	Client::Instance()->StartInGameScene();
 }
 
 void GameScene::MainUnload()
 {
 	//uninit game manager
-	GameManager::CleanGameScene();
+	//GameManager::CleanGameScene();
 
 	//clear behaviours
 	BehaviourFactory::Clear();
+
+	//clear data
+	Client::Instance()->ClearDataInGameScene();
 }
 
 void GameScene::MainUpdate()
@@ -137,7 +139,8 @@ void GameScene::MainUpdate()
 	//test scene change
 	if (Input::Mouse.IsButtonDown(MOUSE_MID))
 	{
-		SceneManager::ChangeScene<TitleScene>();
+		//test
+		//SceneManager::ChangeScene<TitleScene>();
 		return;
 	}
 
@@ -156,10 +159,10 @@ void ServerGameScene::MainLoad()
 	plane->GetTransform()->SetPosition(0, 0, 0);
 
 	//test set main camera look at cubeCenter pos
-	CameraManager::GetMainCamera()->CmrLookAt->TargetTransform = plane->GetTransform();
+	CameraManager::GetMainCamera()->m_CmrLookAt->m_TargetTransform = plane->GetTransform();
 
 	//test set main light look at cubeCenter pos
-	LightManager::GetMainLight()->LightLookAt->TargetTransform = plane->GetTransform();
+	LightManager::GetMainLight()->LightLookAt->m_TargetTransform = plane->GetTransform();
 
 	//entrance
 	Judgement::Instance()->GameStart();
@@ -167,6 +170,8 @@ void ServerGameScene::MainLoad()
 
 void ServerGameScene::MainUnload()
 {
+	//exit main game
+	Judgement::Instance()->GameEnd();
 }
 
 void ServerGameScene::MainUpdate()

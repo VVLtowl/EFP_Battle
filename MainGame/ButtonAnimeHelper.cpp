@@ -3,7 +3,7 @@
 #include "TransformAnime.h"
 #include "ButtonAnimeHelper.h"
 
-ButtonAnimeDescripition ButtonAnimeDesc;
+//ButtonAnimeDescripition ButtonAnimeDesc;
 
 ButtonHelper::ButtonHelper(
 	GameObject* uiObject,
@@ -27,16 +27,16 @@ void ButtonHelper::InitButtonAnime()
 {
 	UIButton->AddDisableEvent([this]() 
 		{
-			UIPolygon2D->Color = ButtonAnimeDesc.DisableUIColor;
+			UIPolygon2D->Color = m_ButtonAniDesc.DisableUIColor;
 		});
 	UIButton->AddEnableEvent([this]() 
 		{
-			UIPolygon2D->Color = ButtonAnimeDesc.OriginalUIColor;
+			UIPolygon2D->Color = m_ButtonAniDesc.OriginalUIColor;
 		});
 
 	UIButton->AddEnterEvent([this]()
 		{
-			UIPolygon2D->Color = ButtonAnimeDesc.HighlightUIColor;
+			UIPolygon2D->Color = m_ButtonAniDesc.HighlightUIColor;
 
 			if (TargetAnimator != nullptr)
 			{
@@ -55,16 +55,16 @@ void ButtonHelper::InitButtonAnime()
 			desc.Duration = 15;
 
 			desc.Start = UIObject->GetTransform()->GetScale();
-			desc.End = ButtonAnimeDesc.HighlightUIScale;
+			desc.End = m_ButtonAniDesc.HighlightUIScale;
 			Anime_Scale* sclAnime = new Anime_Scale(TargetAnimator, desc, computeFunc);
 
 			desc.Start = UIObject->GetTransform()->GetPosition();
-			desc.End = ButtonAnimeDesc.HighlightUIPosition;
+			desc.End = m_ButtonAniDesc.HighlightUIPosition;
 			Anime_Position* posAnime = new Anime_Position(TargetAnimator, desc, computeFunc);
 		});
 	UIButton->AddExitEvent([this]()
 		{
-			UIPolygon2D->Color = ButtonAnimeDesc.OriginalUIColor;		
+			UIPolygon2D->Color = m_ButtonAniDesc.OriginalUIColor;
 			
 			if (TargetAnimator != nullptr)
 			{
@@ -87,16 +87,16 @@ void ButtonHelper::InitButtonAnime()
 			desc.Duration = 15;
 
 			desc.Start = UIObject->GetTransform()->GetScale();
-			desc.End = ButtonAnimeDesc.OriginalUIScale;
+			desc.End = m_ButtonAniDesc.OriginalUIScale;
 			Anime_Scale* sclAnime = new Anime_Scale(TargetAnimator, desc, computeFunc);
 
 			desc.Start = UIObject->GetTransform()->GetPosition();
-			desc.End = ButtonAnimeDesc.OriginalUIPosition;
+			desc.End = m_ButtonAniDesc.OriginalUIPosition;
 			Anime_Position* posAnime = new Anime_Position(TargetAnimator, desc, computeFunc);
 		});
 	UIButton->AddClickEvent([&]()
 		{
-			UIPolygon2D->Color = ButtonAnimeDesc.ClickUIColor;
+			UIPolygon2D->Color = m_ButtonAniDesc.ClickUIColor;
 			
 			if (TargetAnimator != nullptr)
 			{
@@ -109,11 +109,11 @@ void ButtonHelper::InitButtonAnime()
 			desc.Duration = 10;
 
 			desc.Start = UIObject->GetTransform()->GetScale();
-			desc.End = ButtonAnimeDesc.ClickUIScale;
+			desc.End = m_ButtonAniDesc.ClickUIScale;
 			Anime_Scale* sclAnime = new Anime_Scale(TargetAnimator, desc, computeFunc);
 
 			desc.Start = UIObject->GetTransform()->GetPosition();
-			desc.End = ButtonAnimeDesc.ClickUIPosition;
+			desc.End = m_ButtonAniDesc.ClickUIPosition;
 			Anime_Position* posAnime = new Anime_Position(TargetAnimator, desc, computeFunc);
 		});
 }

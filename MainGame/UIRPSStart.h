@@ -1,7 +1,7 @@
 #pragma once
 #include "GameObject.h"
 
-const D3DXVECTOR2 UI_RPS_START_SIZE = { 1280.0f / 3.0f, 720.0f / 3.0f };
+const D3DXVECTOR2 UI_RPS_START_SIZE = { 1280.0f / 3.0f, 1280.0f / 3.0f };
 
 class UIRPSStart :
     public GameObject

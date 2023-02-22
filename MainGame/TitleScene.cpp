@@ -18,10 +18,10 @@ void TitleScene::MainLoad()
 			cubeCenter->GetTransform()->SetPosition(0, 0, 0);
 
 			//test set main camera look at cubeCenter pos
-			CameraManager::GetMainCamera()->CmrLookAt->TargetTransform = cubeCenter->GetTransform();
+			CameraManager::GetMainCamera()->m_CmrLookAt->m_TargetTransform = cubeCenter->GetTransform();
 
 			//test set main light look at cubeCenter pos
-			LightManager::GetMainLight()->LightLookAt->TargetTransform = cubeCenter->GetTransform();
+			LightManager::GetMainLight()->LightLookAt->m_TargetTransform = cubeCenter->GetTransform();
 
 #pragma region ========== cube planes ==========
 			float radius = 2;
@@ -58,8 +58,8 @@ void TitleScene::MainLoad()
 				cmr->GetTransform()->SetPosition(0, 0, -0.5f);
 				cmr->GetTransform()->SetParent(plane[i]->GetTransform());
 
-				cmr->GetCamera()->CmrLookAt->TargetTransform = (lookAtTrs->GetTransform());
-				plane[i]->Image->Texture = cmr->GetCamera()->MainSRV;
+				cmr->GetCamera()->m_CmrLookAt->m_TargetTransform = (lookAtTrs->GetTransform());
+				plane[i]->Image->Texture = cmr->GetCamera()->m_MainSRV;
 
 				D3DXVECTOR3 actSelectPos = { 0,0,-0.1f };
 				D3DXVECTOR3 actSelectScl = V3_ONE * 1.6f;

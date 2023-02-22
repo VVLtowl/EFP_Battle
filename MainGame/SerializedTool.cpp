@@ -2,9 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "Character.h"
-#include "Piece.h"
-#include "Player.h"
 #include "SerializedTool.h"
 
 #include <iostream>

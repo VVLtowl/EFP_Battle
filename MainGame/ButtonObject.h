@@ -33,6 +33,10 @@ protected:
 };
 
 
+
+/*********************************************************
+* @brief	button for input hand
+********************************************************/
 class ButtonHand :
 	public ButtonObject
 {
@@ -64,6 +68,9 @@ public:
 	void SetPieceHand();
 };
 
+/*********************************************************
+* @brief	button for select act
+********************************************************/
 class ButtonActSelection :
 	public ButtonObject
 {
@@ -86,5 +93,80 @@ public:
 public:
 	class UIActSelection* m_UIActSelection;
 	class Piece* m_TargetPiece;
+};
+
+/*********************************************************
+* @brief	button for input move
+********************************************************/
+class ButtonInputMove :
+	public ButtonObject
+{
+	/*********************************************************
+	* @brief	gameobject interface override
+	********************************************************/
+public:
+	ButtonInputMove(class Piece* piece, class Square* square);
+	virtual ~ButtonInputMove() {};
+	void UpdateGameObject()override {};
+
+	/*********************************************************
+	* @brief	コンポネント
+	********************************************************/
+
+
+	/*********************************************************
+	* @brief	customize
+	********************************************************/
+public:
+	class Piece* m_TargetPiece;
+	class Square* m_TargetSquare;
+};
+
+
+class ButtonSquareSelection :
+	public ButtonInputMove
+{
+	/*********************************************************
+	* @brief	gameobject interface override
+	********************************************************/
+public:
+	ButtonSquareSelection(class Piece* piece,class Square* square);
+	virtual ~ButtonSquareSelection();
+	void UpdateGameObject()override;
+
+	/*********************************************************
+	* @brief	コンポネント
+	********************************************************/
+
+
+	/*********************************************************
+	* @brief	customize
+	********************************************************/
+public:
+	class UISquareSelection* m_UISquareSelection;
+};
+
+class ButtonMoveCancel :
+	public ButtonInputMove
+{
+	/*********************************************************
+	* @brief	gameobject interface override
+	********************************************************/
+public:
+	ButtonMoveCancel(class Piece* piece, class Square* square);
+	~ButtonMoveCancel();
+	void UpdateGameObject()override;
+
+	/*********************************************************
+	* @brief	コンポネント
+	********************************************************/
+public:
+	class LookAtCamera* m_LookAtCmr;
+
+	/*********************************************************
+	* @brief	customize
+	********************************************************/
+public:
+	class UIActSelection* m_UICancel;
 };
 

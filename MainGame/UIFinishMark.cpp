@@ -12,8 +12,8 @@ UIFinishMark::UIFinishMark()
 	//create UIMark
 	{
 		OwnUIMark = GameObjectManager::Create<UIMark>(); 
-		OwnUIMark->GetTransform()->SetParent(m_Transform3D);
-		OwnUIMark->SetMark(UIMark::MARK_FINISH);
+		OwnUIMark->SetParent(this);
+		OwnUIMark->SetMark(UIMark::Type::FINISH);
 	}
 
 	//create ui follow worldObject
@@ -29,7 +29,6 @@ UIFinishMark::UIFinishMark()
 
 UIFinishMark::~UIFinishMark()
 {
-	OwnUIMark->SetState(GameObject::DEAD);
 }
 
 void UIFinishMark::UpdateGameObject()

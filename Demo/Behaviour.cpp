@@ -96,7 +96,7 @@ void JBH_TurnStart::MainStart()
 
 void JBH_TurnStart::Update()
 {
-	Print("step: Turn StartBH");
+	PrintState("step: Turn StartBH");
 
 #if 0
 	for (auto player : Game::Instance.m_Players)
@@ -129,7 +129,7 @@ void JBH_RPS::MainStart()
 
 void JBH_RPS::Update()
 {
-	Print("step: RSP");
+	PrintState("step: RSP");
 
 #if 0
 	for (auto player : Game::Instance.m_Players)
@@ -156,7 +156,7 @@ void JBH_RPS::Update()
 
 void JBH_CalculateActPoint::Update()
 {
-	Print("step: Calculate Act Point");
+	PrintState("step: Calculate Act Point");
 
 	//set up camp
 	list<Player*> badCamp;
@@ -215,7 +215,7 @@ void JBH_CalculateActPoint::Update()
 
 void JBH_GroupAct::Update()
 {
-	Print("step: Group Act");
+	PrintState("step: Group Act");
 
 	bool hasCanActPlayer = true;
 	m_Player = m_ActGroup->Next();
@@ -268,7 +268,7 @@ void JBH_GoodManAct::MainStart()
 
 void JBH_TurnEnd::Update()
 {
-	Print("step: Turn End");
+	PrintState("step: Turn End");
 
 	getchar();
 	NextState();
@@ -295,7 +295,7 @@ void PieceBehaviour::SetPiece(Player* player)
 
 void PBH_ClearPoint::Update()
 {
-	Print("player: Clear Point");
+	PrintState("player: Clear Point");
 
 	m_Player->m_ActPoint = 0;
 
@@ -304,7 +304,7 @@ void PBH_ClearPoint::Update()
 
 void PBH_InputHand::Update()
 {
-	Print("player: Input Hand");
+	PrintState("player: Input Hand");
 
 	//select hand
 
@@ -327,7 +327,7 @@ void PBH_SelectAct::MainStart()
 
 void PBH_SelectAct::Update()
 {
-	Print("player: Select Act");
+	PrintState("player: Select Act");
 
 	//select act
 	
@@ -344,7 +344,7 @@ void PBH_SelectAct::Update()
 
 void PBH_Move::Update()
 {
-	Print("player : Move Piece");
+	PrintState("player : Move m_Piece");
 
 	//test
 	m_Player->m_ActPoint--;
@@ -354,7 +354,7 @@ void PBH_Move::Update()
 
 void PBH_UpdateState::Update()
 {
-	Print("player : Update State");
+	PrintState("player : Update State");
 
 	NextState();
 }

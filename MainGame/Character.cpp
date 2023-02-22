@@ -2,6 +2,9 @@
 #include "BehaviourFactory.h"
 #include "Character.h"
 
+#include "Piece.h"
+#include "PieceBehaviour.h"
+
 
 
 Character::Character(Piece* piece)
@@ -23,12 +26,8 @@ Character::Character(Piece* piece)
 
 Character::~Character()
 {
-	for (int i = 0; i < FIXED_BHID_MAX; i++)
-	{
-		FixedBHs[i] = nullptr;
-	}
-	ActBHs.clear();
-	SpecialBHs.clear();
+	m_ActBHs.clear();
+	m_SpecialBHs.clear();
 }
 
 #pragma region ========== bad ==========
@@ -78,7 +77,7 @@ NormalGood::NormalGood(Piece* piece) :
 {
 	//fixed
 	{
-
+		//tips: m_ActBHs.emplace_back(new PieceShowCheckActpoint(piece));
 	}
 
 	//act

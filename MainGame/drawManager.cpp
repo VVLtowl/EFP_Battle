@@ -25,34 +25,50 @@ void DrawManager::Load()
 	Textures.emplace(
 		TEXID_NUMBER_0,
 		TextureFactory::Load("asset\\texture\\number.dds"));
-
 	Textures.emplace(
 		TEXID_FIELD004,
 		TextureFactory::Load("asset\\texture\\field004.jpg"));
-
 	Textures.emplace(
 		TEXID_HINT,
-		TextureFactory::Load("asset\\texture\\hint.png"));
-
+		TextureFactory::Load("asset\\texture\\hint.png"));	
+	Textures.emplace(
+		TEXID_HINT2,
+		TextureFactory::Load("asset\\texture\\hint2.png"));
 	Textures.emplace(
 		TEXID_CIRCLE_0,
 		TextureFactory::Load("asset\\texture\\halfAlpha.png"));
 
+
 	Textures.emplace(
 		TEXID_PIECE_TEST,
 		TextureFactory::Load("asset\\texture\\player_animation.png"));
+	Textures.emplace(
+		TEXID_TEST_PIECE_NORMALBAD,
+		TextureFactory::Load("asset\\texture\\test_piece_normalBad.png"));
+	Textures.emplace(
+		TEXID_TEST_PIECE_NORMALGOOD,
+		TextureFactory::Load("asset\\texture\\test_piece_normalGood.png"));
+
+	Textures.emplace(
+		TEXID_UI_GAMEOVER_BADWIN,
+		TextureFactory::Load("asset\\texture\\ui_gameOver_badWin.png"));
+	Textures.emplace(
+		TEXID_UI_GAMEOVER_GOODWIN,
+		TextureFactory::Load("asset\\texture\\ui_gameOver_goodWin.png"));
+
 
 	Textures.emplace(
 		TEXID_UI_GAME_START,
 		TextureFactory::Load("asset\\texture\\ui_gameStart.png"));
-
 	Textures.emplace(
 		TEXID_UI_TURN_START,
 		TextureFactory::Load("asset\\texture\\ui_turn.png"));
-
 	Textures.emplace(
 		TEXID_UI_RPS_START,
 		TextureFactory::Load("asset\\texture\\ui_RPSStart.png"));
+	Textures.emplace(
+		TEXID_UI_ACT_START,
+		TextureFactory::Load("asset\\texture\\ui_actStart.png"));
 	Textures.emplace(
 		TEXID_UI_ACT_START_BAD,
 		TextureFactory::Load("asset\\texture\\ui_badActStart.png"));
@@ -60,13 +76,34 @@ void DrawManager::Load()
 		TEXID_UI_ACT_START_GOOD,
 		TextureFactory::Load("asset\\texture\\ui_goodActStart.png"));
 
+
 	Textures.emplace(
 		TEXID_UI_RPS,
 		TextureFactory::Load("asset\\texture\\RPS.png"));
-
 	Textures.emplace(
 		TEXID_UI_MARK,
 		TextureFactory::Load("asset\\texture\\mark.png"));
+
+	Textures.emplace(
+		TEXID_UI_ACT_MOVE,
+		TextureFactory::Load("asset\\texture\\ui_actSelection_move.png"));
+	Textures.emplace(
+		TEXID_UI_ACT_FINISH,
+		TextureFactory::Load("asset\\texture\\ui_actSelection_finish.png"));
+	Textures.emplace(
+		TEXID_UI_BACK,
+		TextureFactory::Load("asset\\texture\\ui_back.png"));
+	Textures.emplace(
+		TEXID_UI_SQUARE,
+		TextureFactory::Load("asset\\texture\\button_square.png"));
+
+
+	Textures.emplace(
+		TEXID_UI_SERVER,
+		TextureFactory::Load("asset\\texture\\button_server.png"));
+	Textures.emplace(
+		TEXID_UI_CLIENT,
+		TextureFactory::Load("asset\\texture\\button_client.png"));
 #pragma endregion
 
 #pragma region ========== load model ==========
@@ -85,6 +122,17 @@ void DrawManager::Load()
 	Models.emplace(
 		MDLID_SPHERE,
 		ModelFactory::Load("asset\\model\\sky.obj"));
+
+
+	Models.emplace(
+		MDLID_SQUARE_NORMAL,
+		ModelFactory::Load("asset\\model\\square_normal.obj"));
+	Models.emplace(
+		MDLID_SQUARE_GOAL,
+		ModelFactory::Load("asset\\model\\square_goal.obj"));
+	Models.emplace(
+		MDLID_SQUARE_PRISON,
+		ModelFactory::Load("asset\\model\\square_prison.obj"));
 #pragma endregion
 	
 #pragma region ========== create buffer ==========

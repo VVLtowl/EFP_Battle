@@ -45,7 +45,7 @@ void JudgementInputPlayMode::Update()
 void JudgementWaitPlayersFinish::Reset()
 {
 	FinishPlayerNum = 0;
-	TargetPlayerNum = m_OwnerJudgement->Players.size();
+	TargetPlayerNum = GameManager::m_Players.size();
 	PrintRowID = -1;
 }
 
@@ -92,11 +92,11 @@ void JudgementWaitPiecesFinishCommand::CheckPiecesOrder()
 	//good pieces act after bad pieces 
 	//add bad pieces to orderlist at first
 	PieceActOrder.clear();
-	for (auto piece : m_OwnerJudgement->Bads)
+	for (auto piece : GameManager::m_Bads)
 	{
 		PieceActOrder.emplace_back(piece);
 	}
-	for (auto piece : m_OwnerJudgement->Goods)
+	for (auto piece : GameManager::m_Goods)
 	{
 		PieceActOrder.emplace_back(piece);
 	}
@@ -108,7 +108,16 @@ void JudgementWaitPiecesFinishCommand::Reset(std::function<void()> cmdEvent)
 	{
 		PrintRowID = -1;
 		FinishPieceNum = 0;
-		TargetPieceNum = m_OwnerJudgement->Pieces.size();
+
+		TargetPieceNum = 0;
+		for (auto idPiece : GameManager::m_Pieces)
+		{
+			Piece* piece = idPiece.second;
+			if (piece->m_State == Piece::State::NORMAL)
+			{
+				TargetPieceNum++;
+			}
+		}
 	}
 
 	//set command event
@@ -143,8 +152,9 @@ void JudgementWaitPiecesFinishCommand::Update()
 			//command event
 			OnCommand();
 
+			//tips: set next state state in OnCommand
 			//next state
-			WaitState = State::WAIT_PIECE_FINISH_COMMAND;
+			//WaitState = State::WAIT_PIECE_FINISH_COMMAND;
 		}
 
 		break;
@@ -157,11 +167,24 @@ void JudgementWaitPiecesFinishCommand::Update()
 	case State::PIECE_FINISH_COMMAND:
 	{
 		//update show num
-		FinishPieceNum++;
 		PrintCount("piece finish command");
+		FinishPieceNum++;
 
 		//iterate
 		PieceIterator++;
+
+		//tips: check piece state in OnCommand
+		/*while (PieceIterator != PieceEnd)
+		{
+			if((*PieceIterator)->m_State == Piece::State::CAUGHT)
+			{
+				PieceIterator++;
+			}
+			else if((*PieceIterator)->m_State == Piece::State::NORMAL)
+			{
+				break;
+			}
+		}*/
 
 		//next state
 		WaitState = State::CHECK_COMMAND_PIECE;
@@ -243,8 +266,8 @@ void JudgementCommandShowPieces::Reset(int duration, int targetCount, std::funct
 
 	//init piece iterator
 	{
-		PieceIterator = m_OwnerJudgement->Pieces.begin();
-		PieceEnd = m_OwnerJudgement->Pieces.end();
+		PieceIterator = GameManager::m_Pieces.begin();
+		PieceEnd = GameManager::m_Pieces.end();
 	}
 
 	//set command event
@@ -257,4 +280,5 @@ void JudgementCommandShowPieces::Reset(int duration, int targetCount, std::funct
 		m_OwnerJudgement->BH_WaitPlayersFinish->Reset();
 	}
 }
+
 #pragma endregion

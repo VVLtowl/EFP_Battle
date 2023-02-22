@@ -12,7 +12,8 @@ public:
     SOCKADDR_IN Address;
     std::string Name;
     int TCPSocketID;//just for tcp
-    int ID;//need server check
+    bool Ready;
+    //int ID;//need server check//give up, all use TCPSocketID
 
 public:
     ClientMember(
@@ -32,35 +33,35 @@ class Server :
 public:
     Server();
     ~Server();
+    std::string Name() override { return "server"; };
 
     /*********************************************************
     * @brief    game room data
     ********************************************************/
 public:
-    int JoinedClientNum=0;
-    int TargetClientNum=0;
+    int m_JoinedClientNum=0;
+    int m_TargetClientNum=0;
 
     //for input
-    int Port;
+    int m_Port;
 
     //for confirm game room setting button
-    bool OpenGameRoom = false;
+    bool m_OpenGameRoom = false;
 
     //for reset game room button
-    bool ResetGameRoom = false;
+    bool m_ResetGameRoom = false;
 
     //for start game button
-    bool StartGame = false;
+    bool m_StartGame = false;
 
     /*********************************************************
     * @brief    manage client member
     ********************************************************/
 public:
     //for broadcast, manage clients connect
-    std::unordered_map<int, ClientMember*> ClientMembers;
-    int NewClientJoinID = 0;
+    std::unordered_map<int, ClientMember*> m_ClientMembers;
 public:
-    void RegisterClientMemberAndSetID(ClientMember* c);
+    void RegisterClientMemberAndSetID(int id,ClientMember* c);
     void QuitClientMember(ClientMember* c);
     void QuitClientMember(int id);
     void ClearClientMembers();
@@ -80,9 +81,16 @@ public:
 
 
     /*********************************************************
-    * @brief    behaviour
+    * @brief    çsà◊
     ********************************************************/
 public:
+    void StartInWaitRoomScene();
+    void StartInputGameRoom();
+    void StartWaitClientsJoin();
+    void StartCheckClientJoin(int tcpID,std::string newClientName);
+    void SetClientDisconnect(int id);
+    void SetClientReady(int id, bool ready);
+
     class ServerInit* BH_Init;
     class ServerUninit* BH_Uninit;
     class ServerInputGameRoom* BH_InputGameRoom;

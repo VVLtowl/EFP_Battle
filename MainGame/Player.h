@@ -19,34 +19,33 @@ class Player :
 public:
 	Player();
 	~Player() {};
+	std::string Name() override { return "player" + std::to_string(m_ID); };
 
 	/*********************************************************
 	* @brief	プレイヤー属性
 	********************************************************/
 public:
 	//player id (check same as client id)
-	int ID = -1;
+	int m_ID = -1;
 
 	//camp
-	CampType Camp = CampType::NONE;
+	CampType m_Camp = CampType::NONE;
 
 	//client info, use in server
-	class ClientMember* TargetClient = nullptr;
+	class ClientMember* m_TargetClient = nullptr;
 
 	//piece
-	//std::list<class Piece*> SelfPieces;
-	LoopList<class Piece*> SelfPieces;
+	//std::list<class m_Piece*> SelfPieces;
+	LoopList<class Piece*> m_SelfPieces;
 
-	/*********************************************************
-	* @brief	player data
-	********************************************************/
-public:
-	class Piece* NowOperatePiece = nullptr;
+	//for oterate self piece
+	Piece* m_NowOperatePiece = nullptr;
 
 	/*********************************************************
 	* @brief	行為
 	********************************************************/
 public:
+	void ClearDataInGameScene();
 	void AddSelfPiece(class Piece* piece);
 	void StartIterateSelfPiecesInputHand();
 	void CheckSelfPieceToInputAct(class Piece* piece);

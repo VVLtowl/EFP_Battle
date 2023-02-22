@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "PlayerBehaviour.h"
 
+#include "Client.h"
 #include "LoopList.h"
 
 #pragma region ========== wait self pieces finish ==========
@@ -91,6 +92,9 @@ void PlayerWaitSelfPiecesInputHand::Update()
 	}
 	case State::FINISH://execute one frame
 	{
+		//reset camera
+		Client::Instance()->ResetCameraLookAt();
+
 		NextState();
 		break;
 	}
@@ -103,32 +107,32 @@ Piece* PlayerWaitSelfPiecesInputHand::CheckEnablePiece(CheckType checkType)
 	Piece* piece = nullptr;
 	if (checkType == CheckType::CHECK_FIRST)
 	{
-		piece = m_Player->SelfPieces.First();
+		piece = m_Player->m_SelfPieces.First();
 	}
 	else if (checkType == CheckType::CHECK_NEXT)
 	{
-		piece = m_Player->SelfPieces.Next();
+		piece = m_Player->m_SelfPieces.Next();
 	}
 	else if (checkType == CheckType::CHECK_PREV)
 	{
-		piece = m_Player->SelfPieces.Prev();
+		piece = m_Player->m_SelfPieces.Prev();
 	}
 
 	//if piece finished, try get other piece
 	int count = 0;
-	int countMax = m_Player->SelfPieces.GetList()->size();
+	int countMax = m_Player->m_SelfPieces.GetList()->size();
 	if (piece)
 	{
 		//test
-		while (piece->FinishMark && count < countMax)
+		while (piece->m_FinishMark && count < countMax)
 		{
 			if (checkType == CheckType::CHECK_PREV)
 			{
-				piece = m_Player->SelfPieces.Prev();
+				piece = m_Player->m_SelfPieces.Prev();
 			}
 			else
 			{
-				piece = m_Player->SelfPieces.Next();
+				piece = m_Player->m_SelfPieces.Next();
 			}
 			count++;
 		}
@@ -141,7 +145,7 @@ Piece* PlayerWaitSelfPiecesInputHand::CheckEnablePiece(CheckType checkType)
 	}
 
 	//set now operate piece
-	m_Player->NowOperatePiece = piece;
+	m_Player->m_NowOperatePiece = piece;
 	return piece;
 }
 

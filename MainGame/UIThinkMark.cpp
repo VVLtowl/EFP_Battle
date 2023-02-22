@@ -13,8 +13,8 @@ UIThinkMark::UIThinkMark()
 	//create UIMark
 	{
 		OwnUIMark = GameObjectManager::Create<UIMark>();
-		OwnUIMark->GetTransform()->SetParent(m_Transform3D);
-		OwnUIMark->SetMark(UIMark::MARK_THINK);
+		OwnUIMark->SetParent(this);
+		OwnUIMark->SetMark(UIMark::Type::THINK);
 	}
 
 	//create ui follow worldObject
@@ -25,7 +25,7 @@ UIThinkMark::UIThinkMark()
 
 UIThinkMark::~UIThinkMark()
 {
-	OwnUIMark->SetState(GameObject::DEAD);
+	//OwnUIMark->SetState(GameObject::DEAD);
 }
 
 void UIThinkMark::UpdateGameObject()

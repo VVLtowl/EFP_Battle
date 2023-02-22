@@ -97,3 +97,23 @@ const int DebugInfo::PrintNetMsg(std::string info)
 	m_idNetMsg = (m_idNetMsg + 1) % BDEBUG_INFO_MAX;
 	return out;
 }
+
+
+int DebugInfo::WriteInfoToLog(std::string fileName)
+{
+	FILE* log;
+	fopen_s(&log, fileName.c_str(), "w");
+	if (log == NULL) {
+		//OutputDebugString("Log file open failed.");
+		return -1;
+	}
+
+	int id = 0;
+	while (id < BDEBUG_INFO_MAX)
+	{
+		fprintf(log, "%s\n", m_Info[id].c_str());
+		id++;
+	}
+	fclose(log);
+	return 0;
+}

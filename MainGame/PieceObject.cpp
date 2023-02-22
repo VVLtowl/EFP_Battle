@@ -27,19 +27,19 @@ PieceObject::PieceObject()
 		//pawn up left
 		m_UITransform[(int)UITID::PAWN_UP_LEFT] = GameObjectManager::Create<TransformObject>();
 		m_UITransform[(int)UITID::PAWN_UP_LEFT]->SetParent(this);
-		m_UITransform[(int)UITID::PAWN_UP_LEFT]->InitLocalPosition(D3DXVECTOR3(-PIECE_IMAGE_SIZE.x / 3.0f, PIECE_IMAGE_SIZE.y * 3 / 4, 0));
+		m_UITransform[(int)UITID::PAWN_UP_LEFT]->InitLocalPosition(D3DXVECTOR3(-PIECE_IMAGE_SIZE.x / 2.0f, PIECE_IMAGE_SIZE.y * 3 / 4, 0));
 		
 		//pawn up right
 		m_UITransform[(int)UITID::PAWN_UP_RIGHT] = GameObjectManager::Create<TransformObject>();
 		m_UITransform[(int)UITID::PAWN_UP_RIGHT]->SetParent(this);
-		m_UITransform[(int)UITID::PAWN_UP_RIGHT]->InitLocalPosition(D3DXVECTOR3(PIECE_IMAGE_SIZE.x / 3.0f, PIECE_IMAGE_SIZE.y * 3 / 4, 0));
+		m_UITransform[(int)UITID::PAWN_UP_RIGHT]->InitLocalPosition(D3DXVECTOR3(PIECE_IMAGE_SIZE.x / 2.0f, PIECE_IMAGE_SIZE.y * 3 / 4, 0));
 	}
 
 	//create piece
 	{
-		m_Pawn = GameObjectManager::Create<Pawn_Normal>();
-		m_Pawn->GetTransform()->SetPosition(0, PIECE_IMAGE_SIZE.y / 2.0f, 0);
-		m_Pawn->SetParent(GetUITransform(UITID::ROOT));
+		m_PawnImage = GameObjectManager::Create<Pawn_Normal>();
+		m_PawnImage->GetTransform()->SetPosition(0, PIECE_IMAGE_SIZE.y / 2.0f, 0);
+		m_PawnImage->SetParent(GetUITransform(UITID::ROOT));
 	}
 
 	//create look at camera
@@ -64,7 +64,7 @@ void PieceObject::UpdateGameObject()
 
 void PieceObject::SetTexColor(const D3DXVECTOR4& cl)
 {
-	m_Pawn->PieceImage->Color = cl;
+	m_PawnImage->m_Polygon2D->Color = cl;
 }
 
 GameObject* PieceObject::GetUITransform(UITID uitID)

@@ -1,7 +1,6 @@
 #pragma once
 #include "Singleton.h"
 #include "State.h"
-#include "SquareState_Goal.h"
 
 class StateFactory :
 	public Singleton<StateFactory>

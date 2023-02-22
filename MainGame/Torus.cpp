@@ -24,8 +24,8 @@ Torus::Torus()
 void Torus::UpdateGameObject()
 {
 	//test
-	//m_EulerAngle.x += 0.01f;
-	//m_EulerAngle.y += 0.005f;
-	//GetTransform()->SetRotation(m_EulerAngle.x, m_EulerAngle.y, m_EulerAngle.z);
+	m_EulerAngle.x += 0.01f;
+	m_EulerAngle.y += 0.005f;
+	GetTransform()->SetRotation(m_EulerAngle.x, m_EulerAngle.y, m_EulerAngle.z);
 }
 

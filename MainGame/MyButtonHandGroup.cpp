@@ -127,7 +127,7 @@ void ButtonHandGroup::InitHandButtonsClickEvent()
 				//TargetPiece->Hands.emplace_back(handType);
 				//start wait judgement check
 				NetworkManager::Instance()->Piece_RequestSetHand(
-					piece->ID,
+					piece->m_ID,
 					handType);
 
 				//while one click, finish this ui control

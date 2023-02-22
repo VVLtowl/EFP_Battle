@@ -3,7 +3,7 @@
 
 #include "TransformAnime.h"
 
-const D3DXVECTOR2 UI_SELECT_SIZE = V2_ONE * 1.5f;
+const D3DXVECTOR2 UI_SELECT_SIZE = V2_ONE * 0.9f;
 
 UISelect::UISelect()
 {
@@ -13,7 +13,7 @@ UISelect::UISelect()
 		desc.DrawObjDesc.DepthEnable = false;
 		desc.DrawObjDesc.Layer = LAYER_WORLD_PLAYER_ACTMARK;
 		desc.DrawObjDesc.Shader = SHADER_UNLIT;
-		desc.TextureID = TEXID_HINT;
+		desc.TextureID = TEXID_HINT2;
 		desc.Size = UI_SELECT_SIZE;
 		m_Polygon2D = new Polygon2D(this, desc);
 	}
