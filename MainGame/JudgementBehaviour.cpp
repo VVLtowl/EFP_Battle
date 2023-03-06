@@ -5,7 +5,7 @@
 #include "Judgement.h"
 #include "JudgementBehaviour.h"
 
-#include "NetworkManager.h"
+#include "MyNetManager.h"
 
 #include "imgui/imgui.h"
 

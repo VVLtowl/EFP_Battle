@@ -13,7 +13,7 @@
 
 #include "ServerBehaviour.h"
 #include "ClientBehaviour.h"
-#include "NetworkManager.h"
+#include "MyNetManager.h"
 
 #include "imgui/imgui.h"
 
@@ -189,28 +189,6 @@ void GameManager::Uninit()
 
 	//clear
 	Clear();
-
-	/*
-	//clear new objects
-	{
-		for (auto player : Players)
-		{
-			delete player;
-		}
-		Players.clear();
-
-		for (auto piece : Pieces)
-		{
-			delete piece;
-		}
-		Pieces.clear();
-	}
-
-	//check network close
-	{
-		NetworkManager::Instance()->Close();
-	}
-	*/
 }
 
 void GameManager::Clear()
@@ -221,6 +199,27 @@ void GameManager::Clear()
 		//tips: exec quit in Executor::~()
 		delete m_Executors.back();
 	}
+
+	m_Players.clear();
+	m_Pieces.clear();
+	m_Bads.clear();
+	m_Goods.clear();
+}
+
+void GameManager::ClearPlayerAndPieces()
+{
+	for (auto p : m_Players)
+	{
+		delete p.second;
+	}
+	for (auto p : m_Pieces)
+	{
+		delete p.second;
+	}
+	m_Players.clear();
+	m_Pieces.clear();
+	m_Bads.clear();
+	m_Goods.clear();
 }
 
 void GameManager::UpdateExecutors()

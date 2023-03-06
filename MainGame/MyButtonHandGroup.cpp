@@ -6,7 +6,7 @@
 
 
 #include "Piece.h"
-#include "NetworkManager.h"
+#include "MyNetManager.h"
 
 #include "ButtonObject.h"
 
@@ -126,7 +126,7 @@ void ButtonHandGroup::InitHandButtonsClickEvent()
 				Piece* piece = btnHand->TargetPiece;
 				//TargetPiece->Hands.emplace_back(handType);
 				//start wait judgement check
-				NetworkManager::Instance()->Piece_RequestSetHand(
+				GetNetSendFunc().Piece_RequestSetHand(
 					piece->m_ID,
 					handType);
 

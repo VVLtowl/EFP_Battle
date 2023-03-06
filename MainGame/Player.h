@@ -32,7 +32,7 @@ public:
 	CampType m_Camp = CampType::NONE;
 
 	//client info, use in server
-	class ClientMember* m_TargetClient = nullptr;
+	struct ClientMember* m_TargetClient = nullptr;
 
 	//piece
 	//std::list<class m_Piece*> SelfPieces;

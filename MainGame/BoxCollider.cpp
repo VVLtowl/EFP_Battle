@@ -2,7 +2,7 @@
 #include "BoxCollider.h"
 
 // @brief	衝突ボックスのヒントを表示
-#define HINT_BOX_COLLIDER
+//#define HINT_BOX_COLLIDER
 
 BoxCollider::BoxCollider(GameObject* owner,
 	BoxColliderDescription boxColDesc,

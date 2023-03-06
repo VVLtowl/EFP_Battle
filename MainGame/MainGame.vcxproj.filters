@@ -178,9 +178,6 @@
     <Filter Include="GameWork\GameLogic\Behaviour\ConcreteBehaviour\ServerBehaviour">
       <UniqueIdentifier>{5b427a5d-6263-4174-afd7-1c6f48b8d4a9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameWork\GameLogic\Network">
-      <UniqueIdentifier>{adf126f9-f379-4198-a1d5-d96581a52926}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameWork\GameLogic\Behaviour\ConcreteBehaviour\Helper">
       <UniqueIdentifier>{95a88279-6a72-4e64-ad47-1fd552ec0fa2}</UniqueIdentifier>
     </Filter>
@@ -213,6 +210,15 @@
     </Filter>
     <Filter Include="GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIGameOver">
       <UniqueIdentifier>{85c8ef2d-34b7-40bb-90fc-fa8038f81248}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="network">
+      <UniqueIdentifier>{c5b19956-5cb3-4936-a44c-ea5613d15c62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="network\MyNetwork">
+      <UniqueIdentifier>{25a01ea6-48af-4af4-86ac-c6bb7b2d141e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="network\SerializedTool">
+      <UniqueIdentifier>{adf126f9-f379-4198-a1d5-d96581a52926}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -486,9 +492,6 @@
     <ClCompile Include="Server.cpp">
       <Filter>GameWork\GameLogic\MainExecutor\Server</Filter>
     </ClCompile>
-    <ClCompile Include="NetworkManager.cpp">
-      <Filter>GameWork\GameLogic\Network</Filter>
-    </ClCompile>
     <ClCompile Include="PlayerBehaviour.cpp">
       <Filter>GameWork\GameLogic\Behaviour\ConcreteBehaviour\PlayerBehaviour</Filter>
     </ClCompile>
@@ -502,7 +505,7 @@
       <Filter>GameWork\Scene</Filter>
     </ClCompile>
     <ClCompile Include="SerializedTool.cpp">
-      <Filter>GameWork\GameLogic\Network</Filter>
+      <Filter>network\SerializedTool</Filter>
     </ClCompile>
     <ClCompile Include="ShowUIHelper.cpp">
       <Filter>GameWork\GameLogic\Behaviour\ConcreteBehaviour\Helper</Filter>
@@ -566,6 +569,18 @@
     </ClCompile>
     <ClCompile Include="UIGameOver.cpp">
       <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIGameOver</Filter>
+    </ClCompile>
+    <ClCompile Include="network\NetworkManager.cpp">
+      <Filter>network</Filter>
+    </ClCompile>
+    <ClCompile Include="network\NetworkObject.cpp">
+      <Filter>network</Filter>
+    </ClCompile>
+    <ClCompile Include="MyNetManager.cpp">
+      <Filter>network\MyNetwork</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkSendFunc.cpp">
+      <Filter>network\MyNetwork</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -866,9 +881,6 @@
     <ClInclude Include="Server.h">
       <Filter>GameWork\GameLogic\MainExecutor\Server</Filter>
     </ClInclude>
-    <ClInclude Include="NetworkManager.h">
-      <Filter>GameWork\GameLogic\Network</Filter>
-    </ClInclude>
     <ClInclude Include="PlayerBehaviour.h">
       <Filter>GameWork\GameLogic\Behaviour\ConcreteBehaviour\PlayerBehaviour</Filter>
     </ClInclude>
@@ -882,7 +894,7 @@
       <Filter>GameWork\Scene</Filter>
     </ClInclude>
     <ClInclude Include="SerializedTool.h">
-      <Filter>GameWork\GameLogic\Network</Filter>
+      <Filter>network\SerializedTool</Filter>
     </ClInclude>
     <ClInclude Include="ShowUIHelper.h">
       <Filter>GameWork\GameLogic\Behaviour\ConcreteBehaviour\Helper</Filter>
@@ -940,6 +952,18 @@
     </ClInclude>
     <ClInclude Include="UIGameOver.h">
       <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIGameOver</Filter>
+    </ClInclude>
+    <ClInclude Include="network\NetworkManager.h">
+      <Filter>network</Filter>
+    </ClInclude>
+    <ClInclude Include="network\NetworkObject.h">
+      <Filter>network</Filter>
+    </ClInclude>
+    <ClInclude Include="MyNetManager.h">
+      <Filter>network\MyNetwork</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkSendFunc.h">
+      <Filter>network\MyNetwork</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

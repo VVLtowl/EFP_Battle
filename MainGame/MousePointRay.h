@@ -2,7 +2,7 @@
 #include "GameObject.h"
 #include "Singleton.h"
 
-#define HINT_MOUSE_RAY
+//#define HINT_MOUSE_RAY
 
 class MousePointRay :
     public GameObject,

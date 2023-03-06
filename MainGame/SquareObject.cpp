@@ -5,7 +5,7 @@ SquareObject::SquareObject()
 {
 	//transform init
 	{
-		m_Transform3D->SetScale(1, 0.5f, 1);
+		//m_Transform3D->SetScale(1, 1, 1);
 	}
 
 	//create polygon3d

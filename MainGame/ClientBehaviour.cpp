@@ -6,7 +6,7 @@
 #include "Server.h"
 #include "ClientBehaviour.h"
 
-#include "NetworkManager.h"
+#include "MyNetManager.h"
 #include "SceneManager.h"
 #include "SerializedTool.h"
 
@@ -25,107 +25,99 @@
 #include <iostream>
 #include <thread>
 
-ClientBehaviour::ClientBehaviour(Client* c, bool isOnce) :
-	m_OwnerClient(c),
+ClientBehaviour::ClientBehaviour(AppClient* c, bool isOnce) :
+	m_AppClient(c),
 	Behaviour(c, isOnce)
 {
 }
 
 
-#pragma region ========== init ==========
-
-void ClientInit::Start()
-{
-	//set default val
-	{
-		m_OwnerClient->m_IsConnected = false;
-		m_OwnerClient->m_JoinSuccess = false;
-		m_OwnerClient->m_ServerPort = 5555;
-		sprintf_s(m_OwnerClient->m_Name, "nameless");
-		sprintf_s(m_OwnerClient->m_ServerIP, "127.0.0.1");
-	}
-
-	//init network manager
-	NetworkManager::Instance()->StartAsClient();
-
-	//test 
-	DebugInfo::TestBlocks.emplace(TESTBLOCKID_CLIENT_WORK, [this]()
-		{
-			ImGui::Begin("Client Working...");
-			{
-				if (m_OwnerClient->m_JoinSuccess)
-				{
-					//show port num
-					ImGui::Text("port: %d",
-						m_OwnerClient->m_ServerPort);
-
-					//show server address
-					ImGui::Text("ip: %s",
-						NetworkManager::Instance()->HostIP);
-
-					//show connected clients number
-					ImGui::Text("connected clients num: %d",
-						m_OwnerClient->m_ClientInfos.size());
-
-					//show self id
-					ImGui::Text("id: %d",
-						m_OwnerClient->m_ID);
-
-					//show self name
-					ImGui::Text("name: %s",
-						m_OwnerClient->m_Name);
-
-
-					//input name
-					ImGui::InputText("Test Msg:\n", m_OwnerClient->m_Chat, 128);
-
-					//send test msg
-					if (ImGui::Button("Send Test Msg"))
-					{
-						//tip: BH_Init is not a loop behaviour
-						//m_OwnerClient->JumpToBH(new ClientSendTestMsg(m_OwnerClient));
-						m_OwnerClient->SendChatMsg();
-					}
-				}
-				else
-				{
-					ImGui::Text("...");
-				}
-			}
-			ImGui::End();
-		}
-	);
-
-	//next bh start in next scene
-	SceneManager::ChangeScene<ClientWaitScene>();
-}
-
-#pragma endregion
-
-#pragma region ========== uninit ==========
-
-void ClientUninit::Start()
-{
-	if(	m_OwnerClient->m_IsConnected)
-	{
-		m_OwnerClient->m_IsConnected = false;
-		//NetworkManager::Instance()->Client_RequestDisconnect();
-	}
-
-	if (m_OwnerClient->m_JoinSuccess)
-	{
-		m_OwnerClient->m_JoinSuccess = false;
-		NetworkManager::Instance()->Client_RequestDisconnect();
-	}
-
-	//close test panel
-	DebugInfo::TestBlocks.erase(TESTBLOCKID_CLIENT_WORK);
-}
-
-#pragma endregion
+//#pragma region ========== init ==========
+//void ClientInit::Start()
+//{
+//	//set default val
+//	{
+//		m_AppClient->m_JoinSuccess = false;
+//		m_AppClient->LaunchMyClient();
+//		memcpy(m_AppClient->m_Name, "nameless", LEN_NAME);
+//	}
+//
+//	//test 
+//	DebugInfo::TestBlocks.emplace(TESTBLOCKID_CLIENT_WORK, [this]()
+//		{
+//			ImGui::Begin("Client Working...");
+//			{
+//				if (m_AppClient->m_JoinSuccess)
+//				{
+//					//show port num
+//					ImGui::Text("server port: %d",
+//						m_AppClient->m_MyClient->m_ServerTCPPort);
+//
+//					//show server address
+//					ImGui::Text("server ip: %s",
+//						m_AppClient->m_MyClient->m_ServerIP.c_str());
+//
+//					//show connected clients number
+//					ImGui::Text("connected clients num: %d",
+//						m_AppClient->m_ClientInfos.size());
+//
+//					//show self id
+//					ImGui::Text("id: %d",
+//						m_AppClient->m_MyClient->m_ClientID);
+//
+//					//show self name
+//					ImGui::Text("name: %s",
+//						m_AppClient->m_Name);
+//
+//
+//					//input name
+//					ImGui::InputText("chat:\n", m_AppClient->m_Chat, 128);
+//
+//					//send test msg
+//					if (ImGui::Button("Send Chat"))
+//					{
+//						//tip: BH_Init is not a loop behaviour
+//						//m_OwnerClient->JumpToBH(new ClientSendTestMsg(m_OwnerClient));
+//						m_AppClient->SendChatMsg();
+//						memcpy(m_AppClient->m_Chat, "", LEN_CHAT);
+//					}
+//				}
+//				else
+//				{
+//					ImGui::Text("...");
+//				}
+//			}
+//			ImGui::End();
+//		}
+//	);
+//
+//	//next bh start in next scene
+//	SceneManager::ChangeScene<ClientWaitScene>();
+//}
+//#pragma endregion
+//
+//#pragma region ========== uninit ==========
+//
+//void ClientUninit::Start()
+//{
+//	//close test panel
+//	DebugInfo::TestBlocks.erase(TESTBLOCKID_CLIENT_WORK);
+//	//if(	m_AppClient->m_IsConnected)
+//	//{
+//	//	m_AppClient->m_IsConnected = false;
+//	//	//NetworkManager::Instance()->Client_RequestDisconnect();
+//	//}
+//
+//	if (m_AppClient->m_JoinSuccess)
+//	{
+//		m_AppClient->m_JoinSuccess = false;
+//		GetNetSendFunc().Client_RequestDisconnect();
+//	}
+//}
+//
+//#pragma endregion
 
 #pragma region ========== select server ==========
-
 void ClientSelectServer::Start()
 {
 	//init val
@@ -144,13 +136,13 @@ void ClientSelectServer::Start()
 			if (m_SelectState == State::SELECT_SERVER)
 			{
 				//input port input port
-				ImGui::InputInt("Port:", &m_OwnerClient->m_ServerPort, 0, 65535);
+				ImGui::InputInt("Port:", &m_AppClient->m_MyClient->m_ServerTCPPort, 0, 65535);
 
 				//input server ip
-				ImGui::InputText("RoomServerIP:", m_OwnerClient->m_ServerIP, 16);
+				ImGui::InputText("RoomServerIP:", &(*m_AppClient->m_MyClient->m_ServerIP.begin()), 16);
 
 				//input client user name
-				ImGui::InputText("Name:", m_OwnerClient->m_Name, 64);
+				ImGui::InputText("Name:", m_AppClient->m_Name, LEN_NAME);
 
 				if (ImGui::Button("Join Server"))
 				{
@@ -179,20 +171,15 @@ void ClientSelectServer::Update()
 
 		if (m_JoinServer)
 		{
-			//init socket and start asynselect
-			NetworkManager::Instance()->SetConnectServerInfo(
-				m_OwnerClient->m_ServerPort,
-				m_OwnerClient->m_ServerIP,
-				true);
 
 			//set up server addr
-			SOCKADDR_IN serverAddr;
+			/*SOCKADDR_IN serverAddr;
 			memset(&serverAddr, 0, LEN_ADDRIN);
 			serverAddr.sin_family = AF_INET;
-			serverAddr.sin_port = htons(m_OwnerClient->m_ServerPort);
+			serverAddr.sin_port = htons(m_AppClient->m_ServerPort);
 			serverAddr.sin_addr.s_addr =
 				*((unsigned long*)NetworkManager::Instance()->HostEnt->h_addr);
-			memcpy(&m_OwnerClient->m_ServerAddr, &serverAddr, LEN_ADDRIN);
+			memcpy(&m_AppClient->m_ServerAddr, &serverAddr, LEN_ADDRIN);*/
 
 			//jump behaviour
 			//JumpToBH(new ClientRequestJoinServer(m_OwnerClient));
@@ -208,7 +195,7 @@ void ClientSelectServer::Update()
 		PrintState("try join");
 
 		//check connect at first or request directly
-		m_OwnerClient->TryJoinServer();
+		m_AppClient->TryJoinServer();
 
 		//next to wait
 		m_SelectState = State::WAIT_SERVER_CHECK;
@@ -245,8 +232,6 @@ void ClientSelectServer::Update()
 	}
 	}
 }
-
-
 #pragma endregion
 
 #pragma region ========== tcp try connect ==========
@@ -260,32 +245,23 @@ void ClientTryConnectServer::Reset(std::function<void()> onSuccess, std::functio
 	OnConnectSuccess = onSuccess;
 	OnConnectFail = onFail;
 
-	if (NetworkManager::Instance()->IsTCP)
-		//tcp try connect server
+	//start communication after connected
+	if (m_AppClient->m_IsConnected==false)
+		//no connect
 	{
-		//start communication after connected
-		if (!m_OwnerClient->m_IsConnected)
-		{
-			//reset time count
-			m_TimeStamp = GetTickCount();
+		//reset time count
+		m_TimeStamp = GetTickCount();
 
-			//non-blocking connect
-			NetworkManager::Instance()->Client_TryConnectServer();
-			//std::thread thread1(&NetworkManager::Client_TryConnectServer, NetworkManager::Instance());
-			//thread1.detach();
+		//non-blocking connect
+		GetNetSendFunc().Client_TryConnectServer();
+		//std::thread thread1(&NetworkManager::Client_TryConnectServer, NetworkManager::Instance());
+		//thread1.detach();
 
-			//set state
-			m_ConnectState = State::WAIT_CONNECT;
-		}
-		else
-		{
-			//todo
-			//set state
-			m_ConnectState = State::NONE;
-		}
+		//set state
+		m_ConnectState = State::WAIT_CONNECT;
 	}
 	else
-		//udp dont need connect
+		//connected 
 	{
 		//todo
 		//set state
@@ -297,10 +273,25 @@ void ClientTryConnectServer::Update()
 {
 	switch (m_ConnectState)
 	{
+	case State::NONE:
+	{
+		PrintUpdateState("none");
+		//finish
+		NextState();
+		break;
+	}
+
 	case State::WAIT_CONNECT:
 	{
 		m_TimeCount = GetTickCount() - m_TimeStamp;
 		PrintUpdateState("wait connect(" + std::to_string(m_TimeCount) + ")");
+
+		//time out
+		if (m_TimeCount >= m_TimeOut)
+		{
+			//set state for check end event
+			m_ConnectState = State::CONNECT_TIME_OUT;
+		}
 
 		break;
 	}
@@ -310,30 +301,42 @@ void ClientTryConnectServer::Update()
 		PrintState("check connect");
 
 		//use time out to check connect successfully
-		m_TimeCount = GetTickCount()-m_TimeStamp;
+		m_TimeCount = GetTickCount() - m_TimeStamp;
 		if (m_TimeCount < m_TimeOut)
 		{
-			DebugInfo::Print("connect success");
-
-			//event
-			OnConnectSuccess();
-			
-			//connect
-			m_OwnerClient->m_IsConnected = true;
-
 			//set state for check end event
 			m_ConnectState = State::CONNECT_SUCCEED;
 		}
 		else
 		{
-			DebugInfo::Print("connect time out");
-
-			//event
-			OnConnectFail(); 
-
 			//set state for check end event
 			m_ConnectState = State::CONNECT_TIME_OUT;
 		}
+
+		break;
+	}
+
+	case State::CONNECT_TIME_OUT:
+	{
+		DebugInfo::Print("connect time out");
+
+		//event
+		OnConnectFail();
+
+		//finish
+		NextState();
+		break;
+	}
+
+	case State::CONNECT_SUCCEED:
+	{
+		DebugInfo::Print("connect success");
+
+		//set connected
+		m_AppClient->m_IsConnected = true;
+
+		//event
+		OnConnectSuccess();
 
 		//finish
 		NextState();
@@ -349,19 +352,10 @@ void ClientTryConnectServer::Update()
 void ClientRequestJoinServer::Start()
 {
 	//request server check joinable
-	if (NetworkManager::Instance()->IsTCP)
-		//tcp
+	//start communication after connected
+	if (m_AppClient->m_IsConnected == true)
 	{
-		//start communication after connected
-		if (m_OwnerClient->m_IsConnected)
-		{
-			NetworkManager::Instance()->Client_RequestJoinServer();
-		}
-	}
-	else
-		//udp
-	{
-		NetworkManager::Instance()->Client_RequestJoinServer();
+		GetNetSendFunc().Client_RequestJoinServer(m_AppClient);
 	}
 }
 
@@ -385,18 +379,18 @@ void ClientWaitRoom::Start()
 			{
 				//show waiting clients num
 				ImGui::Text("num of player: %d / %d",
-					m_OwnerClient->m_ClientInfos.size(),
-					m_OwnerClient->m_TargetClientNum);
+					m_AppClient->m_ClientInfos.size(),
+					m_AppClient->m_TargetClientNum);
 				ImGui::Text("");
 
 				//show player ready
-				for (auto idMem : m_OwnerClient->m_ClientInfos)
+				for (auto idInfo : m_AppClient->m_ClientInfos)
 				{
-					int id = idMem.first;
-					ClientMember* mem = idMem.second;
+					int id = idInfo.first;
+					ClientInfo& mem = idInfo.second;
 					ImGui::Text("%s [%s]",
-						std::string("[" + std::to_string(id) + "]" + mem->Name).c_str(),
-						mem->Ready ? std::string("ready").c_str() : std::string("wait").c_str());
+						std::string("[" + std::to_string(id) + "]" + mem.Name).c_str(),
+						mem.Ready ? std::string("ready").c_str() : std::string("wait").c_str());
 				}
 
 				//set ready
@@ -430,7 +424,7 @@ void ClientWaitRoom::Update()
 
 		if (m_Ready)
 		{
-			NetworkManager::Instance()->Client_RequestSetReady(true);
+			GetNetSendFunc().Client_RequestSetReady(m_AppClient->m_MyClient->m_ClientID, true);
 
 			//when connect success, set wait server check and request ID
 			m_WaitState = State::WAIT_START;
@@ -517,7 +511,7 @@ void ClientWaitPiecesFinish::Update()
 #pragma endregion
 
 #pragma region ========== show step ==========
-ClientShowStep::ClientShowStep(Client* c):
+ClientShowStep::ClientShowStep(AppClient* c):
 	ClientBehaviour(c)
 {
 	ShowHelper = new ShowUIHelper();
@@ -574,7 +568,7 @@ void ClientShowStep::Reset(int stepType, std::string endInfo, std::function<void
 		}
 
 		UITurnStart* uiTurnStart = new UITurnStart();
-		uiTurnStart->SetNumber(m_OwnerClient->m_TurnCount);
+		uiTurnStart->SetNumber(m_AppClient->m_TurnCount);
 		ShowHelper->m_UIObject = uiTurnStart;
 		break;
 	}
@@ -587,6 +581,7 @@ void ClientShowStep::Reset(int stepType, std::string endInfo, std::function<void
 
 	case Judgement::ShowStepType::ACT_START:
 	{
+		m_AppClient->ClearPiecesHandUI();
 		ShowHelper->m_UIObject = new UIActStart();
 		break;
 	}
@@ -610,7 +605,7 @@ void ClientShowStep::Reset(int stepType, std::string endInfo, std::function<void
 
 #pragma region ========== show game over ==========
 
-ClientShowGameOver::ClientShowGameOver(Client* c):
+ClientShowGameOver::ClientShowGameOver(AppClient* c):
 	ClientBehaviour(c)
 {
 	m_ShowHelper = new ShowGameOverUIHelper();

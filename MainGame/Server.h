@@ -1,46 +1,51 @@
 #pragma once
 #include "Executor.h"
 #include "Singleton.h"
+#include "network/NetworkObject.h"
 
 #include <list>
 #include <string>
 
-//for server keep clients
-class ClientMember
+struct ClientMember
 {
-public:
-    SOCKADDR_IN Address;
+    int ID;
     std::string Name;
-    int TCPSocketID;//just for tcp
     bool Ready;
-    //int ID;//need server check//give up, all use TCPSocketID
+    SOCKET* TCPSock;
+    SOCKADDR_IN* UDPAddr;
 
-public:
-    ClientMember(
-        const SOCKADDR_IN& addr,
-        const std::string& name);
+    //disconnect flag
+    bool Disconnect = false;
 
-    ClientMember(
-        const int tcpSockID,
-        const std::string& name);
+    //for set camp and piece
+    bool SetCampPiece = false;
+    CampType Camp=CampType::NONE;
+    CharacterType SelfPiece[4] = { CharacterType::NONE };
 };
 
-
-class Server :
-    public Singleton<Server>,
+class AppServer :
+    public Singleton<AppServer>,
     public Executor
 {
 public:
-    Server();
-    ~Server();
-    std::string Name() override { return "server"; };
+    AppServer();
+    ~AppServer();
+    std::string Name() override { return "app server"; };
+
+    /*********************************************************
+    * @brief    server network object
+    ********************************************************/
+public:
+    class MyServer* m_MyServer = nullptr;
 
     /*********************************************************
     * @brief    game room data
     ********************************************************/
 public:
-    int m_JoinedClientNum=0;
-    int m_TargetClientNum=0;
+    //client member
+    std::unordered_map<int, ClientMember*> m_ClientMembers;
+    int m_JoinedClientNum = 0;
+    int m_TargetClientNum = 0;
 
     //for input
     int m_Port;
@@ -54,45 +59,25 @@ public:
     //for start game button
     bool m_StartGame = false;
 
-    /*********************************************************
-    * @brief    manage client member
-    ********************************************************/
-public:
-    //for broadcast, manage clients connect
-    std::unordered_map<int, ClientMember*> m_ClientMembers;
-public:
-    void RegisterClientMemberAndSetID(int id,ClientMember* c);
-    void QuitClientMember(ClientMember* c);
-    void QuitClientMember(int id);
-    void ClearClientMembers();
-    
-    /*********************************************************
-    * @brief    state
-    ********************************************************/
-    int State;
-    enum class State_WaitClientsJoin
-    {
-        WAIT_CLIENT_REQUEST,
-        BACK_TO_INPUT_ROOM,
-        FINISH_WAIT,
-
-        NONE,
-    };
-
 
     /*********************************************************
     * @brief    çsà◊
     ********************************************************/
 public:
+    void Init();
+    void Uninit();
+    void ClearMember();
+
     void StartInWaitRoomScene();
+
     void StartInputGameRoom();
+    void LaunchMyServer();
+
     void StartWaitClientsJoin();
     void StartCheckClientJoin(int tcpID,std::string newClientName);
     void SetClientDisconnect(int id);
     void SetClientReady(int id, bool ready);
 
-    class ServerInit* BH_Init;
-    class ServerUninit* BH_Uninit;
     class ServerInputGameRoom* BH_InputGameRoom;
     class ServerWaitClientsJoin* BH_WaitClientsJoin;
 };

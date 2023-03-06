@@ -14,23 +14,26 @@
 #include "TransformAnime.h"
 #include "WorldToScreen.h"
 
-#include "NetworkManager.h"
+#include "MyNetManager.h"
 
 void GameScene::MainLoad()
 {
 	//test game scene load object
-	if (0)
+	if (1)
 	{
 		//test plane
 		Plane* plane = GameObjectManager::Create<Plane>();
-		plane->GetTransform()->SetRotation(PI / 2.0f, 0, 0);
+		plane->Image->Texture = DrawManager::Textures[TEXID_OIL_3];
+		plane->Image->Texcoord = { 0,0,5,5 };
+		plane->GetTransform()->SetRotation(PI_HALF, 0, 0);
 		plane->GetTransform()->SetPosition(0, 0, 0);
+		plane->GetTransform()->SetScale(10, 10, 10);
 
 		//test set main camera look at cubeCenter pos
-		CameraManager::GetMainCamera()->m_CmrLookAt->m_TargetTransform = plane->GetTransform();
+		//CameraManager::GetMainCamera()->m_CmrLookAt->m_TargetTransform = plane->GetTransform();
 
 		//test set main light look at cubeCenter pos
-		LightManager::GetMainLight()->LightLookAt->m_TargetTransform = plane->GetTransform();
+		//LightManager::GetMainLight()->LightLookAt->m_TargetTransform = plane->GetTransform();
 
 		//test light
 		//MainLight* lit = GameObjectManager::Create<MainLight>();
@@ -119,7 +122,7 @@ void GameScene::MainLoad()
 	}
 
 	//logic entrance
-	Client::Instance()->StartInGameScene();
+	AppClient::Instance()->StartInGameScene();
 }
 
 void GameScene::MainUnload()
@@ -131,7 +134,7 @@ void GameScene::MainUnload()
 	BehaviourFactory::Clear();
 
 	//clear data
-	Client::Instance()->ClearDataInGameScene();
+	AppClient::Instance()->ClearDataInGameScene();
 }
 
 void GameScene::MainUpdate()

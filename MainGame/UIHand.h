@@ -2,7 +2,6 @@
 #include "GameObject.h"
 #include "RPS.h"
 
-const D3DXVECTOR2 UI_HAND_SIZE = { 20,20 };
 
 class UIHand :
 	public GameObject

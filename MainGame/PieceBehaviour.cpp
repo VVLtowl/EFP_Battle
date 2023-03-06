@@ -7,7 +7,7 @@
 #include "Player.h"
 #include "Judgement.h"
 #include "Client.h"
-#include "NetworkManager.h"
+#include "MyNetManager.h"
 
 #include "PieceBehaviour.h"
 
@@ -99,7 +99,7 @@ void PieceShowHand::Start()
 		{
 			count++;//count: 0~size-1
 			UIHand* uiHand = new UIHand();
-			m_Piece->m_UIShowHands.emplace_back(uiHand);
+			m_Piece->m_UIShowHands.emplace_back(uiHand);//register
 			uiHand->SetHandType(handType);
 			uiHand->GetTransform()->SetPosition(0, 10000, 0);
 			uiHand->FollowWorldObject->SetTargetTransform(followTrans);
@@ -135,9 +135,7 @@ void PieceShowHand::Start()
 					ComputeHermiteVec3 computeFunc;
 					new Anime_Position(animator, desc, computeFunc);
 				}
-			}
-			
-		}
+			}		}
 	}
 }
 
@@ -468,6 +466,8 @@ void PieceShowCheckActpoint::Update()
 			m_FrameCount >= DURATION_CHECKACTPOINT_LEAST)
 		{
 			//next state
+			//todo
+			//m_CheckState = State::WAIT_SERVER_SET_ACTPOINT;
 			m_CheckState = State::FINISH;
 
 			break;
@@ -481,12 +481,20 @@ void PieceShowCheckActpoint::Update()
 				{
 					m_Piece->m_ActPoint = m_TargetActpoint;
 					m_Piece->m_UIShowActpoint->StartNumberChangeAnime(m_TargetActpoint);
+					m_TargetActpoint = 0;
 				}
 			}
 
 			m_FrameCount += FRAME_STRIDE;
 		}
 
+		break;
+	}
+
+
+	case State::WAIT_SERVER_SET_ACTPOINT:
+	{
+		PrintUpdateState("wait server set actpoint");
 		break;
 	}
 
@@ -797,7 +805,7 @@ void PieceInputHand::Update()
 							Piece* piece = btnHand->TargetPiece;
 							//TargetPiece->Hands.emplace_back(handType);
 							//start wait judgement check
-							NetworkManager::Instance()->Piece_RequestSetHand(
+							GetNetSendFunc().Piece_RequestSetHand(
 								piece->m_ID,
 								handType);
 
@@ -860,16 +868,19 @@ void PieceInputHand::Update()
 	case State::WAIT_SHOW_UI_FINISH:
 	{
 		//wait button panel finish showing anime
+		PrintUpdateState("wait show ui finish");
 		break;
 	}
 	case State::INPUT:
 	{
-		//wait player celect button
+		//wait player select button
+		PrintUpdateState("wait player input");
 		break;
 	}
 	case State::WAIT_JUDGE_SET:
 	{
 		//wait request server judgement to check and command back
+		PrintUpdateState("wait jud set hand");
 		break;
 	}
 	case State::FINISH:

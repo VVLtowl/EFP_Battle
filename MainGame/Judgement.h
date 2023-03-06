@@ -13,11 +13,21 @@
 class PlayMode
 {
 public:
-	int GetPlayerNum()const { return PlayerDescs.size(); };
+	void SetBadGoodTargetNum(int bad, int good) { m_TargetBadNum = bad; m_TargetGoodNum = good; };
+	int GetBadNum()const;
+	int GetGoodNum()const;
+private:
+	int m_TargetBadNum;
+	int m_TargetGoodNum;
+
 
 public:
-	
-	std::vector<PlayerDesc> PlayerDescs;
+	void AddPlayerDesc(const PlayerDesc& desc);
+	PlayerDesc& GetPlayerDesc(int id) { return m_PlayerDescs[id]; };
+	int GetPlayerNum()const { return m_PlayerDescs.size(); };
+	void Clean();
+private:
+	std::vector<PlayerDesc> m_PlayerDescs;
 };
 
 #pragma endregion
@@ -30,7 +40,7 @@ public:
 	std::string Name() override { return "judgement"; };
 
 public:
-	PlayMode Mode;
+	PlayMode m_Mode;
 
 	/*********************************************************
 	* @brief	ジャッジメント行為
@@ -43,6 +53,7 @@ public:
 	void GameEnd();//in game scene
 
 	void ShuffleAndSetPiecesToPlayers();//after client num ready
+	void SetPlayerClient();
 	void SetPiecesInfoBlocks(bool show);
 	void CalculatePiecesActpoint();
 	void PrepareBoardAndPieces();
@@ -65,7 +76,7 @@ public:
 	void StartWaitClientsShowStepTurnStart();
 	void StartWaitClientsShowStepRPSStart();
 	void StartWaitClientsShowStepActStart();
-	void StartWaitClientsShowStepTurnEnd();
+	//void StartWaitClientsShowStepTurnEnd();
 
 	void StartWaitClientsInputRPS();
 	void StartCommandShowPiecesHand();

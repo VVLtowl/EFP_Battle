@@ -51,7 +51,8 @@ void PlayerWaitSelfPiecesInputHand::Update()
 		}
 
 		//set up piece input hand BH
-		piece->StartInputHand([this]()
+		piece->StartInputHand(
+			[this]()
 			{
 				InputFinish = true;
 			});
@@ -71,7 +72,8 @@ void PlayerWaitSelfPiecesInputHand::Update()
 		}
 
 		//set up piece input hand BH
-		piece->StartInputHand([this]()
+		piece->StartInputHand(
+			[this]()
 			{
 				InputFinish = true;
 			});
@@ -93,7 +95,7 @@ void PlayerWaitSelfPiecesInputHand::Update()
 	case State::FINISH://execute one frame
 	{
 		//reset camera
-		Client::Instance()->ResetCameraLookAt();
+		AppClient::Instance()->ResetCameraLookAt();
 
 		NextState();
 		break;

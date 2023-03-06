@@ -19,7 +19,7 @@
 #include "LookAt.h"
 
 #include "Board.h"
-#include "NetworkManager.h"
+#include "MyNetManager.h"
 
 Piece::Piece()
 {
@@ -84,12 +84,18 @@ void Piece::FinishSetHand(HandType handType)
 		}*/
 		SetUISelect(false);
 
+		if (m_OwnerPlayer)
+		{
+			//show self hand
+			SetUIHands(true);
+		}
+
 		//create finish mark
 		SetUIFinish(true);
 	}
 
 	//check continue input behaviour
-	if(BH_InputHand)
+	if(m_ExecuteBehaviour == BH_InputHand)
 	{
 		if (BH_InputHand->InputState == PieceInputHand::State::WAIT_JUDGE_SET)
 		{
@@ -152,7 +158,7 @@ void Piece::StartInputSelectAct()
 									BH_Input->InputState = PieceInput::State::FINISH;
 
 									//tell server judgement this piece has finished act
-									NetworkManager::Instance()->Piece_RequestFinishAct(m_ID);
+									GetNetSendFunc().Piece_RequestFinishAct(m_ID);
 								};
 
 								//next state
@@ -355,7 +361,7 @@ void Piece::StartInputMove()
 									BH_Input->MainUpdate();
 
 									//request server to judge
-									NetworkManager::Instance()->Piece_RequestMoveAct(m_ID, square->m_ID);
+									GetNetSendFunc().Piece_RequestMoveAct(m_ID, square->m_ID);
 								};
 
 								//inputBH's next state
@@ -450,7 +456,7 @@ void Piece::StartMove(int squareID)
 	move->SetEndEvent("NotifyCountPlayerFinished", 
 		[this]()
 		{
-			NetworkManager::Instance()->Client_NotifyCountPlayerFinished();
+			GetNetSendFunc().Client_NotifyCountPlayerFinished();
 		});
 	StartBH(move);
 }
@@ -463,8 +469,11 @@ void Piece::StartCameraLookAtThis(float duration, std::function<void()> endEvent
 		D3DXVECTOR3 endPos;
 		Camera* cmr = CameraManager::GetMainCamera();
 		{
-			D3DXVECTOR3 farPos = Board::Instance()->m_CameraOrientation->GetTransform()->GetWorldPosition();
-			D3DXVECTOR3 piecePos = m_PieceObject->GetUITransform(PieceObject::UITID::PAWN_CENTER)->GetTransform()->GetWorldPosition();
+			D3DXVECTOR3 farPos = Board::Instance()->
+				m_CameraOrientation->GetTransform()->GetWorldPosition();
+			D3DXVECTOR3 piecePos = m_PieceObject->
+				GetUITransform(PieceObject::UITID::PAWN_CENTER)->
+				GetTransform()->GetWorldPosition();
 			D3DXVECTOR3 dir = piecePos - farPos;
 			float len = 12.5f;
 			D3DXVec3Normalize(&dir, &dir);
@@ -509,7 +518,7 @@ void Piece::StartCaught(int prisonSquareID)
 	caught->SetEndEvent("NotifyCountPlayerFinished", 
 		[this]()
 		{
-			NetworkManager::Instance()->Client_NotifyCountPlayerFinished();
+			 GetNetSendFunc().Client_NotifyCountPlayerFinished();
 		});
 	StartBH(caught);
 }
@@ -517,19 +526,23 @@ void Piece::StartCaught(int prisonSquareID)
 void Piece::StartEscape(int escapeSquareID)
 {
 	//update square
-	Square* newSqr = Board::Instance()->Squares[escapeSquareID];
+	//todo; into goal square
+	//Square* newSqr = Board::Instance()->Squares[escapeSquareID];
 	//Square* oldSqr = FootOnSquare;//oldSqr has been set by piece move
-	m_FootOnSquare = newSqr;
-	newSqr->m_Piece = this;
+	//m_FootOnSquare = newSqr;
+	//newSqr->m_Piece = this;
+
+	D3DXVECTOR3 targetPos = m_FootOnSquare->m_SquareObject->GetTransform()->GetWorldPosition() + D3DXVECTOR3(0, -10, 0);
+	m_FootOnSquare = nullptr;
 
 	//start show piece escape
 	PieceShowEscape* escape = new PieceShowEscape(this);
-	escape->Reset(newSqr->m_SquareObject->
-		GetTransform()->GetWorldPosition() + OFFSET_PIECE_ON_SQUARE);
+	//escape->Reset(newSqr->m_SquareObject->GetTransform()->GetWorldPosition() + OFFSET_PIECE_ON_SQUARE);
+	escape->Reset(targetPos);
 	escape->SetEndEvent("NotifyCountPlayerFinished", 
 		[this]()
 		{
-			NetworkManager::Instance()->Client_NotifyCountPlayerFinished();
+			GetNetSendFunc().Client_NotifyCountPlayerFinished();
 		});
 	StartBH(escape);
 }
@@ -572,7 +585,7 @@ void Piece::SetUIFinish(bool show)
 		{
 			UIFinishMark* finishMark = new UIFinishMark();
 			finishMark->FollowWorldObject->SetTargetTransform(
-				m_PieceObject->GetUITransform(PieceObject::UITID::PAWN_CENTER)->GetTransform());
+				m_PieceObject->GetUITransform(PieceObject::UITID::PAWN_UP)->GetTransform());
 
 			m_FinishMark = finishMark;
 		}
@@ -622,6 +635,21 @@ void Piece::SetUIHands(bool show)
 
 		//	//todo
 		//}
+		//if (m_UIShowHands.empty())
+		{
+			int count = 0;
+			for (auto hand : m_Hands)
+			{
+				UIHand* handUI = new UIHand();
+				handUI->SetHandType(hand);
+				handUI->FollowWorldObject->SetTargetTransform(
+					m_PieceObject->GetUITransform(PieceObject::UITID::PAWN_CENTER)->GetTransform());
+				handUI->GetTransform()->SetPosition(0, count * UI_MARK_SIZE.y, 0);
+
+				m_UIShowHands.emplace_back(handUI);
+				count++;
+			}
+		}
 	}
 	else
 	{
@@ -659,10 +687,15 @@ void Piece::SetUIActpoint(bool show)
 	}
 }
 
+
+
 std::string CampTypeName(CampType type)
 {
 	switch (type)
 	{
+	case CampType::NONE:
+		return std::string("none");
+
 	case CampType::BAD:
 		return std::string("bad");
 

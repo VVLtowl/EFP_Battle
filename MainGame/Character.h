@@ -4,9 +4,12 @@
 
 enum class CharacterType
 {
+	NONE,
+
 	NORMALBAD,
 	NORMALGOOD,
 };
+std::string CharacterTypeName(CharacterType type);
 
 //base
 class Character

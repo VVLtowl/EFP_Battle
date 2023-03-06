@@ -1,11 +1,17 @@
 #include "main.h"
-#include "Server.h"
 #include "Judgement.h"
 #include "ServerBehaviour.h"
-#include "NetworkManager.h"
+#include "MyNetManager.h"
+#include "Server.h"
 
-Server::Server()
+#include "imgui/imgui.h"
+
+AppServer::AppServer()
 {
+	//create server (server_as)
+	m_MyServer = new MyServer(MyNetManager::Instance());
+	MyNetManager::Instance()->m_TargetAppServer = this; 
+
 	//reset room data
 	m_JoinedClientNum = 0;
 	m_TargetClientNum = 0;
@@ -16,85 +22,98 @@ Server::Server()
 	m_StartGame = false;
 
 	//create behaviour
-	BH_Init = new ServerInit(this);
-	BH_Uninit = new ServerUninit(this);
+	//BH_Init = new ServerInit(this);
+	//BH_Uninit = new ServerUninit(this);
 	BH_InputGameRoom = new ServerInputGameRoom(this);
 	BH_WaitClientsJoin = new ServerWaitClientsJoin(this);
 }
 
-Server::~Server()
+AppServer::~AppServer()
 {
-	//delete behaviour by base class destructor
+	m_ClientMembers.clear();
+	delete m_MyServer;
+	MyNetManager::Instance()->m_TargetAppServer = nullptr;
 }
 
+#pragma region ========== behaviour ==========
 
-#pragma region ========== manage client member ==========
-
-ClientMember::ClientMember(const SOCKADDR_IN& addr, const std::string& name) :
-	Name(name),
-	Ready(false)
+void AppServer::Init()
 {
-	//constructor set
-	memcpy(&Address, &addr, LEN_ADDRIN);
-
-	//wait to set id
-	//ID = -1;
-
-	//useless in udp
-	TCPSocketID = -1;
-}
-
-ClientMember::ClientMember(const int tcpSockID, const std::string& name):
-	TCPSocketID(tcpSockID),
-	Name(name),
-	Ready(false)
-{
-	//wait to set id
-	//ID = -1;
-
-	//useless in tcp
-	memset(&Address, 0, LEN_ADDRIN);
-}
-
-void Server::RegisterClientMemberAndSetID(int id, ClientMember* c)
-{
-	m_ClientMembers.emplace(id, c);
-
-	//set client id
-	c->TCPSocketID = id;
-
-	m_JoinedClientNum++;
-}
-
-void Server::QuitClientMember(ClientMember* c)
-{
-	m_ClientMembers.erase(c->TCPSocketID);
-		
-	m_JoinedClientNum--;
-}
-
-void Server::QuitClientMember(int id)
-{
-	m_ClientMembers.erase(id);
-
-	m_JoinedClientNum--;
-}
-
-void Server::ClearClientMembers()
-{
-	for (auto mem : m_ClientMembers)
+	//set default val
 	{
-		delete mem.second;
+		m_JoinedClientNum = 0;
+		m_TargetClientNum = Judgement::Instance()->m_Mode.GetPlayerNum();
+		m_Port = 5555;
+		m_OpenGameRoom = false;
+		m_ResetGameRoom = false;
+		m_StartGame = false;
+	}
+
+	//test 
+	DebugInfo::TestBlocks.emplace(TESTBLOCKID_SERVER_WORK, [this]()
+		{
+			ImGui::Begin("Server Working...");
+			{
+				if (m_OpenGameRoom)
+				{
+					//show port num
+					ImGui::Text("port: %d",
+						m_MyServer->m_TCPPort);
+
+					//show server address
+					ImGui::Text("ip: %s",
+						m_MyServer->m_IP.c_str());
+
+					//show connected clients number
+					ImGui::Text("connected clients num: %d",
+						m_JoinedClientNum);
+
+					//test for chat
+					//todo
+				}
+				else
+				{
+					ImGui::Text("...");
+				}
+			}
+			ImGui::End();
+		});
+}
+
+void AppServer::Uninit()
+{
+	//close test panel
+	DebugInfo::TestBlocks.erase(TESTBLOCKID_SERVER_WORK);
+
+	//set default val
+	{
+		m_JoinedClientNum = 0;
+		m_TargetClientNum = 0;
+		m_OpenGameRoom = false;
+		m_ResetGameRoom = false;
+		m_StartGame = false;
+	}
+
+	if (m_OpenGameRoom)
+	{
+		m_OpenGameRoom = false;
+		GetNetSendFunc().Server_CommandDisconnect();
+	}
+
+}
+
+void AppServer::ClearMember()
+{
+	while (m_ClientMembers.empty() == false)
+	{
+		auto idMem = m_ClientMembers.begin();
+		delete (*idMem).second;
+		m_ClientMembers.erase((*idMem).first);
 	}
 	m_ClientMembers.clear();
 }
 
-
-#pragma endregion
-
-#pragma region ========== behaviour ==========
-
-void Server::StartInWaitRoomScene()
+void AppServer::StartInWaitRoomScene()
 {
 	if (m_OpenGameRoom)
 	{
@@ -106,7 +125,7 @@ void Server::StartInWaitRoomScene()
 	}
 }
 
-void Server::StartInputGameRoom()
+void AppServer::StartInputGameRoom()
 {
 	BH_InputGameRoom->Reset();
 	BH_InputGameRoom->SetEndEvent("StartWaitClientsJoin", 
@@ -117,21 +136,32 @@ void Server::StartInputGameRoom()
 	StartBH(BH_InputGameRoom);
 }
 
-void Server::StartWaitClientsJoin()
+void AppServer::LaunchMyServer()
+{
+	//start server
+	m_MyServer->Launch();
+	m_MyServer->Bind();
+	m_MyServer->Listen();
+}
+
+void AppServer::StartWaitClientsJoin()
 {
 	BH_WaitClientsJoin->Reset();
 	BH_WaitClientsJoin->SetEndEvent("StartWaitClientsCreatePlayer", 
 		[this]()
 		{
-			if (State == (int)State_WaitClientsJoin::FINISH_WAIT)
+			if (BH_WaitClientsJoin->m_WaitState == 
+				ServerWaitClientsJoin::State::FINISH_WAIT)
 			{
 				StartBH(nullptr);
 
 				//judgement create players and pieces
 				Judgement::Instance()->ShuffleAndSetPiecesToPlayers();
+				Judgement::Instance()->SetPlayerClient();
 				Judgement::Instance()->StartWaitClientsCreatePlayer();
 			}
-			else if (State == (int)State_WaitClientsJoin::BACK_TO_INPUT_ROOM)
+			else if (BH_WaitClientsJoin->m_WaitState == 
+				ServerWaitClientsJoin::State::BACK_TO_INPUT_ROOM)
 			{
 				StartInputGameRoom();
 			}
@@ -139,43 +169,46 @@ void Server::StartWaitClientsJoin()
 	StartBH(BH_WaitClientsJoin);
 }
 
-void Server::StartCheckClientJoin(int tcpID, std::string newClientName)
+void AppServer::StartCheckClientJoin(int tcpID, std::string newClientName)
 {
 	DebugInfo::Print("check new client[" + newClientName + "] join");
 
-	if (NetworkManager::Instance()->IsTCP)
-	{
-		JumpToBH(new ServerCheckClientJoin(
-			this, tcpID, newClientName));
-	}
+	//use tcp
+	JumpToBH(new ServerCheckClientJoin(
+		this,
+		tcpID, 
+		newClientName));
 }
 
-void Server::SetClientDisconnect(int id)
+void AppServer::SetClientDisconnect(int id)
 {
-	ClientMember* disconnectClient = m_ClientMembers[id];
+	//copy! for send msg
+	ClientMember disconnectClient = *m_ClientMembers[id];
+	disconnectClient.Disconnect = true;
+
+	//delete
+	delete m_ClientMembers[id];
+	m_ClientMembers.erase(id);
+
+	//close tcp sock
+	m_MyServer->FreeClientID(id);
+
+
 
 	//set quit info before close and quit
 	std::string info =
 		"- " +
-		std::string("[" + std::to_string(disconnectClient->TCPSocketID) + "]") +
-		disconnectClient->Name +
+		std::string("[" + std::to_string(id) + "]") +
+		disconnectClient.Name +
 		" quit room";
 	DebugInfo::PrintNetMsg(info.c_str());
 
-	//close tcp sock
-	if (NetworkManager::Instance()->IsTCP)
-	{
-		int tcpSockID = disconnectClient->TCPSocketID;
-		NetworkManager::Instance()->CloseTCPSock(tcpSockID);
-	}
-
 	//update client members and notify other clients
-	QuitClientMember(id);
-	NetworkManager::Instance()->Server_CommandUpdateJoinedNum(disconnectClient);
-	NetworkManager::Instance()->Server_BroadcastTestMsgToShow(info.c_str());
+	GetNetSendFunc().Server_CommandUpdateJoinedNum(&disconnectClient);
+	GetNetSendFunc().Server_BroadcastTestMsgToShow(info.c_str());
 }
 
-void Server::SetClientReady(int id,bool ready)
+void AppServer::SetClientReady(int id,bool ready)
 {
 	DebugInfo::Print(
 		"set client[" +
@@ -184,11 +217,11 @@ void Server::SetClientReady(int id,bool ready)
 		(ready ? "true" : "false") +
 		"]");
 
-	ClientMember* readyClient = m_ClientMembers[id];
-	readyClient->Ready = ready;
+	ClientMember& readyClient = *m_ClientMembers[id];
+	readyClient.Ready = ready;
 
 	//command all clients update client info
-	NetworkManager::Instance()->Server_CommandUpdateJoinedNum(readyClient);
+	GetNetSendFunc().Server_CommandUpdateJoinedNum(&readyClient);
 }
 
 #pragma endregion

@@ -156,7 +156,10 @@
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ClientBehaviour.cpp" />
     <ClCompile Include="LoopList.cpp" />
-    <ClCompile Include="NetworkManager.cpp" />
+    <ClCompile Include="MyNetManager.cpp" />
+    <ClCompile Include="NetworkSendFunc.cpp" />
+    <ClCompile Include="network\NetworkManager.cpp" />
+    <ClCompile Include="network\NetworkObject.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Executor.cpp" />
     <ClCompile Include="FreeCamera.cpp" />
@@ -273,7 +276,10 @@
     <ClInclude Include="Client.h" />
     <ClInclude Include="ClientBehaviour.h" />
     <ClInclude Include="LoopList.h" />
-    <ClInclude Include="NetworkManager.h" />
+    <ClInclude Include="MyNetManager.h" />
+    <ClInclude Include="NetworkSendFunc.h" />
+    <ClInclude Include="network\NetworkManager.h" />
+    <ClInclude Include="network\NetworkObject.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="FreeCamera.h" />
     <ClInclude Include="GameScene.h" />

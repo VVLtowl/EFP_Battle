@@ -98,6 +98,17 @@ const int DebugInfo::PrintNetMsg(std::string info)
 	return out;
 }
 
+void DebugInfo::ClearNetMsg()
+{
+	int id = 0;
+	m_idNetMsg = 0;
+	while (id < BDEBUG_INFO_MAX)
+	{
+		m_NetMsg[id] = "";
+		id++;
+	}
+}
+
 
 int DebugInfo::WriteInfoToLog(std::string fileName)
 {

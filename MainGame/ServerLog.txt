@@ -1,16 +1,16 @@
-add [2_paper] to piece[0]
-add [1_rock] to piece[5]
-[start] BH-PieceShowCheckActpoint
-[finish] BH-PieceShowCheckActpoint
-[end] BH-PieceShowCheckActpoint
-[start] BH-ServerInit
-start wsa server success
-[update] BH-ServerInit
-[end] BH-ServerInit
 [start] BH-ServerInputGameRoom(end event[StartWaitClientsJoin])
 [update] BH-ServerInputGameRoom(end event[StartWaitClientsJoin])
+server_as launch ok
+TCPListenSocket bind port[5555] ok
+UDPSocket bind port[5556] ok
+TCPListenSocket start listen ok
+[end] BH-ServerInputGameRoom(end event[StartWaitClientsJoin])
+[start] BH-ServerWaitClientsJoin(end event[StartWaitClientsCreatePlayer])
+[wait client request] BH-ServerWaitClientsJoin(end event[StartWaitClientsCreatePlayer])
 exceptionÅFnormal test exception
 ----------------------
+
+
 
 
 

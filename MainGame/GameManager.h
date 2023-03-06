@@ -29,6 +29,8 @@ public:
 	static void Init();
 	static void Uninit();
 	static void Clear();
+	static void ClearPlayerAndPieces();//for wait room load unload
+
 	static void Register(class Executor* executor) { m_Executors.emplace_back(executor); };
 	static void Quit(class Executor* executor) { m_Executors.remove(executor); };
 	static void UpdateExecutors();
@@ -41,17 +43,5 @@ public:
 	static std::unordered_map<int,class Piece*> m_Pieces;
 	static std::list<class Piece*> m_Bads;
 	static std::list<class Piece*> m_Goods;
-
-	//Server
-	//Client
-	//Judgement
-	//Board??
-
-public:
-	//game scene
-	//static void SetUpGameScene();
-	//static void CleanGameScene();
-
-
 };
 

@@ -104,3 +104,18 @@ Character* Character::Create(CharacterType type)
 	}
 	return nullptr;
 }
+
+std::string CharacterTypeName(CharacterType type)
+{
+	switch (type)
+	{
+	case CharacterType::NONE:
+		return std::string("none");
+
+	case CharacterType::NORMALBAD:
+		return std::string("normal bad");
+
+	case CharacterType::NORMALGOOD:
+		return std::string("normal good");
+	}
+}

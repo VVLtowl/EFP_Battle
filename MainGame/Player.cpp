@@ -6,7 +6,7 @@
 
 #include "PlayerBehaviour.h"
 #include "Judgement.h"
-#include "NetworkManager.h"
+#include "MyNetManager.h"
 #include "UIThinkMark.h"
 #include "WorldToScreen.h"
 
@@ -32,7 +32,7 @@ void Player::StartIterateSelfPiecesInputHand()
 	BH_WaitSelfPiecesInputHand->SetEndEvent("NotifyCountPlayerFinished",
 		[this]() {
 		//next
-		NetworkManager::Instance()->Client_NotifyCountPlayerFinished();
+		GetNetSendFunc().Client_NotifyCountPlayerFinished();
 		});
 	StartBH(BH_WaitSelfPiecesInputHand);
 }
@@ -62,7 +62,7 @@ void Player::CheckSelfPieceToInputAct(Piece* piece)
 		piece->SetUIThink(true);
 
 		//reset camera pos
-		Client::Instance()->ResetCameraLookAt();
+		AppClient::Instance()->ResetCameraLookAt();
 	}
 }
 

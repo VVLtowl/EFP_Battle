@@ -9,6 +9,8 @@ const float Y_NUM = 1.0f;
 const float TEXCOORD_W = 1.0f / X_NUM;
 const float TEXCOORD_H = 1.0f / Y_NUM;
 
+const D3DXVECTOR2 UI_HAND_SIZE = { 50,50 };
+
 UIHand::UIHand()
 {
 	//create ui follow worldObject

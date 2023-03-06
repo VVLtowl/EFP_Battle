@@ -3,33 +3,47 @@
 #include "Singleton.h"
 #include <string>
 
-class Client :
-    public Singleton<Client>,
+const size_t LEN_CHAT = 256;
+const size_t LEN_NAME = 64;
+
+struct ClientInfo
+{
+    int ID;
+    std::string Name;
+    bool Ready;
+    SOCKET* TCPSock;
+    SOCKADDR_IN* UDPAddr;
+};
+
+class AppClient :
+    public Singleton<AppClient>,
     public Executor
 {
 public:
-    Client();
-    ~Client();
-    std::string Name() override { return "client"; };
+    AppClient();
+    ~AppClient();
+    std::string Name() override { return "app client"; };
+
+    /*********************************************************
+    * @brief    server network object
+    ********************************************************/
+public:
+    class MyClient* m_MyClient = nullptr;
 
     /*********************************************************
     * @brief    client data
     ********************************************************/
 public:
     //client property
-    int m_ID;
+    //int m_ID;
+    //int m_TCPSocketID;
     bool m_IsConnected;
-    int m_TCPSocketID;
-    char m_Name[64];
-    char m_Chat[128];
+    char m_Chat[LEN_CHAT];
+    char m_Name[LEN_NAME];
 
     //room data
-    std::unordered_map<int, class ClientMember*> m_ClientInfos;
+    std::unordered_map<int, ClientInfo> m_ClientInfos;
     int m_TargetClientNum;
-    int m_ServerPort;
-    char m_ServerIP[16];
-    SOCKADDR_IN m_ServerAddr;
-    SOCKET m_TCPSocket;//for tcp
 
     //for check join
     bool m_JoinSuccess = false;
@@ -60,19 +74,24 @@ public:
     * @brief    fixed behaviour
     ********************************************************/
 public:
+    void Init();
+    void Uninit();
+
     void SendChatMsg();
 
     void StartInWaitRoomScene();
     void StartInGameScene();
+    void LaunchMyClient();
 
     void StartSelectServer();
     void TryJoinServer();
     void CheckConnect();
-    void JoinRoom(int id,int targetNum);
+    void SetClientID(int id);
+    void JoinRoom(int id,int targetNum);//need quit room
     void StartWaitRoom();
-    void UpdateClientInfo(int checkMemID, std::string name, bool ready);
+    void UpdateClientInfo(int checkMemID, std::string name, bool ready, bool disconnect);
     void RequestDisconnect();
-    void Disconnect();
+    void Disconnect();//back to select server
 
 
     void ResetCameraLookAt(float duration=45);
@@ -80,6 +99,7 @@ public:
     void CreatePiece(PieceDesc desc);
     void ChangeToGameScene();
     void ClearPiecesFinishMark();
+    void ClearPiecesHandUI();
     void ClearDataInGameScene();
 
     void StartWaitShowStep(int stepType);
@@ -101,8 +121,6 @@ public:
     void ShowPiecesThinkMark();
 
 public:
-    class ClientInit* BH_Init;
-    class ClientUninit* BH_Uninit;
     class ClientSelectServer* BH_SelectServer;
     class ClientTryConnectServer* BH_TryConnectServer;
     class ClientWaitRoom* BH_WaitStartRoom;

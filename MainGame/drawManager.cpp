@@ -37,6 +37,9 @@ void DrawManager::Load()
 	Textures.emplace(
 		TEXID_CIRCLE_0,
 		TextureFactory::Load("asset\\texture\\halfAlpha.png"));
+	Textures.emplace(
+		TEXID_OIL_3,
+		TextureFactory::Load("asset\\texture\\oil3.png"));
 
 
 	Textures.emplace(

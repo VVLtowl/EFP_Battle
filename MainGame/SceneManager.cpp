@@ -2,7 +2,7 @@
 #include "SceneManager.h"
 
 #include "GameManager.h"
-#include "NetworkManager.h"
+#include "MyNetManager.h"
 
 
 /*********************************************************
@@ -120,7 +120,7 @@ void Scene::UpdateGameExecutors()
 void Scene::UpdateNetwork()
 {
 	//network 
-	NetworkManager::Instance()->Update();
+	MyNetManager::Instance()->Update();
 }
 
 void Scene::UpdateDraw()

@@ -13,7 +13,7 @@
 
 #include "ClientBehaviour.h"
 #include "ServerBehaviour.h"
-#include "NetworkManager.h"
+#include "MyNetManager.h"
 
 #pragma region ========== client wait scene ==========
 void ClientWaitScene::MainLoad()
@@ -67,8 +67,11 @@ void ClientWaitScene::MainLoad()
 		}
 	}
 
+	//clean game manager player and piece
+	GameManager::ClearPlayerAndPieces();
+
 	//logic entrance
-	Client::Instance()->StartInWaitRoomScene();
+	AppClient::Instance()->StartInWaitRoomScene();
 }
 
 void ClientWaitScene::MainUnload()
@@ -80,11 +83,17 @@ void ClientWaitScene::MainUpdate()
 	//test scene change
 	if (Input::Mouse.IsButtonDown(MOUSE_MID))
 	{
+		//test
+		return;
+
+
 		SceneManager::ChangeScene<TestScene>();
-		Client* client = Client::Instance();
+		AppClient* client = AppClient::Instance();
 		{
-			client->StartBH(client->BH_Uninit);
-			NetworkManager::Instance()->Close();
+			client->CheckConnect();
+
+			client->Uninit();
+			//MyNetManager::Instance()->Close();
 		}
 		return;
 	}
@@ -94,8 +103,15 @@ void ClientWaitScene::MainUpdate()
 #pragma region ========== server setting scene ==========
 void ServerSettingScene::MainLoad()
 {
+	//clean game manager
+	GameManager::ClearPlayerAndPieces();
+
+	//judgement reset
+	Judgement::Instance()->m_Mode.Clean();
+	Judgement::Instance()->m_Mode.SetBadGoodTargetNum(4, 2);
+
 	//logic entrance
-	Server::Instance()->StartInWaitRoomScene();
+	AppServer::Instance()->StartInWaitRoomScene();
 }
 
 void ServerSettingScene::MainUnload()

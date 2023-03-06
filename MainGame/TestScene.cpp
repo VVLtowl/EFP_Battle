@@ -28,7 +28,7 @@
 #include "PieceObject.h"
 #include "PieceBehaviour.h"
 
-#define TEST_BEHAVIOUR
+//#define TEST_BEHAVIOUR
 
 void TestScene::MainLoad()
 {
@@ -100,6 +100,10 @@ void TestScene::MainLoad()
 		TransformObject* lookAtTrs = GameObjectManager::Create<TransformObject>();
 		lookAtTrs->GetTransform()->SetPosition(0, 0, -1);
 		lookAtTrs->GetTransform()->SetParent(plane->GetTransform());
+
+		SquareObject* sqrObj = new SquareObject();
+		sqrObj->m_Polygon3D->Model = DrawManager::Models[MDLID_SQUARE_PRISON];
+		sqrObj->m_Polygon3D->Model = DrawManager::Models[MDLID_SQUARE_GOAL];
 
 		if(0)
 		{
@@ -333,10 +337,13 @@ void TestScene::MainLoad()
 				Judgement::Instance()->Init();
 
 				//create server
-				Server* server=Server::Instance();
+				AppServer* server=AppServer::Instance();
 				
 				//logic entrance
-				server->StartBH(server->BH_Init);
+				server->Init();
+
+				//app server bh start in next scene
+				SceneManager::ChangeScene<ServerSettingScene>();
 			});
 
 		buttonStartClient->GetTransform()->SetPosition(2, 2, 0); 
@@ -346,13 +353,14 @@ void TestScene::MainLoad()
 		buttonStartClient->m_Button->AddClickEvent([]()
 			{
 				//create client
-				Client* client = Client::Instance();
-
-				//start client 
-			
+				AppClient* client = AppClient::Instance();
 
 				//logic entrance
-				client->StartBH(client->BH_Init);
+				client->Init();
+				//client->StartBH(client->BH_Init);
+
+				//next bh start in next scene
+				SceneManager::ChangeScene<ClientWaitScene>();
 			});
 	}
 }
@@ -361,7 +369,7 @@ void TestScene::MainUnload()
 {
 #ifdef  TEST_BEHAVIOUR
 	//test
-	Client::Instance()->ClearDataInGameScene();
+	//AppClient::Instance()->ClearDataInGameScene();
 	Judgement::Instance()->GameEnd();
 #endif //  TEST_BEHAVIOUR
 

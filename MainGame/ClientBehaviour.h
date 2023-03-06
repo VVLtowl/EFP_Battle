@@ -5,38 +5,38 @@ class ClientBehaviour :
 	public Behaviour
 {
 public:
-	ClientBehaviour(class Client* c, bool isOnce = false);
+	ClientBehaviour(class AppClient* c, bool isOnce = false);
 
 protected:
-	class Client* m_OwnerClient;
+	class AppClient* m_AppClient;
 };
 
 
-class ClientInit :
-	public ClientBehaviour
-{
-public:
-	ClientInit(class Client* c) : ClientBehaviour(c) {};
-	std::string Name() override { return "ClientInit"; };
-
-	void Start()override;
-};
-
-class ClientUninit :
-	public ClientBehaviour
-{
-public:
-	ClientUninit(class Client* c) : ClientBehaviour(c) {};
-	std::string Name() override { return "ClientUninit"; };
-
-	void Start()override;
-};
-
+//class ClientInit :
+//	public ClientBehaviour
+//{
+//public:
+//	ClientInit(class AppClient* c) : ClientBehaviour(c) {};
+//	std::string Name() override { return "ClientInit"; };
+//
+//	void Start()override;
+//};
+//
+//class ClientUninit :
+//	public ClientBehaviour
+//{
+//public:
+//	ClientUninit(class AppClient* c) : ClientBehaviour(c) {};
+//	std::string Name() override { return "ClientUninit"; };
+//
+//	void Start()override;
+//};
+//
 class ClientSelectServer :
 	public ClientBehaviour
 {
 public:
-	ClientSelectServer(class Client* c) :ClientBehaviour(c) {};
+	ClientSelectServer(class AppClient* c) :ClientBehaviour(c) {};
 	std::string Name() override { return "ClientSelectServer"; };
 
 private:
@@ -62,7 +62,7 @@ class ClientTryConnectServer :
 	public ClientBehaviour
 {
 public:
-	ClientTryConnectServer(class Client* c) :ClientBehaviour(c) {};
+	ClientTryConnectServer(class AppClient* c) :ClientBehaviour(c) {};
 	std::string Name() override { return "ClientTryConnectServer"; };
 
 	void Reset(std::function<void()> onSuccess = []() {},
@@ -95,7 +95,7 @@ class ClientRequestJoinServer :
 	public ClientBehaviour
 {
 public:
-	ClientRequestJoinServer(class Client* c) :ClientBehaviour(c,true) {};
+	ClientRequestJoinServer(class AppClient* c) :ClientBehaviour(c,true) {};
 	std::string Name() override { return "ClientRequestJoinServer"; };
 
 	void Start()override;
@@ -105,7 +105,7 @@ class ClientWaitRoom :
 	public ClientBehaviour
 {
 public:
-	ClientWaitRoom(class Client* c) :ClientBehaviour(c) {};
+	ClientWaitRoom(class AppClient* c) :ClientBehaviour(c) {};
 	std::string Name() override { return "ClientWaitRoom"; };
 
 private:
@@ -130,7 +130,7 @@ class ClientWaitPiecesFinish :
 	public ClientBehaviour
 {
 public:
-	ClientWaitPiecesFinish(class Client* c) :
+	ClientWaitPiecesFinish(class AppClient* c) :
 		ClientBehaviour(c) {};
 	std::string Name() override { return "ClientWaitPiecesFinish"; };
 
@@ -150,7 +150,7 @@ class ClientShowStep :
 	public ClientBehaviour
 {
 public:
-	ClientShowStep(class Client* c);
+	ClientShowStep(class AppClient* c);
 	~ClientShowStep();
 	std::string Name() override { return "ClientShowStep"; };
 
@@ -168,7 +168,7 @@ class ClientShowGameOver :
 	public ClientBehaviour
 {
 public:
-	ClientShowGameOver(class Client* c);
+	ClientShowGameOver(class AppClient* c);
 	~ClientShowGameOver();
 	std::string Name() override { return "ClientShowGameOver"; };
 

@@ -123,6 +123,7 @@ void Behaviour::MainUpdate()
 
 		//from this time, cant set next behaviour
 		m_EndEvent();
+		m_EndEventInfo = "";
 
 		//delete this should be at last
 		if (m_IsOnceBehaviour)

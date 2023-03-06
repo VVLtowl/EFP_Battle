@@ -10,24 +10,29 @@
 
 #include "PieceBehaviour.h"
 #include "ClientBehaviour.h"
-#include "NetworkManager.h"
+#include "MyNetManager.h"
 #include "SceneManager.h"
+#include "NetworkSendFunc.h"
 
 #include "UIThinkMark.h"
 
-#include"TransformAnime.h"
+#include "TransformAnime.h"
 #include "WorldToScreen.h"
 #include "LookAt.h"
 
-Client::Client()
+#include "imgui/imgui.h"
+
+AppClient::AppClient()
 {
+	//create MyClient
+	m_MyClient = new MyClient(MyNetManager::Instance());
+	MyNetManager::Instance()->m_TargetAppClient = this;
+
 	//reset room data
-	memset(&m_ServerAddr, 0, LEN_ADDRIN);
+	m_IsConnected = false;
 	m_TargetClientNum = 0;
 		
 	//create behaviour
-	BH_Init = new ClientInit(this);
-	BH_Uninit = new ClientUninit(this);
 	BH_SelectServer = new ClientSelectServer(this);
 	BH_TryConnectServer = new ClientTryConnectServer(this);
 	BH_WaitStartRoom = new ClientWaitRoom(this);
@@ -37,12 +42,91 @@ Client::Client()
 	BH_ShowGameOver = new ClientShowGameOver(this);
 }
 
-Client::~Client()
+AppClient::~AppClient()
 {
+	m_ClientInfos.clear();
+	delete m_MyClient;
+	MyNetManager::Instance()->m_TargetAppClient = nullptr;
 	//delete behaviour by base class destructor
 }
 
-void Client::SendChatMsg()
+void AppClient::Init()
+{
+	//set default val
+	{
+		m_JoinSuccess = false;
+		LaunchMyClient();
+		memcpy(m_Name, "nameless", LEN_NAME);
+	}
+
+	//test 
+	DebugInfo::TestBlocks.emplace(TESTBLOCKID_CLIENT_WORK, 
+		[this]()
+		{
+			ImGui::Begin("Client Working...");
+			{
+				if (m_JoinSuccess)
+				{
+					//show port num
+					ImGui::Text("server port: %d",
+						m_MyClient->m_ServerTCPPort);
+
+					//show server address
+					ImGui::Text("server ip: %s",
+						m_MyClient->m_ServerIP.c_str());
+
+					//show connected clients number
+					ImGui::Text("connected clients num: %d",
+						m_ClientInfos.size());
+
+					//show self id
+					ImGui::Text("id: %d",
+						m_MyClient->m_ClientID);
+
+					//show self name
+					ImGui::Text("name: %s",
+						m_Name);
+
+
+					//input name
+					ImGui::InputText("chat:\n", m_Chat, 128);
+
+					//send test msg
+					if (ImGui::Button("Send Chat"))
+					{
+						//tip: BH_Init is not a loop behaviour
+						//m_OwnerClient->JumpToBH(new ClientSendTestMsg(m_OwnerClient));
+						SendChatMsg();
+						memcpy(m_Chat, "", LEN_CHAT);
+					}
+				}
+				else
+				{
+					ImGui::Text("...");
+				}
+			}
+			ImGui::End();
+		});
+}
+
+void AppClient::Uninit()
+{
+	//close test panel
+	DebugInfo::TestBlocks.erase(TESTBLOCKID_CLIENT_WORK);
+	//if(	m_AppClient->m_IsConnected)
+	//{
+	//	m_AppClient->m_IsConnected = false;
+	//	//NetworkManager::Instance()->Client_RequestDisconnect();
+	//}
+
+	if (m_JoinSuccess)
+	{
+		m_JoinSuccess = false;
+		GetNetSendFunc().Client_RequestDisconnect();
+	}
+}
+
+void AppClient::SendChatMsg()
 {
 	if (!m_JoinSuccess)
 	{
@@ -51,18 +135,18 @@ void Client::SendChatMsg()
 
 	//send
 	std::string msg =
-		"[" + std::to_string(m_ID) + "]" +
+		"[" + std::to_string(m_MyClient->m_ClientID) + "]" +
 		m_Name + std::string(": ") +
 		m_Chat;
-	NetworkManager::Instance()->Client_SendTestMsgToBroadcast(msg.c_str());
+	GetNetSendFunc().Client_SendTestMsgToBroadcast(msg.c_str());
 }
 
-void Client::StartInWaitRoomScene()
+void AppClient::StartInWaitRoomScene()
 {
 	if (m_JoinSuccess)
 	{
 		//notify server judgement load wait room scene finish
-		NetworkManager::Instance()->Client_NotifyCountPlayerFinished();
+		GetNetSendFunc().Client_NotifyCountPlayerFinished();
 
 		//start wait room
 		StartWaitRoom();
@@ -73,7 +157,7 @@ void Client::StartInWaitRoomScene()
 	}
 }
 
-void Client::StartInGameScene()
+void AppClient::StartInGameScene()
 {
 	//init board
 	Board::Instance()->Init();
@@ -84,12 +168,17 @@ void Client::StartInGameScene()
 		Board::Instance()->m_BoardCenter->GetTransform();
 
 	//notify server judgement load gamescene finish
-	NetworkManager::Instance()->Client_NotifyCountPlayerFinished();
+	GetNetSendFunc().Client_NotifyCountPlayerFinished();
 
 	//wait server judgement command
 }
 
-void Client::StartSelectServer()
+void AppClient::LaunchMyClient()
+{
+	m_MyClient->Launch();
+}
+
+void AppClient::StartSelectServer()
 {
 	//set up select server
 	BH_SelectServer->Reset();
@@ -110,9 +199,9 @@ void Client::StartSelectServer()
 	StartBH(BH_SelectServer);
 }
 
-void Client::TryJoinServer()
+void AppClient::TryJoinServer()
 {
-	if (NetworkManager::Instance()->IsTCP)
+	if (1)
 		//tcp need connect before send join request
 	{
 		BH_TryConnectServer->Reset();
@@ -146,7 +235,7 @@ void Client::TryJoinServer()
 	}
 }
 
-void Client::CheckConnect()
+void AppClient::CheckConnect()
 {
 	if (m_ExecuteBehaviour == BH_TryConnectServer)
 	{
@@ -155,7 +244,12 @@ void Client::CheckConnect()
 	}
 }
 
-void Client::JoinRoom(int id, int targetNum)
+void AppClient::SetClientID(int id)
+{
+	m_MyClient->m_ClientID = id;
+}
+
+void AppClient::JoinRoom(int id, int targetNum)
 {
 	if (!m_JoinSuccess)
 	{
@@ -163,9 +257,13 @@ void Client::JoinRoom(int id, int targetNum)
 			"join room set ID[" + std::to_string(id) + "]" +
 			"set target client num[" + std::to_string(targetNum) + "]");
 
+		//show chat panel
+		MyNetManager::Instance()->SetChatPanel(true);
+
 		//set value
 		m_JoinSuccess = true;
-		m_ID = id;
+		//todo
+		//m_MyClient->m_ClientID = id;
 		m_TargetClientNum = targetNum;
 
 		//set SelectServerBH state
@@ -173,7 +271,7 @@ void Client::JoinRoom(int id, int targetNum)
 	}
 }
 
-void Client::StartWaitRoom()
+void AppClient::StartWaitRoom()
 {
 	BH_WaitStartRoom->Reset();
 	BH_WaitStartRoom->SetEndEvent("ChangeScene ToGameScene",
@@ -184,7 +282,7 @@ void Client::StartWaitRoom()
 	StartBH(BH_WaitStartRoom);
 }
 
-void Client::UpdateClientInfo(int checkMemID,std::string name,bool ready)
+void AppClient::UpdateClientInfo(int checkMemID,std::string name,bool ready, bool disconnect)
 {
 	DebugInfo::Print("update joined and target client info");
 
@@ -193,43 +291,72 @@ void Client::UpdateClientInfo(int checkMemID,std::string name,bool ready)
 		m_ClientInfos.end())
 		//contain member
 	{
-		ClientMember* mem = m_ClientInfos[checkMemID];
-		mem->Ready = ready;
+		ClientInfo& mem = m_ClientInfos[checkMemID];
+
+		if (disconnect)
+		{
+			//delete disonnected client info
+			m_ClientInfos.erase(checkMemID);
+			return;
+		}
+
+		mem.Ready = ready;
 	}
 	else
 		//new member
 	{
-		ClientMember* mem = new ClientMember(checkMemID, name);
-		mem->Ready = ready;
+		ClientInfo mem;
+		mem.ID = checkMemID;
+		mem.Name = name;
+		mem.Ready = ready;
+		//mem->TCPSock
+		//mem->UDPAddr
 
 		//add to list
 		m_ClientInfos.emplace(checkMemID, mem);
 	}
 }
 
-void Client::RequestDisconnect()
+void AppClient::RequestDisconnect()
 {
-	NetworkManager::Instance()->Client_RequestDisconnect();
+	//notify server to quit this client
+	GetNetSendFunc().Client_RequestDisconnect();
+
+	//set my client disconnect
+	m_MyClient->Disconnect();
+
+	//disconnect
+	Disconnect();
 }
 
-void Client::Disconnect()
+void AppClient::Disconnect()
 {
-	DebugInfo::Print("server closed");
-
 	//set default val
-	m_ServerPort = 5555;
-	BH_SelectServer->m_SelectState = ClientSelectServer::State::NONE;
-	memcpy(m_ServerIP, std::string("127.0.0.1").c_str(), 16);
+	m_IsConnected = false;
+	m_JoinSuccess = false;
 
-	//next bh
-	StartBH(BH_Uninit);
+	//reset client info
+	m_ClientInfos.clear();
+	
+	//close wait room panel
+	if (BH_WaitStartRoom->m_WaitState != ClientWaitRoom::State::FINISH)
+	{
+		DebugInfo::CloseBlock(TESTBLOCKID_CLIENT_WAITROOM);
+	}
 
-	//over join  
-	//JoinSuccess = false;
+	//close chat panel
+	DebugInfo::ClearNetMsg();
+	MyNetManager::Instance()->SetChatPanel(false);
+
+	//set my client disconnect
+	m_MyClient->Disconnect();
+
+	//next
+	StartSelectServer();
 }
 
 
-void Client::ResetCameraLookAt(float duration)
+void AppClient::ResetCameraLookAt(float duration)
 {
 	//reset camera pos
 	{
@@ -252,18 +379,31 @@ void Client::ResetCameraLookAt(float duration)
 	}
 }
 
-void Client::CreatePlayer(PlayerDesc desc)
+void AppClient::CreatePlayer(PlayerDesc desc)
 {
-	DebugInfo::Print(
-		"create main player " +
-		std::string("[" + std::to_string(desc.ClientID) + "]") +
-		"...");
-	m_MainPlayer = new Player();
-	m_MainPlayer->m_Camp = desc.PlayerCamp;
-	m_MainPlayer->m_ID = desc.ClientID;
+	if (desc.ClientID == m_MyClient->m_ClientID)
+	{
+		DebugInfo::Print(
+			"create main player" +
+			std::string("[" + std::to_string(desc.ClientID) + "]") +
+			"...");
+		m_MainPlayer = new Player();
+		m_MainPlayer->m_Camp = desc.PlayerCamp;
+		m_MainPlayer->m_ID = desc.ClientID;
+
+		//when create main player, notify finish 
+		GetNetSendFunc().Client_NotifyCountPlayerFinished();
+	}
+	else
+	{
+		DebugInfo::Print(
+			"dont create player" +
+			std::string("[" + std::to_string(desc.ClientID) + "]") +
+			"...");
+	}
 }
 
-void Client::CreatePiece(PieceDesc desc)
+void AppClient::CreatePiece(PieceDesc desc)
 {
 	std::string info = 
 		"create piece " +
@@ -299,7 +439,7 @@ void Client::CreatePiece(PieceDesc desc)
 	GameManager::m_Pieces.emplace(piece->m_ID,piece);
 }
 
-void Client::ChangeToGameScene()
+void AppClient::ChangeToGameScene()
 {
 	if (m_ExecuteBehaviour == BH_WaitStartRoom)
 	{
@@ -308,21 +448,27 @@ void Client::ChangeToGameScene()
 	}
 }
 
-void Client::ClearPiecesFinishMark()
+void AppClient::ClearPiecesFinishMark()
 {
 	DebugInfo::Print("clear pieces finish mark...");
 	for (auto idPiece : GameManager::m_Pieces)
 	{
 		Piece* piece = idPiece.second;
-		if (piece->m_FinishMark)
-		{
-			piece->m_FinishMark->SetState(GameObject::DEAD);
-			piece->m_FinishMark = nullptr;
-		}
+		piece->SetUIFinish(false);
 	}
 }
 
-void Client::ClearDataInGameScene()
+void AppClient::ClearPiecesHandUI()
+{
+	DebugInfo::Print("clear pieces hand ui...");
+	for (auto idPiece : GameManager::m_Pieces)
+	{
+		Piece* piece = idPiece.second;
+		piece->SetUIHands(false);
+	}
+}
+
+void AppClient::ClearDataInGameScene()
 {
 	//uninit board
 	Board::Instance()->Uninit();
@@ -347,7 +493,7 @@ void Client::ClearDataInGameScene()
 	}
 }
 
-void Client::ShowPiecesThinkMark()
+void AppClient::ShowPiecesThinkMark()
 {
 	//show rival piece's think mask directly
 	DebugInfo::Print("show pieces think mark...");
@@ -368,7 +514,7 @@ void Client::ShowPiecesThinkMark()
 }
 
 
-void Client::StartWaitPiecesFinish()
+void AppClient::StartWaitPiecesFinish()
 {
 	//tips: check just start wait once 
 	if (BH_WaitPiecesFinish->Working)
@@ -377,8 +523,9 @@ void Client::StartWaitPiecesFinish()
 	}
 	else
 	{
-		//clear pieces finish mark
+		//clear pieces ui
 		ClearPiecesFinishMark();
+		ClearPiecesHandUI();
 
 		DebugInfo::Print("");
 		DebugInfo::Print("- start WaitPiecesFinish");
@@ -390,13 +537,13 @@ void Client::StartWaitPiecesFinish()
 			[this]() 
 			{
 				DebugInfo::Print("- finish WaitPiecesFinish");
-				NetworkManager::Instance()->Client_NotifyCountPlayerFinished(); 
+				GetNetSendFunc().Client_NotifyCountPlayerFinished(); 
 			});
 		StartBH(BH_WaitPiecesFinish);
 	}
 }
 
-void Client::StartPieceShowEntry(int pieceID, int squareID)
+void AppClient::StartPieceShowEntry(int pieceID, int squareID)
 {
 	Piece* piece = GameManager::m_Pieces[pieceID];
 	Square* square = Board::Instance()->Squares[squareID];
@@ -435,13 +582,14 @@ void Client::StartPieceShowEntry(int pieceID, int squareID)
 	piece->StartBH(showEntry);
 }
 
-void Client::StartPieceShowHand(int pieceID)
+void AppClient::StartPieceShowHand(int pieceID)
 {
 	Piece* piece = GameManager::m_Pieces[pieceID];
 
 	//start show entry bh
 	PieceShowHand* showHand = new PieceShowHand(piece);
-	showHand->SetEndEvent("CountPieceFinish ShowHand",[this]() 
+	showHand->SetEndEvent("CountPieceFinish ShowHand",
+		[this]() 
 		{
 			BH_WaitPiecesFinish->FinishPieceNum++;
 			BH_WaitPiecesFinish->PrintCount(" piece show hand");
@@ -449,7 +597,7 @@ void Client::StartPieceShowHand(int pieceID)
 	piece->StartBH(showHand);
 }
 
-void Client::StartPieceShowCheckActpoint(int pieceID,int actPoint)
+void AppClient::StartPieceShowCheckActpoint(int pieceID,int actPoint)
 {
 	Piece* piece = GameManager::m_Pieces[pieceID];
 	DebugInfo::Print(
@@ -465,18 +613,18 @@ void Client::StartPieceShowCheckActpoint(int pieceID,int actPoint)
 	showCheckActpoint->SetEndEvent("NotifyCountPlayerFinish CheckActpt",
 		[this]()
 		{
-			NetworkManager::Instance()->Client_NotifyCountPlayerFinished();
+			GetNetSendFunc().Client_NotifyCountPlayerFinished();
 		});
 	piece->StartBH(showCheckActpoint);
 }
 
-void Client::StartPieceInputAct(int pieceID)
+void AppClient::StartPieceInputAct(int pieceID)
 {
 	Piece* piece = GameManager::m_Pieces[pieceID];
 	m_MainPlayer->CheckSelfPieceToInputAct(piece);
 }
 
-void Client::StartPiecesClearHandAndActpoint()
+void AppClient::StartPiecesClearHandAndActpoint()
 {
 	//test
 	ResetCameraLookAt();
@@ -487,11 +635,13 @@ void Client::StartPiecesClearHandAndActpoint()
 
 		//clear actpoint
 		PieceClearActPoint* clearActpoint = new PieceClearActPoint(piece);
-		clearActpoint->SetEndEvent("PieceClearHand", [this, piece]()
+		clearActpoint->SetEndEvent("PieceClearHand",
+			[this, piece]()
 			{
 				//cleat hand
 				PieceClearHand* clearHand = new PieceClearHand(piece);
-				clearHand->SetEndEvent("CountPieceFinish ClearHandAndActpt",[this]()
+				clearHand->SetEndEvent("CountPieceFinish ClearHandAndActpt",
+					[this]()
 					{
 						BH_WaitPiecesFinish->FinishPieceNum++;
 						BH_WaitPiecesFinish->PrintCount(" piece clear hand and actpoint");
@@ -504,7 +654,7 @@ void Client::StartPiecesClearHandAndActpoint()
 
 
 
-void Client::StartPieceShowFinishAct(int pieceID)
+void AppClient::StartPieceShowFinishAct(int pieceID)
 {
 	DebugInfo::Print("show piece[" + std::to_string(pieceID) + "] finish...");
 
@@ -518,17 +668,17 @@ void Client::StartPieceShowFinishAct(int pieceID)
 	}
 
 	//notify server judgement show finish act over
-	NetworkManager::Instance()->Client_NotifyCountPlayerFinished();
+	GetNetSendFunc().Client_NotifyCountPlayerFinished();
 }
 
-void Client::StartPieceShowMove(int pieceID, int squareID)
+void AppClient::StartPieceShowMove(int pieceID, int squareID)
 {
 	//start piece move
 	Piece* piece = GameManager::m_Pieces[pieceID];
 	piece->StartMove(squareID);
 }
 
-void Client::StartPieceShowCaught(int movePieceID, int caughtPieceID, int prisonRoomSquareID)
+void AppClient::StartPieceShowCaught(int movePieceID, int caughtPieceID, int prisonRoomSquareID)
 {
 	//start piece caught
 	Piece* movePiece = GameManager::m_Pieces[movePieceID];
@@ -536,7 +686,7 @@ void Client::StartPieceShowCaught(int movePieceID, int caughtPieceID, int prison
 	caughtPiece->StartCaught(prisonRoomSquareID);
 }
 
-void Client::StartPieceShowEscape(int escapePieceID, int escapeSquareID)
+void AppClient::StartPieceShowEscape(int escapePieceID, int escapeSquareID)
 {
 	//start piece caught
 	Piece* escapePiece = GameManager::m_Pieces[escapePieceID];
@@ -544,18 +694,18 @@ void Client::StartPieceShowEscape(int escapePieceID, int escapeSquareID)
 }
 
 
-void Client::StartWaitShowStep(int stepType)
+void AppClient::StartWaitShowStep(int stepType)
 {
 	BH_ShowStep->Reset(stepType,
 		"NotifyCountPlayerFinished",
 		[]() 
 		{
-			NetworkManager::Instance()->Client_NotifyCountPlayerFinished();
+			GetNetSendFunc().Client_NotifyCountPlayerFinished();
 		});
 	StartBH(BH_ShowStep);
 }
 
-void Client::StartShowGameOver(int result)
+void AppClient::StartShowGameOver(int result)
 {
 	BH_ShowGameOver->Reset((ClientShowGameOver::ResultType)result,
 		"ChangeScene ToClientWaitScene",

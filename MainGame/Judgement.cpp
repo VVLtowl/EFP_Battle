@@ -13,7 +13,7 @@
 #include "JudgementBehaviour.h"
 #include "ClientBehaviour.h"
 #include "PieceBehaviour.h"
-#include "NetworkManager.h"
+#include "MyNetManager.h"
 #include "SceneManager.h"
 
 #include "WorldToScreen.h"
@@ -29,18 +29,6 @@ void Judgement::Init()
 		BH_WaitPiecesFinishCmd = new JudgementWaitPiecesFinishCommand(this);
 		BH_CommandShowPieces = new JudgementCommandShowPieces(this);
 	}
-
-	//test mode
-	{
-		//reset
-		Mode.PlayerDescs.clear();
-
-		PlayerDesc player1{ false,4,CampType::BAD};
-		Mode.PlayerDescs.push_back(player1);
-
-		PlayerDesc player2{ false,2,CampType::GOOD};
-		Mode.PlayerDescs.push_back(player2);
-	}
 }
 
 void Judgement::Uninit()
@@ -55,7 +43,7 @@ void Judgement::Uninit()
 
 	//test mode
 	{
-		Mode.PlayerDescs.clear();
+		m_Mode.Clean();
 	}
 }
 
@@ -103,32 +91,65 @@ void Judgement::GameEnd()
 	}
 }
 
+#pragma region ========== player mode ==========
+
+int PlayMode::GetBadNum() const
+{
+	return m_TargetBadNum;
+}
+
+int PlayMode::GetGoodNum() const
+{
+	return m_TargetGoodNum;
+}
+
+void PlayMode::AddPlayerDesc(const PlayerDesc& desc)
+{
+	//if (desc.PlayerCamp == CampType::GOOD)
+	//{
+	//	m_TargetGoodNum++;
+	//}
+	//else if (desc.PlayerCamp == CampType::BAD)
+	//{
+	//	m_TargetBadNum++;
+	//}
+	m_PlayerDescs.emplace_back(desc);
+}
+
+void PlayMode::Clean()
+{ 
+	m_PlayerDescs.clear(); 
+	m_TargetBadNum = 0;
+	m_TargetGoodNum = 0;
+}
+
+#pragma endregion
+
 #pragma region ========== judgement behaviour ==========
 
 void Judgement::ShuffleAndSetPiecesToPlayers()
 {
-	//test
-	//random set player desc to client by id order 
+	//test: random set player desc to client by id order 
 	if (0)
 	{
-		int num = Mode.GetPlayerNum();
+		int num = m_Mode.GetPlayerNum();
 		int count = 0;
 		for (; num > 1; num--, count++)
 		{
 			int playerDescID = rand() % num;
 			//todo: check can use move swap
-			PlayerDesc temp = Mode.PlayerDescs[count];
-			Mode.PlayerDescs[count] = Mode.PlayerDescs[playerDescID];
-			Mode.PlayerDescs[playerDescID] = temp;
+			PlayerDesc temp = m_Mode.GetPlayerDesc(count);
+			m_Mode.GetPlayerDesc(count) = m_Mode.GetPlayerDesc(playerDescID);
+			m_Mode.GetPlayerDesc(playerDescID) = temp;
 		}
 	}
 
 	//create players and pieces data in server
 	int pieceCount = 0;
-	int playerNum = Mode.GetPlayerNum();
+	int playerNum = m_Mode.GetPlayerNum();
 	for (int playerCount = 0; playerCount < playerNum; playerCount++)
 	{
-		PlayerDesc& playerDesc = Mode.PlayerDescs[playerCount];
+		PlayerDesc& playerDesc = m_Mode.GetPlayerDesc(playerCount);
 		Player* player = new Player();
 		{
 			//set camp
@@ -184,19 +205,22 @@ void Judgement::ShuffleAndSetPiecesToPlayers()
 		}
 		GameManager::m_Players.emplace(playerCount, player);
 	}
+}
 
+void Judgement::SetPlayerClient()
+{
 	//set id and client
 	int playerCount = 0;
-	for (auto client : Server::Instance()->m_ClientMembers)
+	for (auto idClient : AppServer::Instance()->m_ClientMembers)
 	{
 		Player* player = GameManager::m_Players[playerCount];
 		playerCount++;
 		{
 			//pair player with client
-			player->m_TargetClient = client.second;
+			player->m_TargetClient = idClient.second;
 
 			//set id
-			player->m_ID = client.second->TCPSocketID;
+			player->m_ID = idClient.first;
 		}
 	}
 }
@@ -236,13 +260,16 @@ void Judgement::SetPiecesInfoBlocks(bool show)
 					std::string title = "Piece[" + std::to_string(piece->m_ID) + "] Info";
 					ImGui::Begin(title.c_str());
 					{
+						//test
+						ClientMember* clientMem = AppServer::Instance()->m_ClientMembers[0];
+
 						//id
 						ImGui::Text("id: %d",
 							piece->m_ID);
 
 						//owner client
 						ImGui::Text("owner: \n client[%d] \n name[%s]",
-							piece->m_OwnerPlayer->m_TargetClient->TCPSocketID,
+							piece->m_OwnerPlayer->m_TargetClient->ID,
 							piece->m_OwnerPlayer->m_TargetClient->Name.c_str());
 
 						//camp
@@ -373,7 +400,7 @@ void Judgement::StartWaitClientsCreatePlayer()
 	//network command
 	DebugInfo::Print("");
 	DebugInfo::Print("- start WaitCreatePlayer");
-	NetworkManager::Instance()->Judgement_CommandCreatePlayer();
+	GetNetSendFunc().Judgement_CommandCreatePlayer();
 
 	//set what to do after wait
 	BH_WaitPlayersFinish->SetEndEvent("StartWaitClients SetTargetPieceNum", [this]()
@@ -395,7 +422,7 @@ void Judgement::StartWaitClientsSetTargetPieceNum()
 	//network command
 	DebugInfo::Print("");
 	DebugInfo::Print("- start WaitSetPieceNum");
-	NetworkManager::Instance()->Judgement_CommandSetPieceNum();
+	GetNetSendFunc().Judgement_CommandSetPieceNum();
 
 	//set what to do after wait
 	BH_WaitPlayersFinish->SetEndEvent("StartWaitClients CreatePiece", 
@@ -420,7 +447,7 @@ void Judgement::StartWaitClientsCreatePieces()
 	DebugInfo::Print("- start WaitCreatePieces");
 	for (auto piece : GameManager::m_Pieces)
 	{
-		NetworkManager::Instance()->Judgement_CommandCreatePiece(piece.second);
+		GetNetSendFunc().Judgement_CommandCreatePiece(piece.second);
 	}
 
 	//set what to do after wait
@@ -443,7 +470,7 @@ void Judgement::StartWaitClientsLoadGameScene()
 	//network command
 	DebugInfo::Print("");
 	DebugInfo::Print("- start WaitLoadGameScene");
-	NetworkManager::Instance()->Server_CommandLoadGameScene();
+	GetNetSendFunc().Server_CommandLoadGameScene();
 	
 	//set what to do after wait
 	BH_WaitPlayersFinish->SetEndEvent("ChangeScene ToGameScene", [this]()
@@ -481,7 +508,7 @@ void Judgement::StartWaitClientsPrepareBoard()
 		{
 			//send command
 			Piece* piece = (*BH_CommandShowPieces->PieceIterator).second;
-			NetworkManager::Instance()->Judgement_CommandPieceShowEntry(piece);
+			GetNetSendFunc().Judgement_CommandPieceShowEntry(piece);
 		});
 	BH_CommandShowPieces->SetEndEvent("StartWaitClients ShowPiecesEntry",
 		[this]() //end event
@@ -502,7 +529,7 @@ void Judgement::StartWaitClientsShowStepGameStart()
 	//network server command
 	DebugInfo::Print("");
 	DebugInfo::Print("- start WaitClientsShowStep");
-	NetworkManager::Instance()->
+	GetNetSendFunc().
 		Judgement_CommandShowStep((int)ShowStepType::GAME_START);
 
 	//set what to do after wait
@@ -529,7 +556,7 @@ void Judgement::StartWaitClientsShowStepTurnStart()
 	//network server command
 	DebugInfo::Print("");
 	DebugInfo::Print("- start WaitClientsShowTurnStart");
-	NetworkManager::Instance()->
+	GetNetSendFunc().
 		Judgement_CommandShowStep((int)ShowStepType::TURN_START);
 
 	//set what to do after wait
@@ -553,7 +580,7 @@ void Judgement::StartWaitClientsShowStepRPSStart()
 	//network server command
 	DebugInfo::Print("");
 	DebugInfo::Print("- start WaitClientsShowRPSStart");
-	NetworkManager::Instance()->
+	GetNetSendFunc().
 		Judgement_CommandShowStep((int)ShowStepType::RPS_START);
 
 	//set what to do after wait
@@ -577,7 +604,7 @@ void Judgement::StartWaitClientsShowStepActStart()
 	//network server command
 	DebugInfo::Print("");
 	DebugInfo::Print("- start WaitClientsShowActStart");
-	NetworkManager::Instance()->
+	GetNetSendFunc().
 		Judgement_CommandShowStep((int)ShowStepType::ACT_START);
 
 	//set what to do after wait
@@ -605,7 +632,7 @@ void Judgement::StartWaitClientsInputRPS()
 	//network server command
 	DebugInfo::Print("");
 	DebugInfo::Print("- start WaitClientsInputRPS");
-	NetworkManager::Instance()->Judgement_CommandInputRPS();
+	GetNetSendFunc().Judgement_CommandInputRPS();
 
 	//set what to do after wait
 	BH_WaitPlayersFinish->SetEndEvent("StartTimerCommand ShowPiecesHandResult", 
@@ -635,7 +662,7 @@ void Judgement::StartCommandShowPiecesHand()
 		{
 			//send command
 			Piece* piece = (*BH_CommandShowPieces->PieceIterator).second;
-			NetworkManager::Instance()->Judgement_CommandShowPieceHand(piece);
+			GetNetSendFunc().Judgement_CommandShowPieceHand(piece);
 		});
 	BH_CommandShowPieces->SetEndEvent("StartWaitClients ShowPiecesHandResult",
 		[this]() //end event
@@ -649,17 +676,18 @@ void Judgement::StartIteratePiecesShowCheckActpoint()
 {
 	//tips: sync by client check actpoint
 	//check and save actpoint data in server judgement
-	//CalculatePiecesActpoint();
+	CalculatePiecesActpoint();
 
 	//reset piece iterator
-	BH_WaitPiecesFinishCmd->Reset([this]()//command event
+	BH_WaitPiecesFinishCmd->Reset(
+		[this]()//command event
 		{
 			Piece* piece = (*BH_WaitPiecesFinishCmd->PieceIterator);
 
 			if (piece->m_State == Piece::State::NORMAL)
 				//state normal and state caught piece need to check
 			{
-				NetworkManager::Instance()->Judgement_CommandPieceShowCheckActpoint(piece);
+				GetNetSendFunc().Judgement_CommandPieceShowCheckActpoint(piece);
 
 				//jump to wait client finish cmd
 				BH_WaitPlayersFinish->Reset();
@@ -700,7 +728,7 @@ void Judgement::StartIteratePiecesInputAct()
 			if (piece->m_State == Piece::State::NORMAL)
 				//only state normal piece need to act
 			{
-				NetworkManager::Instance()->Judgement_CommandPieceInputAct(piece);
+				GetNetSendFunc().Judgement_CommandPieceInputAct(piece);
 				BH_WaitPiecesFinishCmd->WaitState =
 					JudgementWaitPiecesFinishCommand::State::WAIT_PIECE_FINISH_COMMAND;
 			}
@@ -724,7 +752,13 @@ void Judgement::StartCommandPiecesClearActpoint()
 {
 	//need clear judgement server hand and actpoint
 	//command pieces clear actpoint
-	NetworkManager::Instance()->Judgement_CommandPiecesClearHandAndActpoint();
+	for (auto piece : GameManager::m_Pieces)
+	{
+		piece.second->m_Hands.clear();
+		piece.second->m_ActPoint = 0;
+	}
+
+	GetNetSendFunc().Judgement_CommandPiecesClearHandAndActpoint();
 
 	//set up waitBH
 	BH_WaitPlayersFinish->Reset();
@@ -748,7 +782,7 @@ void Judgement::StartIteratePiecesClearActpoint()
 			if (piece->m_State == Piece::State::NORMAL)
 				//only state normal piece need to act
 			{
-				NetworkManager::Instance()->Judgement_CommandPieceInputAct(piece);
+				GetNetSendFunc().Judgement_CommandPieceInputAct(piece);
 				BH_WaitPiecesFinishCmd->WaitState =
 					JudgementWaitPiecesFinishCommand::State::WAIT_PIECE_FINISH_COMMAND;
 			}
@@ -778,7 +812,7 @@ void Judgement::StartIteratePiecesClearHand()
 			if (piece->m_State == Piece::State::NORMAL)
 				//only state normal piece need to act
 			{
-				NetworkManager::Instance()->Judgement_CommandPieceInputAct(piece);
+				GetNetSendFunc().Judgement_CommandPieceInputAct(piece);
 				BH_WaitPiecesFinishCmd->WaitState =
 					JudgementWaitPiecesFinishCommand::State::WAIT_PIECE_FINISH_COMMAND;
 			}
@@ -806,7 +840,7 @@ void Judgement::StartWaitClientsPieceFinishAct(int pieceID)
 	//network server command
 	DebugInfo::Print("");
 	DebugInfo::Print("- start WaitClientsPieceFinishAct");
-	NetworkManager::Instance()->
+	GetNetSendFunc().
 		Judgement_CommandPieceFinishAct(pieceID);
 
 	//tips: clear judgement server hand and actpoint must be at last
@@ -875,12 +909,12 @@ void Judgement::CheckPieceMove(int pieceID, int squareID)
 		{
 			if (piece->m_ActPoint > 0)
 			{
-				NetworkManager::Instance()->
-					Judgement_CommandPieceContinueMove(piece->m_OwnerPlayer->m_TargetClient, piece->m_ID);
+				GetNetSendFunc().Judgement_CommandPieceContinueMove(
+					piece->m_OwnerPlayer->m_TargetClient->ID, piece->m_ID);
 			}
 			else
 			{
-				NetworkManager::Instance()->
+				GetNetSendFunc().
 					Judgement_CommandPieceInputAct(piece);
 			}
 		};
@@ -915,7 +949,7 @@ void Judgement::StartWaitClientsPieceMove(int pieceID,int squareID, std::string 
 	//network server command
 	DebugInfo::Print("");
 	DebugInfo::Print("- start WaitClientsPieceMove");
-	NetworkManager::Instance()->
+	GetNetSendFunc().
 		Judgement_CommandPieceMove(pieceID,squareID);
 
 	//set what to do after wait
@@ -976,7 +1010,7 @@ void Judgement::StartWaitClientsPieceEscape(int pieceID,int goalSquareID, std::s
 	//network server command
 	DebugInfo::Print("");
 	DebugInfo::Print("- start WaitClients PieceEscape");
-	NetworkManager::Instance()->
+	GetNetSendFunc().
 		Judgement_CommandPieceEscape(pieceID, goalSquareID);
 
 	//set what to do after wait
@@ -1034,12 +1068,12 @@ void Judgement::CheckPieceCaught(int movePieceID, int caughtPieceID)
 			{
 				if (movePiece->m_ActPoint > 0)
 				{
-					NetworkManager::Instance()->
-						Judgement_CommandPieceContinueMove(movePiece->m_OwnerPlayer->m_TargetClient, movePiece->m_ID);
+					GetNetSendFunc().Judgement_CommandPieceContinueMove(
+						movePiece->m_OwnerPlayer->m_TargetClient->ID, movePiece->m_ID);
 				}
 				else
 				{
-					NetworkManager::Instance()->
+					GetNetSendFunc().
 						Judgement_CommandPieceInputAct(movePiece);
 				}
 			};
@@ -1062,7 +1096,7 @@ void Judgement::StartWaitClientsPieceCaught(int movePieceID, int caughtPieceID, 
 	//network server command
 	DebugInfo::Print("");
 	DebugInfo::Print("- start WaitClients PieceCaught");
-	NetworkManager::Instance()->
+	GetNetSendFunc().
 		Judgement_CommandPieceCaught(movePieceID, caughtPieceID, prisonRoomSquareID);
 
 	//set what to do after wait
@@ -1137,7 +1171,7 @@ void Judgement::StartWaitClientsGameOver(int result)
 	//network server command
 	DebugInfo::Print("");
 	DebugInfo::Print("- start WaitClients GameOver");
-	NetworkManager::Instance()->Judgement_CommandShowGameOver(result);
+	GetNetSendFunc().Judgement_CommandShowGameOver(result);
 
 
 	//set what to do after wait
@@ -1158,5 +1192,3 @@ void Judgement::StartWaitClientsGameOver(int result)
 
 
 #pragma endregion
-
-

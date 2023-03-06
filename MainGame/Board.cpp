@@ -10,8 +10,8 @@ void Board::Init()
 	m_CameraOrientation = new TransformObject();
 	m_BoardCenter = new TransformObject();
 
-	m_CameraOrientation->GetTransform()->SetPosition(0, -10, 5);
-	m_BoardCenter->GetTransform()->SetPosition(0, 0, 0);
+	m_CameraOrientation->GetTransform()->SetPosition(0, -8, 8);
+	m_BoardCenter->GetTransform()->SetPosition(0, 0, 2);
 #pragma endregion
 
 #pragma region ========== main map ==========
@@ -22,11 +22,11 @@ void Board::Init()
 	//2: bad start
 	int squareType[SQUARE_Z_NUM][SQUARE_X_NUM] =
 	{
-		{0,2,0,2,0,},
-		{2,0,0,0,2,},
-		{0,1,9,1,0,},
-		{0,0,0,0,0,},
 		{0,0,9,0,0,},
+		{0,1,0,1,0,},
+		{0,0,0,0,0,},
+		{2,0,0,0,2,},
+		{0,2,0,2,0,},
 	};
 
 	//for connect squares

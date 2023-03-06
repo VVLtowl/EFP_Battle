@@ -25,7 +25,7 @@
 #include "BoxCollider.h"
 #include "GameManager.h"
 
-#include "NetworkManager.h"
+#include "MyNetManager.h"
 
 #pragma region ========== prototype declaration ==========
 /*********************************************************
@@ -137,11 +137,11 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 						//make log
 
 						//DebugInfo::WriteInfoToLog("..\\MainGame\\TestLog.txt");
-						if (NetworkManager::Instance()->TargetClient)
+						if (MyNetManager::Instance()->m_TargetAppClient)
 						{
 							DebugInfo::WriteInfoToLog("..\\MainGame\\ClientLog.txt");
 						}
-						if (NetworkManager::Instance()->TargetServer)
+						if (MyNetManager::Instance()->m_TargetAppServer)
 						{
 							DebugInfo::WriteInfoToLog("..\\MainGame\\ServerLog.txt");
 						}
@@ -184,11 +184,11 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 			DebugInfo::Print("exceptionF" + std::string(m.what()));
 
 			//make log
-			if (NetworkManager::Instance()->TargetClient)
+			if (MyNetManager::Instance()->m_TargetAppClient)
 			{
 				DebugInfo::WriteInfoToLog("..\\MainGame\\ClientLog.txt");
 			}
-			if (NetworkManager::Instance()->TargetServer)
+			if (MyNetManager::Instance()->m_TargetAppServer)
 			{
 				DebugInfo::WriteInfoToLog("..\\MainGame\\ServerLog.txt");
 			}
@@ -209,7 +209,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	//network
-	NetworkManager::Instance()->UpdateNetProc(uMsg,lParam);
+	MyNetManager::Instance()->UpdateNetProc(uMsg,lParam);
 
 	//imgui
 	if (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
@@ -302,31 +302,30 @@ void Init()
 }
 void Update()
 {
-	
-		//input update
-		Input::Update();
+	//input update
+	Input::Update();
 
-		//scene update
-		SceneManager::Update();
+	//scene update
+	SceneManager::Update();
 
-		//draw imgui
-		{
-			ImGui_ImplDX11_NewFrame();
-			ImGui_ImplWin32_NewFrame();
-			ImGui::NewFrame();
+	//draw imgui
+	{
+		ImGui_ImplDX11_NewFrame();
+		ImGui_ImplWin32_NewFrame();
+		ImGui::NewFrame();
 
-			DebugInfo::Update();
+		DebugInfo::Update();
 
 
-			ImGui::Render();
-			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-		}
+		ImGui::Render();
+		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	}
 
-		//draw over
-		Renderer::End(true);
+	//draw over
+	Renderer::End(true);
 
-		//scene change
-		SceneManager::CheckChange();
+	//scene change
+	SceneManager::CheckChange();
 
 }
 void Uninit() 
