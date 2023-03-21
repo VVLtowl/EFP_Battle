@@ -1,58 +1,37 @@
-create piece [5]...[self]
-[success] to server notify self finish
-[end] BH-ClientWaitRoom(end event[ChangeScene ToGameScene])
-[success] to server notify self finish
-clear pieces finish mark...
-clear pieces hand ui...
-
-- start WaitPiecesFinish
-[start] BH-ClientWaitPiecesFinish(end event[NotifyCountPlayerFinished])
-[update] BH-ClientWaitPiecesFinish(end event[NotifyCountPlayerFinished])
-[start] BH-PieceShowEntry(end event[CountPieceFinish ShowEntry])
-[update] BH-PieceShowEntry(end event[CountPieceFinish ShowEntry])
-[start] BH-PieceShowEntry(end event[CountPieceFinish ShowEntry])
-[update] BH-PieceShowEntry(end event[CountPieceFinish ShowEntry])
-[start] BH-PieceShowEntry(end event[CountPieceFinish ShowEntry])
-[update] BH-PieceShowEntry(end event[CountPieceFinish ShowEntry])
-[start] BH-PieceShowEntry(end event[CountPieceFinish ShowEntry])
-[update] BH-PieceShowEntry(end event[CountPieceFinish ShowEntry])
-[end] BH-PieceShowEntry(end event[CountPieceFinish ShowEntry])
-[6/6]piece show entry
-[start] BH-PieceShowEntry(end event[CountPieceFinish ShowEntry])
-[update] BH-PieceShowEntry(end event[CountPieceFinish ShowEntry])
-[end] BH-PieceShowEntry(end event[CountPieceFinish ShowEntry])
-[start] BH-PieceShowEntry(end event[CountPieceFinish ShowEntry])
-[update] BH-PieceShowEntry(end event[CountPieceFinish ShowEntry])
-[end] BH-PieceShowEntry(end event[CountPieceFinish ShowEntry])
-[end] BH-PieceShowEntry(end event[CountPieceFinish ShowEntry])
-[end] BH-PieceShowEntry(end event[CountPieceFinish ShowEntry])
-[end] BH-PieceShowEntry(end event[CountPieceFinish ShowEntry])
-[end] BH-ClientWaitPiecesFinish(end event[NotifyCountPlayerFinished])
-- finish WaitPiecesFinish
-[success] to server notify self finish
-[start] BH-ClientShowStep(end event[NotifyCountPlayerFinished])
-[update] BH-ClientShowStep(end event[NotifyCountPlayerFinished])
-[end] BH-ClientShowStep(end event[NotifyCountPlayerFinished])
-[success] to server notify self finish
-[start] BH-ClientShowStep(end event[NotifyCountPlayerFinished])
-[update] BH-ClientShowStep(end event[NotifyCountPlayerFinished])
-[end] BH-ClientShowStep(end event[NotifyCountPlayerFinished])
-[success] to server notify self finish
-[start] BH-ClientShowStep(end event[NotifyCountPlayerFinished])
-[update] BH-ClientShowStep(end event[NotifyCountPlayerFinished])
-[end] BH-ClientShowStep(end event[NotifyCountPlayerFinished])
-[success] to server notify self finish
-show pieces think mark...
-[start] BH-PlayerWaitSelfPiecesInputHand(end event[NotifyCountPlayerFinished])
-[update] BH-PlayerWaitSelfPiecesInputHand(end event[NotifyCountPlayerFinished])
 [start] BH-PieceInputHand
-[wait player input] BH-PieceInputHand
+[update] BH-PieceInputHand
 [start] BH-PieceShowButtonsPanel(next[PieceInputHand])(end event[StartInputAfterAnime InputHand])
 [update] BH-PieceShowButtonsPanel(next[PieceInputHand])(end event[StartInputAfterAnime InputHand])
 [end] BH-PieceShowButtonsPanel(next[PieceInputHand])(end event[StartInputAfterAnime InputHand])
+[success] to server request set piece[0] hand[3_scissors] 
+add [3_scissors] to piece[0]
+[end] BH-PieceInputHand
+[start] BH-PieceInputHand
+[update] BH-PieceInputHand
+[start] BH-PieceShowButtonsPanel(next[PieceInputHand])(end event[StartInputAfterAnime InputHand])
+[update] BH-PieceShowButtonsPanel(next[PieceInputHand])(end event[StartInputAfterAnime InputHand])
+[end] BH-PieceShowButtonsPanel(next[PieceInputHand])(end event[StartInputAfterAnime InputHand])
+[success] to server request set piece[1] hand[1_rock] 
+add [1_rock] to piece[1]
+[end] BH-PieceInputHand
+[start] BH-PieceInputHand
+[update] BH-PieceInputHand
+[start] BH-PieceShowButtonsPanel(next[PieceInputHand])(end event[StartInputAfterAnime InputHand])
+[update] BH-PieceShowButtonsPanel(next[PieceInputHand])(end event[StartInputAfterAnime InputHand])
+[end] BH-PieceShowButtonsPanel(next[PieceInputHand])(end event[StartInputAfterAnime InputHand])
+add [2_paper] to piece[4]
+add [3_scissors] to piece[5]
+[success] to server request set piece[2] hand[1_rock] 
 add [1_rock] to piece[2]
-exceptionÅFnormal test exception
-----------------------
+[end] BH-PieceInputHand
+[start] BH-PieceInputHand
+[update] BH-PieceInputHand
+[start] BH-PieceShowButtonsPanel(next[PieceInputHand])(end event[StartInputAfterAnime InputHand])
+[update] BH-PieceShowButtonsPanel(next[PieceInputHand])(end event[StartInputAfterAnime InputHand])
+[end] BH-PieceShowButtonsPanel(next[PieceInputHand])(end event[StartInputAfterAnime InputHand])
+[success] to server request set piece[3] hand[3_scissors] 
+add [3_scissors] to piece[3]
+[end] BH-PieceInputHand
 [end] BH-PlayerWaitSelfPiecesInputHand(end event[NotifyCountPlayerFinished])
 [success] to server notify self finish
 clear pieces finish mark...
@@ -70,7 +49,7 @@ clear pieces hand ui...
 [start] BH-PieceShowHand(end event[CountPieceFinish ShowHand])
 [update] BH-PieceShowHand(end event[CountPieceFinish ShowHand])
 [end] BH-PieceShowHand(end event[CountPieceFinish ShowHand])
-[6/6]count
+[6/6] piece show hand
 [start] BH-PieceShowHand(end event[CountPieceFinish ShowHand])
 [update] BH-PieceShowHand(end event[CountPieceFinish ShowHand])
 [end] BH-PieceShowHand(end event[CountPieceFinish ShowHand])
@@ -82,6 +61,21 @@ clear pieces hand ui...
 [end] BH-PieceShowHand(end event[CountPieceFinish ShowHand])
 [end] BH-ClientWaitPiecesFinish(end event[NotifyCountPlayerFinished])
 - finish WaitPiecesFinish
+[success] to server notify self finish
+piece 0 [self] start input act...
+[start] BH-PieceShowCheckActpoint(end event[NotifyCountPlayerFinish CheckActpt])
+[finish] BH-PieceShowCheckActpoint(end event[NotifyCountPlayerFinish CheckActpt])
+[end] BH-PieceShowCheckActpoint(end event[NotifyCountPlayerFinish CheckActpt])
+[success] to server notify self finish
+piece 1 [self] start input act...
+[start] BH-PieceShowCheckActpoint(end event[NotifyCountPlayerFinish CheckActpt])
+[finish] BH-PieceShowCheckActpoint(end event[NotifyCountPlayerFinish CheckActpt])
+[end] BH-PieceShowCheckActpoint(end event[NotifyCountPlayerFinish CheckActpt])
+[success] to server notify self finish
+piece 2 [self] start input act...
+[start] BH-PieceShowCheckActpoint(end event[NotifyCountPlayerFinish CheckActpt])
+[finish] BH-PieceShowCheckActpoint(end event[NotifyCountPlayerFinish CheckActpt])
+[end] BH-PieceShowCheckActpoint(end event[NotifyCountPlayerFinish CheckActpt])
 [success] to server notify self finish
 piece 3 [self] start input act...
 [start] BH-PieceShowCheckActpoint(end event[NotifyCountPlayerFinish CheckActpt])
@@ -103,35 +97,9 @@ clear pieces hand ui...
 [update] BH-ClientShowStep(end event[NotifyCountPlayerFinished])
 [end] BH-ClientShowStep(end event[NotifyCountPlayerFinished])
 [success] to server notify self finish
-piece 3 start input act...
-[start] BH-PieceShowMove(end event[NotifyCountPlayerFinished])
-[update] BH-PieceShowMove(end event[NotifyCountPlayerFinished])
-[end] BH-PieceShowMove(end event[NotifyCountPlayerFinished])
-[success] to server notify self finish
-piece 3 start input act...
-show piece[3] finish...
-[success] to server notify self finish
-piece 4 [self] start input act...
+piece 0 [self] start input act...
 
-- start piece 4 select act...
-[start] BH-PieceInput(end event[DebugHintFinishSelectAct])
-[update] BH-PieceInput(end event[DebugHintFinishSelectAct])
-[start show ui] BH-PieceInput(end event[DebugHintFinishSelectAct])
-[start show ui ok] BH-PieceInput(end event[DebugHintFinishSelectAct])
-[start] BH-PieceShowButtonsPanel(next[PieceInput])(end event[StartInputAfterAnime])
-[update] BH-PieceShowButtonsPanel(next[PieceInput])(end event[StartInputAfterAnime])
-[end] BH-PieceShowButtonsPanel(next[PieceInput])(end event[StartInputAfterAnime])
-[start hide ui] BH-PieceInput(end event[DebugHintFinishSelectAct])
-[success] to server request piece[4] finish act 
-[input finish] BH-PieceInput(end event[DebugHintFinishSelectAct])
-[input finish ok] BH-PieceInput(end event[DebugHintFinishSelectAct])
-[end] BH-PieceInput(end event[DebugHintFinishSelectAct])
-- finish piece 4 select act
-show piece[4] finish...
-[success] to server notify self finish
-piece 5 [self] start input act...
-
-- start piece 5 select act...
+- start piece 0 select act...
 [start] BH-PieceInput(end event[DebugHintFinishSelectAct])
 [update] BH-PieceInput(end event[DebugHintFinishSelectAct])
 [start show ui] BH-PieceInput(end event[DebugHintFinishSelectAct])
@@ -143,9 +111,9 @@ piece 5 [self] start input act...
 [input finish] BH-PieceInput(end event[DebugHintFinishSelectAct])
 [input finish ok] BH-PieceInput(end event[DebugHintFinishSelectAct])
 [end] BH-PieceInput(end event[DebugHintFinishSelectAct])
-- finish piece 5 select act
+- finish piece 0 select act
 
-- start piece 5 input move...
+- start piece 0 input move...
 [start] BH-PieceInput(end event[DebugHintFinishPieceInputMove])
 [update] BH-PieceInput(end event[DebugHintFinishPieceInputMove])
 [start show ui] BH-PieceInput(end event[DebugHintFinishPieceInputMove])
@@ -163,38 +131,70 @@ piece 5 [self] start input act...
 [input finish] BH-PieceInput(end event[DebugHintFinishPieceInputMove])
 [input finish ok] BH-PieceInput(end event[DebugHintFinishPieceInputMove])
 [end] BH-PieceInput(end event[DebugHintFinishPieceInputMove])
-- finish piece 5 input move
-[success] to server request piece[5] move to square[23] 
+- finish piece 0 input move
+[success] to server request piece[0] move to square[2] 
 [start] BH-PieceShowMove(end event[NotifyCountPlayerFinished])
 [update] BH-PieceShowMove(end event[NotifyCountPlayerFinished])
 [end] BH-PieceShowMove(end event[NotifyCountPlayerFinished])
 [success] to server notify self finish
-[start] BH-PieceShowCaught(end event[NotifyCountPlayerFinished])
-[update] BH-PieceShowCaught(end event[NotifyCountPlayerFinished])
-[end] BH-PieceShowCaught(end event[NotifyCountPlayerFinished])
+[start] BH-PieceShowEscape(end event[NotifyCountPlayerFinished])
+[update] BH-PieceShowEscape(end event[NotifyCountPlayerFinished])
+[end] BH-PieceShowEscape(end event[NotifyCountPlayerFinished])
 [success] to server notify self finish
 [start] BH-ClientShowGameOver(end event[ChangeScene ToClientWaitScene])
 [update] BH-ClientShowGameOver(end event[ChangeScene ToClientWaitScene])
-[end] BH-ClientShowGameOver(end event[ChangeScene ToClientWaitScene])
-behaviours size : 0
+exceptionÅFnormal test exception
+----------------------
+[start] BH-ClientWaitPiecesFinish(end event[NotifyCountPlayerFinished])
+[update] BH-ClientWaitPiecesFinish(end event[NotifyCountPlayerFinished])
+[start] BH-PieceClearActPoint(end event[PieceClearHand])
+[update] BH-PieceClearActPoint(end event[PieceClearHand])
+[end] BH-PieceClearActPoint(end event[PieceClearHand])
+[start] BH-PieceClearActPoint(end event[PieceClearHand])
+[update] BH-PieceClearActPoint(end event[PieceClearHand])
+[end] BH-PieceClearActPoint(end event[PieceClearHand])
+[start] BH-PieceClearActPoint(end event[PieceClearHand])
+[update] BH-PieceClearActPoint(end event[PieceClearHand])
+[end] BH-PieceClearActPoint(end event[PieceClearHand])
+[start] BH-PieceClearActPoint(end event[PieceClearHand])
+[update] BH-PieceClearActPoint(end event[PieceClearHand])
+[end] BH-PieceClearActPoint(end event[PieceClearHand])
+[start] BH-PieceClearActPoint(end event[PieceClearHand])
+[update] BH-PieceClearActPoint(end event[PieceClearHand])
+[end] BH-PieceClearActPoint(end event[PieceClearHand])
+[start] BH-PieceClearActPoint(end event[PieceClearHand])
+[update] BH-PieceClearActPoint(end event[PieceClearHand])
+[end] BH-PieceClearActPoint(end event[PieceClearHand])
+[start] BH-PieceClearHand(end event[CountPieceFinish ClearHandAndActpt])
+[update] BH-PieceClearHand(end event[CountPieceFinish ClearHandAndActpt])
+[end] BH-PieceClearHand(end event[CountPieceFinish ClearHandAndActpt])
+[6/6]count
+[start] BH-PieceClearHand(end event[CountPieceFinish ClearHandAndActpt])
+[update] BH-PieceClearHand(end event[CountPieceFinish ClearHandAndActpt])
+[end] BH-PieceClearHand(end event[CountPieceFinish ClearHandAndActpt])
+[start] BH-PieceClearHand(end event[CountPieceFinish ClearHandAndActpt])
+[update] BH-PieceClearHand(end event[CountPieceFinish ClearHandAndActpt])
+[end] BH-PieceClearHand(end event[CountPieceFinish ClearHandAndActpt])
+[start] BH-PieceClearHand(end event[CountPieceFinish ClearHandAndActpt])
+[update] BH-PieceClearHand(end event[CountPieceFinish ClearHandAndActpt])
+[end] BH-PieceClearHand(end event[CountPieceFinish ClearHandAndActpt])
+[start] BH-PieceClearHand(end event[CountPieceFinish ClearHandAndActpt])
+[update] BH-PieceClearHand(end event[CountPieceFinish ClearHandAndActpt])
+[end] BH-PieceClearHand(end event[CountPieceFinish ClearHandAndActpt])
+[start] BH-PieceClearHand(end event[CountPieceFinish ClearHandAndActpt])
+[update] BH-PieceClearHand(end event[CountPieceFinish ClearHandAndActpt])
+[end] BH-PieceClearHand(end event[CountPieceFinish ClearHandAndActpt])
+[end] BH-ClientWaitPiecesFinish(end event[NotifyCountPlayerFinished])
+- finish WaitPiecesFinish
 [success] to server notify self finish
-[start] BH-ClientWaitRoom(end event[ChangeScene ToGameScene])
-[update] BH-ClientWaitRoom(end event[ChangeScene ToGameScene])
-[success] to server request set ready[true] 
-update joined and target client info
-update joined and target client info
-update joined and target client info
-update joined and target client info
-update joined and target client info
-update joined and target client info
-dont create player[0]...
-dont create player[1]...
-create main player[2]...
+[start] BH-ClientShowStep(end event[NotifyCountPlayerFinished])
+[update] BH-ClientShowStep(end event[NotifyCountPlayerFinished])
+[end] BH-ClientShowStep(end event[NotifyCountPlayerFinished])
 [success] to server notify self finish
-set target piece num: 6
+[start] BH-ClientShowStep(end event[NotifyCountPlayerFinished])
+[update] BH-ClientShowStep(end event[NotifyCountPlayerFinished])
+[end] BH-ClientShowStep(end event[NotifyCountPlayerFinished])
 [success] to server notify self finish
-create piece [0]...
-create piece [1]...
-create piece [2]...
-create piece [3]...
-create piece [4]...[self]
+show pieces think mark...
+[start] BH-PlayerWaitSelfPiecesInputHand(end event[NotifyCountPlayerFinished])
+[update] BH-PlayerWaitSelfPiecesInputHand(end event[NotifyCountPlayerFinished])

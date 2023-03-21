@@ -129,7 +129,7 @@ protected:
 	//virtual void AddSendMsgsToOther(const char* msgBuf, bool tcp, int exceptID);
 
 	/*********************************************************
-	* @brief	server info
+	* @brief	server attributes
 	********************************************************/
 public:
 	std::string m_IP = std::string(DEFAULT_IP);
@@ -172,7 +172,7 @@ public:
 	virtual void AddSendMsg(const char* msgBuf, bool tcp);
 
 	/*********************************************************
-	* @brief	client info
+	* @brief	client attributes
 	********************************************************/
 public:
 	std::string m_IP = std::string(DEFAULT_IP);

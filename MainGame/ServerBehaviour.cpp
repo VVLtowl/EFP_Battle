@@ -1,7 +1,6 @@
 #include "main.h"
 
 #include "MyNetManager.h"
-
 #include "SceneManager.h"
 
 #include "Character.h"
@@ -20,76 +19,6 @@ ServerBehaviour::ServerBehaviour(AppServer* s, bool isOnce):
 {
 }
 
-//#pragma region ========== server init ==========
-//void ServerInit::Start()
-//{
-//	//set default val
-//	{
-//		m_AppServer->m_JoinedClientNum = 0;
-//		m_AppServer->m_TargetClientNum = Judgement::Instance()->m_Mode.GetPlayerNum();
-//		m_AppServer->m_Port = 5555;
-//		m_AppServer->m_OpenGameRoom = false;
-//		m_AppServer->m_ResetGameRoom = false;
-//		m_AppServer->m_StartGame = false;
-//	}
-//
-//	//test 
-//	DebugInfo::TestBlocks.emplace(TESTBLOCKID_SERVER_WORK, [this]()
-//		{
-//			ImGui::Begin("Server Working...");
-//			{
-//				if (m_AppServer->m_OpenGameRoom)
-//				{
-//					//show port num
-//					ImGui::Text("port: %d",
-//						m_AppServer->m_MyServer->m_TCPPort);
-//
-//					//show server address
-//					ImGui::Text("ip: %s",
-//						m_AppServer->m_MyServer->m_IP.c_str());
-//
-//					//show connected clients number
-//					ImGui::Text("connected clients num: %d",
-//						m_AppServer->m_JoinedClientNum);
-//
-//					//test for chat
-//					//todo
-//				}
-//				else
-//				{
-//					ImGui::Text("...");
-//				}
-//			}
-//			ImGui::End();
-//		});
-//	
-//	//next bh start in next scene
-//	SceneManager::ChangeScene<ServerSettingScene>();
-//}
-//#pragma endregion
-//
-//#pragma region ========== server uninit ==========
-//void ServerUninit::Start()
-//{
-//	//set default val
-//	{
-//		m_AppServer->m_JoinedClientNum = 0;
-//		m_AppServer->m_TargetClientNum = 0;
-//		m_AppServer->m_OpenGameRoom = false;
-//		m_AppServer->m_ResetGameRoom = false;
-//		m_AppServer->m_StartGame = false;
-//	}
-//
-//	if (m_AppServer->m_OpenGameRoom)
-//	{
-//		m_AppServer->m_OpenGameRoom = false;
-//		GetNetSendFunc().Server_CommandDisconnect();
-//	}
-//
-//	//close test panel
-//	DebugInfo::TestBlocks.erase(TESTBLOCKID_SERVER_WORK);
-//}
-//#pragma endregion
 
 #pragma region ========== input game room ==========
 
@@ -111,6 +40,12 @@ void ServerInputGameRoom::Start()
 
 				//input port
 				ImGui::InputInt("port", &m_AppServer->m_Port, 0, 65535);
+
+				//input IP
+				char ipBuf[LEN_IP];
+				memcpy(ipBuf, m_AppServer->m_MyServer->m_IP.c_str(), LEN_IP);
+				ImGui::InputText("RoomServerIP:", ipBuf, LEN_IP);
+				m_AppServer->m_MyServer->m_IP = std::string(ipBuf);
 
 				//confirm setting and start wait client
 				if (ImGui::Button("Comfirm & Open Room"))
