@@ -373,7 +373,8 @@ void ClientWaitRoom::Start()
 
 	//test
 	//start room info panel
-	DebugInfo::TestBlocks.emplace(TESTBLOCKID_CLIENT_WAITROOM, [this]()
+	DebugInfo::TestBlocks.emplace(TESTBLOCKID_CLIENT_WAITROOM, 
+		[this]()
 		{
 			ImGui::Begin("Wait Room");
 			{
@@ -440,7 +441,7 @@ void ClientWaitRoom::Update()
 
 	case State::FINISH:
 	{
-		DebugInfo::TestBlocks.erase(TESTBLOCKID_CLIENT_WAITROOM);
+		DebugInfo::CloseBlock(TESTBLOCKID_CLIENT_WAITROOM);
 		NextState();
 		break;
 	}

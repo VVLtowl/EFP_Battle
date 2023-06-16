@@ -50,14 +50,17 @@ AppClient::~AppClient()
 	//delete behaviour by base class destructor
 }
 
+#pragma region ========== method ==========
+
 void AppClient::Init()
 {
 	//set default val
-	{
-		m_JoinSuccess = false;
-		LaunchMyClient();
-		memcpy(m_Name, "nameless", LEN_NAME);
-	}
+	m_JoinSuccess = false;
+	LaunchMyClient();
+	memcpy(m_Name, "nameless", LEN_NAME);
+
+	//set windows name
+	SetWinSubName(" client");
 
 	//test 
 	DebugInfo::TestBlocks.emplace(TESTBLOCKID_CLIENT_WORK, 
@@ -113,11 +116,6 @@ void AppClient::Uninit()
 {
 	//close test panel
 	DebugInfo::TestBlocks.erase(TESTBLOCKID_CLIENT_WORK);
-	//if(	m_AppClient->m_IsConnected)
-	//{
-	//	m_AppClient->m_IsConnected = false;
-	//	//NetworkManager::Instance()->Client_RequestDisconnect();
-	//}
 
 	if (m_JoinSuccess)
 	{
@@ -211,6 +209,7 @@ void AppClient::TryJoinServer()
 				if (BH_TryConnectServer->m_ConnectState ==
 					ClientTryConnectServer::State::CONNECT_SUCCEED)
 				{
+					//todo
 					//BH_TryConnectServer back to BH_SelectServer
 					
 
@@ -309,6 +308,7 @@ void AppClient::UpdateClientInfo(int checkMemID,std::string name,bool ready, boo
 		mem.ID = checkMemID;
 		mem.Name = name;
 		mem.Ready = ready;
+		//todo set sock info
 		//mem->TCPSock
 		//mem->UDPAddr
 
@@ -716,4 +716,5 @@ void AppClient::StartShowGameOver(int result)
 	StartBH(BH_ShowGameOver);
 }
 
+#pragma endregion
 

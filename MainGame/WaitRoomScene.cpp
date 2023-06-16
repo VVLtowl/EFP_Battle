@@ -34,15 +34,6 @@ void ClientWaitScene::MainLoad()
 			CameraManager::GetMainCamera()->m_CmrLookAt->m_TargetTransform = sky->GetTransform();
 			//test set main light look at plane pos
 			LightManager::GetMainLight()->LightLookAt->m_TargetTransform = sky->GetTransform();
-
-
-			//FreeCamera* cmr = GameObjectManager::Create<FreeCamera>();
-			//cmr->GetTransform()->SetPosition(0, 0, -0.5f);
-			//cmr->GetTransform()->SetParent(plane->GetTransform());
-
-			//plane->Image->Texture = cmr->GetCamera()->MainSRV;
-			//plane->Image->Texcoord = { 1,0,-1,1 };
-			//cmr->GetCamera()->CmrLookAt->TargetTransform = lookAtTrs->GetTransform();
 		}
 
 		//test particle system
@@ -86,7 +77,6 @@ void ClientWaitScene::MainUpdate()
 		//test
 		return;
 
-
 		SceneManager::ChangeScene<TestScene>();
 		AppClient* client = AppClient::Instance();
 		{
@@ -116,7 +106,6 @@ void ServerSettingScene::MainLoad()
 
 void ServerSettingScene::MainUnload()
 {
-	//DebugInfo::TestBlocks.erase(TESTBLOCKID_SERVER_WAITCLIENTINROOM);
 }
 
 void ServerSettingScene::MainUpdate()

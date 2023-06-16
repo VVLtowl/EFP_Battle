@@ -64,17 +64,6 @@ void GameScene::MainLoad()
 			dldesc.Color = { 5,2,2,1 };
 			dldesc.Size = 0.01f;
 			LinePainter::Instance()->MakeLine(dldesc);
-
-			//test transform anime
-			if (0)
-			{
-				TransformAnimeDescripition tadesc(t->GetTransform(), t->GetTransform());
-				tadesc.LoopCount = INT_MAX;
-				tadesc.EndPosition = { 0,3,0 };
-				D3DXQuaternionRotationYawPitchRoll(&tadesc.EndRotation, PI / 3, PI / 2, PI / 4);
-				tadesc.EndScale = V3_ONE * 0.5f;
-				new TransformAnime(t, tadesc);
-			}
 		}
 
 		//test depth UI for shadow map

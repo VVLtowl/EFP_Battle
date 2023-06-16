@@ -11,27 +11,6 @@ protected:
 	class AppClient* m_AppClient;
 };
 
-
-//class ClientInit :
-//	public ClientBehaviour
-//{
-//public:
-//	ClientInit(class AppClient* c) : ClientBehaviour(c) {};
-//	std::string Name() override { return "ClientInit"; };
-//
-//	void Start()override;
-//};
-//
-//class ClientUninit :
-//	public ClientBehaviour
-//{
-//public:
-//	ClientUninit(class AppClient* c) : ClientBehaviour(c) {};
-//	std::string Name() override { return "ClientUninit"; };
-//
-//	void Start()override;
-//};
-//
 class ClientSelectServer :
 	public ClientBehaviour
 {

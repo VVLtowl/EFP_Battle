@@ -3,6 +3,291 @@
 #include <vector>
 #include <functional>
 
+
+#pragma region ========== new version ==========
+/*********************************************************
+* @brief    animator component
+********************************************************/
+class Animator :
+    public Component
+{
+public:
+    Animator(
+        class GameObject* owner,
+        int order = COMP_TRANSFORMANIME);
+    ~Animator();
+    void Update() override;
+
+private:
+    std::list<class Anime*> m_Animes;
+    std::list<class Anime*> m_TrashAnimes;
+    std::function<void()> m_EndEvent;
+
+public:
+    void AddEndEvent(std::function<void()> func) { m_EndEvent = func; };
+    void AddAnime(class Anime* ani);
+    void RemoveAnime(class Anime* ani);
+    void AnimeFinsh(class Anime* ani);
+};
+
+/*********************************************************
+* @brief    anime descripition
+********************************************************/
+// @brief   base class
+class AnimeDescripition
+{
+public:
+    int LoopCount = 1;
+    float Duration = 60;
+};
+
+// @brief   concrete descripition
+class AniDesc_Vec3StartEnd :
+    public AnimeDescripition
+{
+public:
+    D3DXVECTOR3 Start;
+    D3DXVECTOR3 End;
+};
+class AniDesc_QuaternionStartEnd :
+    public AnimeDescripition
+{
+public:
+    D3DXQUATERNION Start;
+    D3DXQUATERNION End;
+};
+class AniDesc_PositionCircleRotate :
+    public AnimeDescripition
+{
+public:
+    D3DXVECTOR3 Center;
+    float Radius;
+    float StartRadian;
+    float EndRadian;
+};
+class AniDesc_Vec3Hermite :
+    public AnimeDescripition
+{
+public:
+    D3DXVECTOR3 StartVec3;
+    D3DXVECTOR3 StartTangent;
+    D3DXVECTOR3 EndVec3;
+    D3DXVECTOR3 EndTangent;
+};
+class AniDesc_Texture:
+    public AnimeDescripition
+{
+public:
+    D3DXVECTOR4 StartTexcoord;
+    int ColumnNum;
+    int RowNum;
+    int ClipNum;
+};
+class AniDesc_Event :
+    public AnimeDescripition
+{
+public:
+    std::function<void()> Event;
+    float EventFrame;
+};
+
+/*********************************************************
+* @brief    anime
+********************************************************/
+// @brief   anime common info
+class Anime
+{
+public:
+    Anime(
+        class Animator* animator, 
+        const AnimeDescripition& desc);
+    void Update();
+    ~Anime();
+private:
+    virtual void AnimeUpdate() = 0;
+public:
+    int LoopCount;
+    const float Duration;
+
+    float FrameMax;
+    float FrameCount;
+public:
+    class GameObject* TargetObject;
+    class Animator* OwnAnimator;
+};
+
+// @brief   vector3 anime
+class Vector3Anime :
+    public Anime
+{
+public:
+    Vector3Anime(
+        class Animator* animator,
+        const AnimeDescripition& desc,
+        class ComputeFunction& computeFunc);
+    //virtual void AnimeUpdate()override;
+public:
+    std::vector<D3DXVECTOR3> Vector3Datas;
+};
+class Anime_Position :
+    public Vector3Anime
+{
+public:
+    Anime_Position(
+        class Animator* animator,
+        const AnimeDescripition& desc,
+        class ComputeFunction& computeFunc) :
+        Vector3Anime(animator, desc, computeFunc) {};
+    void AnimeUpdate()override;
+};
+class Anime_Scale :
+    public Vector3Anime
+{
+public:
+    Anime_Scale(
+        class Animator* animator,
+        const AnimeDescripition& desc,
+        class ComputeFunction& computeFunc) :
+        Vector3Anime(animator, desc, computeFunc) {};
+    void AnimeUpdate()override;
+};
+
+// @brief   quaternion anime
+class QuaternionAnime :
+    public Anime
+{
+public:
+    QuaternionAnime(
+        class Animator* animator,
+        const AnimeDescripition& desc,
+        class ComputeFunction& computeFunc);
+    //void AnimeUpdate()override;
+public:
+    std::vector<D3DXQUATERNION> QuaternionDatas;
+};
+class Anime_Rotation :
+    public QuaternionAnime
+{
+public:
+    Anime_Rotation(
+        class Animator* animator,
+        const AnimeDescripition& desc,
+        class ComputeFunction& computeFunc) :
+        QuaternionAnime(animator, desc, computeFunc) {};
+    void AnimeUpdate()override;
+};
+
+// @brief   texture texcoord anime
+class Anime_Texture :
+    public Anime
+{
+public:
+    Anime_Texture(
+        class Animator* animator,
+        const AniDesc_Texture& desc,
+        class DrawObject* drawObj);
+    
+public:
+    void AnimeUpdate()override;
+
+public:
+    class DrawObject* TargetDrawObj;
+    float PerClipDuration=0;
+    std::vector<D3DXVECTOR4> ClipDatas;
+};
+
+// @brief   anime event
+class Anime_Event :
+    public Anime
+{
+public:
+    Anime_Event(
+        class Animator* animator,
+        const AniDesc_Event& desc);
+
+public:
+    void AnimeUpdate()override;
+
+private:
+    float EventFrame;
+    std::function<void()> Event;
+};
+
+
+/*********************************************************
+* @brief    compute func
+********************************************************/
+// @brief   compute function base class
+class ComputeFunction
+{
+public:
+    virtual void operator()(
+        Anime* anime,
+        const AnimeDescripition& aniDesc) = 0;
+};
+
+// @brief   ìØÇ∂ä‘äu
+class ComputeUniformVec3 :
+    public ComputeFunction
+{
+public:
+    void operator()(
+        Anime* anime,
+        const AnimeDescripition& aniDesc)override;
+};
+
+// @brief   Ç«ÇÒÇ«ÇÒíxÇ≠Ç»ÇÈ
+class ComputeSlowLerpVec3 :
+    public ComputeFunction
+{
+public:
+    void operator()(
+        Anime* anime,
+        const AnimeDescripition& aniDesc)override;
+};
+
+// @brief   ìØÇ∂ä‘äu
+class ComputeUniformQuaternion :
+    public ComputeFunction
+{
+public:
+    void operator()(
+        Anime* anime,
+        const AnimeDescripition& aniDesc)override;
+};
+
+// @brief   äJénÇ∆èIóπÇ™íxÇ¢
+class ComputeSlowStartSlowEndVec3 :
+    public ComputeFunction
+{
+public:
+    void operator()(
+        Anime* anime,
+        const AnimeDescripition& aniDesc)override;
+};
+
+// @brief   â~êSÇ∆îºåaÇ≈â~é¸â^ìÆ
+class ComputePositionCircleRotate :
+    public ComputeFunction
+{
+public:
+    void operator()(
+        Anime* anime,
+        const AnimeDescripition& aniDesc)override;
+};
+
+// @brief   ã»ê¸â^ìÆ
+class ComputeHermiteVec3 :
+    public ComputeFunction
+{
+public:
+    void operator()(
+        Anime* anime,
+        const AnimeDescripition& aniDesc)override;
+};
+#pragma endregion
+
+#if 1
 #pragma region ========== old version ==========
 /*********************************************************
 * @brief    äeÉtÉåÅ[ÉÄÇÃÉfÅ[É^ÇÃåvéZä÷êî
@@ -183,279 +468,5 @@ public:
     std::vector<D3DXVECTOR3> m_AnimeScales;
 };
 #pragma endregion
-
-#pragma region ========== new version ==========
-
-
-/*********************************************************
-* @brief    component
-********************************************************/
-class Animator :
-    public Component
-{
-public:
-    Animator(
-        class GameObject* owner,
-        int order = COMP_TRANSFORMANIME);
-    ~Animator();
-    void Update() override;
-
-private:
-    std::list<class Anime*> m_Animes;
-    std::list<class Anime*> m_TrashAnimes;
-    std::function<void()> m_EndEvent;
-
-public:
-    void AddEndEvent(std::function<void()> func) { m_EndEvent = func; };
-    void AddAnime(class Anime* ani);
-    void RemoveAnime(class Anime* ani);
-    void AnimeFinsh(class Anime* ani);
-};
-
-/*********************************************************
-* @brief    anime descripition
-********************************************************/
-//base
-class AnimeDescripition
-{
-public:
-    int LoopCount = 1;
-    float Duration = 60;
-};
-class AniDesc_Vec3StartEnd :
-    public AnimeDescripition
-{
-public:
-    D3DXVECTOR3 Start;
-    D3DXVECTOR3 End;
-};
-class AniDesc_QuaternionStartEnd :
-    public AnimeDescripition
-{
-public:
-    D3DXQUATERNION Start;
-    D3DXQUATERNION End;
-};
-class AniDesc_PositionCircleRotate :
-    public AnimeDescripition
-{
-public:
-    D3DXVECTOR3 Center;
-    float Radius;
-    float StartRadian;
-    float EndRadian;
-};
-class AniDesc_Vec3Hermite :
-    public AnimeDescripition
-{
-public:
-    D3DXVECTOR3 StartVec3;
-    D3DXVECTOR3 StartTangent;
-    D3DXVECTOR3 EndVec3;
-    D3DXVECTOR3 EndTangent;
-};
-class AniDesc_Texture:
-    public AnimeDescripition
-{
-public:
-    D3DXVECTOR4 StartTexcoord;
-    int ColumnNum;
-    int RowNum;
-    int ClipNum;
-};
-
-class AniDesc_Event :
-    public AnimeDescripition
-{
-public:
-    std::function<void()> Event;
-    float EventFrame;
-};
-
-/*********************************************************
-* @brief    anime
-********************************************************/
-class Anime
-{
-public:
-    Anime(
-        class Animator* animator, 
-        const AnimeDescripition& desc);
-    void Update();
-    ~Anime();
-private:
-    virtual void AnimeUpdate() = 0;
-public:
-    int LoopCount;
-    const float Duration;
-
-    float FrameMax;
-    float FrameCount;
-public:
-    class GameObject* TargetObject;
-    class Animator* OwnAnimator;
-};
-
-//base
-class Vector3Anime :
-    public Anime
-{
-public:
-    Vector3Anime(
-        class Animator* animator,
-        const AnimeDescripition& desc,
-        class ComputeFunction& computeFunc);
-    //virtual void AnimeUpdate()override;
-public:
-    std::vector<D3DXVECTOR3> Vector3Datas;
-};
-class Anime_Position :
-    public Vector3Anime
-{
-public:
-    Anime_Position(
-        class Animator* animator,
-        const AnimeDescripition& desc,
-        class ComputeFunction& computeFunc) :
-        Vector3Anime(animator, desc, computeFunc) {};
-    void AnimeUpdate()override;
-};
-class Anime_Scale :
-    public Vector3Anime
-{
-public:
-    Anime_Scale(
-        class Animator* animator,
-        const AnimeDescripition& desc,
-        class ComputeFunction& computeFunc) :
-        Vector3Anime(animator, desc, computeFunc) {};
-    void AnimeUpdate()override;
-};
-
-//base
-class QuaternionAnime :
-    public Anime
-{
-public:
-    QuaternionAnime(
-        class Animator* animator,
-        const AnimeDescripition& desc,
-        class ComputeFunction& computeFunc);
-    //void AnimeUpdate()override;
-public:
-    std::vector<D3DXQUATERNION> QuaternionDatas;
-};
-class Anime_Rotation :
-    public QuaternionAnime
-{
-public:
-    Anime_Rotation(
-        class Animator* animator,
-        const AnimeDescripition& desc,
-        class ComputeFunction& computeFunc) :
-        QuaternionAnime(animator, desc, computeFunc) {};
-    void AnimeUpdate()override;
-};
-
-class Anime_Texture :
-    public Anime
-{
-public:
-    Anime_Texture(
-        class Animator* animator,
-        const AniDesc_Texture& desc,
-        class DrawObject* drawObj);
-    
-public:
-    void AnimeUpdate()override;
-
-public:
-    class DrawObject* TargetDrawObj;
-    float PerClipDuration=0;
-    std::vector<D3DXVECTOR4> ClipDatas;
-};
-
-class Anime_Event :
-    public Anime
-{
-public:
-    Anime_Event(
-        class Animator* animator,
-        const AniDesc_Event& desc);
-
-public:
-    void AnimeUpdate()override;
-
-private:
-    float EventFrame;
-    std::function<void()> Event;
-};
-
-
-/*********************************************************
-* @brief    compute func
-********************************************************/
-class ComputeFunction
-{
-public:
-    virtual void operator()(
-        Anime* anime,
-        const AnimeDescripition& aniDesc) = 0;
-};
-
-class ComputeUniformVec3 :
-    public ComputeFunction
-{
-public:
-    void operator()(
-        Anime* anime,
-        const AnimeDescripition& aniDesc)override;
-};
-
-class ComputeSlowLerpVec3 :
-    public ComputeFunction
-{
-public:
-    void operator()(
-        Anime* anime,
-        const AnimeDescripition& aniDesc)override;
-};
-
-class ComputeUniformQuaternion :
-    public ComputeFunction
-{
-public:
-    void operator()(
-        Anime* anime,
-        const AnimeDescripition& aniDesc)override;
-};
-
-class ComputeSlowStartSlowEndVec3 :
-    public ComputeFunction
-{
-public:
-    void operator()(
-        Anime* anime,
-        const AnimeDescripition& aniDesc)override;
-};
-
-class ComputePositionCircleRotate :
-    public ComputeFunction
-{
-public:
-    void operator()(
-        Anime* anime,
-        const AnimeDescripition& aniDesc)override;
-};
-
-class ComputeHermiteVec3 :
-    public ComputeFunction
-{
-public:
-    void operator()(
-        Anime* anime,
-        const AnimeDescripition& aniDesc)override;
-};
-#pragma endregion
-
+#endif
 

@@ -11,27 +11,6 @@ protected:
 	class AppServer* m_AppServer;
 };
 
-
-//class ServerInit :
-//	public ServerBehaviour
-//{
-//public:
-//	ServerInit(class AppServer* s) :ServerBehaviour(s) {};
-//	std::string Name() override { return "ServerInit"; };
-//
-//	void Start()override;
-//};
-//
-//class ServerUninit :
-//	public ServerBehaviour
-//{
-//public:
-//	ServerUninit(class AppServer* s) :ServerBehaviour(s) {};
-//	std::string Name() override { return "ServerUninit"; };
-//
-//	void Start()override;
-//};
-
 class ServerInputGameRoom :
 	public ServerBehaviour
 {
@@ -66,7 +45,8 @@ public:
 	State m_WaitState = State::NONE;
 };
 
-//jump once 
+//jump 
+//once 
 class ServerSetClientCampPiece :
 	public ServerBehaviour
 {

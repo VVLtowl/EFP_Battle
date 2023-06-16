@@ -4,6 +4,7 @@
 #include "LookAtCamera.h"
 #include "MoveControl.h"
 #include "Button.h"
+#include "TransformAnime.h"
 
 #include "Board.h"
 #include "Judgement.h"
@@ -16,7 +17,6 @@
 #include "ClientBehaviour.h"
 
 #include "SceneManager.h"
-#include "TransformAnime.h"
 
 #include "imgui/imgui.h"
 
@@ -32,8 +32,6 @@
 
 void TestScene::MainLoad()
 {
-	//InitGameObjectManager();
-
 	//test mark anime
 	if (0)
 	{
@@ -101,20 +99,13 @@ void TestScene::MainLoad()
 		lookAtTrs->GetTransform()->SetPosition(0, 0, -1);
 		lookAtTrs->GetTransform()->SetParent(plane->GetTransform());
 
-		SquareObject* sqrObj = new SquareObject();
-		sqrObj->m_Polygon3D->Model = DrawManager::Models[MDLID_SQUARE_PRISON];
-		sqrObj->m_Polygon3D->Model = DrawManager::Models[MDLID_SQUARE_GOAL];
+		SquareObject* sqrObj1 = new SquareObject();
+		sqrObj1->GetTransform()->SetPosition(-2, 0, -2);
+		sqrObj1->m_Polygon3D->Model = DrawManager::Models[MDLID_SQUARE_PRISON];
 
-		if(0)
-		{
-			FreeCamera* cmr = GameObjectManager::Create<FreeCamera>();
-			cmr->GetTransform()->SetPosition(0, 0, -0.5f);
-			cmr->GetTransform()->SetParent(plane->GetTransform());
-
-			plane->Image->Texture = cmr->GetCamera()->m_MainSRV;
-			plane->Image->Texcoord = { 1,0,-1,1 };
-			cmr->GetCamera()->m_CmrLookAt->m_TargetTransform = lookAtTrs->GetTransform();
-		}
+		SquareObject* sqrObj2 = new SquareObject(); 
+		sqrObj2->GetTransform()->SetPosition(2, 0, 2);
+		sqrObj2->m_Polygon3D->Model = DrawManager::Models[MDLID_SQUARE_GOAL];
 	}
 
 	//test sky
@@ -176,102 +167,6 @@ void TestScene::MainLoad()
 				}
 			}
 		}
-
-		//few
-		{
-
-		}
-	}
-
-	//test create obj
-	if (0)
-	{
-		//test plane
-		Plane* plane = GameObjectManager::Create<Plane>();
-		plane->GetTransform()->SetRotation(0, 0, 0);
-		plane->GetTransform()->SetPosition(0, 0, 0);
-		plane->GetTransform()->SetScale(0, 0, 0);
-		//new LookAtCamera(plane, CameraManager::GetMainCamera());
-		FreeCamera* freeCmr = new FreeCamera();
-		//freeCmr->SetParent(CameraManager::GetMainCamera()->GetGameObject());
-		freeCmr->GetTransform()->SetPosition(10, 16, 10);
-		freeCmr->GetCamera()->m_CmrLookAt->m_TargetTransform = plane->GetTransform();
-		//plane->Image->Texture = freeCmr->GetCamera()->MainSRV;
-
-		//test obj
-		Torus* t = GameObjectManager::Create<Torus>();
-		Torus* t2 = GameObjectManager::Create<Torus>();
-		Torus* t3 = GameObjectManager::Create<Torus>();
-		//new MoveControl(t3);
-		//Emitter* emt = GameObjectManager::Create<Emitter>();
-
-		t2->GetTransform()->SetParent(t->GetTransform());
-		t2->GetTransform()->SetPosition(1, 1, 0);
-		t2->GetTransform()->SetScale(0.5f, 0.5f, 0.5f);
-
-		t3->GetTransform()->SetParent(t2->GetTransform());
-		t3->GetTransform()->SetPosition(0, 1, 0);
-		t3->GetTransform()->SetScale(0.5f, 0.5f, 0.5f);
-
-
-		//test line painter
-		{
-			DrawLineDescription dldesc;
-			dldesc.StartTransform = t2->GetTransform();
-			dldesc.EndTransform = t->GetTransform();
-			dldesc.Color = { 5,2,2,1 };
-			dldesc.Size = 0.01f;
-			LinePainter::Instance()->MakeLine(dldesc);
-		}
-		{
-			DrawLineDescription dldesc;
-			dldesc.StartTransform = t3->GetTransform();
-			dldesc.EndTransform = t2->GetTransform();
-			dldesc.Color = { 5,2,2,1 };
-			dldesc.Size = 0.01f;
-			LinePainter::Instance()->MakeLine(dldesc);
-		}
-
-		//test emitter and local forward
-		Emitter* emt = GameObjectManager::Create<Emitter>();
-		emt->GetTransform()->SetParent(t3->GetTransform());
-
-		//test pawn normal
-		Pawn_Normal* pawn = GameObjectManager::Create<Pawn_Normal>();
-		pawn->GetTransform()->SetParent(t2->GetTransform());
-
-
-		//test transform anime
-		Animator* animator = new Animator(t);
-		{
-			AniDesc_PositionCircleRotate desc;
-			desc.LoopCount = INT_MAX;
-			desc.Duration = 80;
-			desc.StartRadian = PI / 2;
-			desc.EndRadian = PI * 2.5f;
-			desc.Radius = 2;
-			desc.Center = { 1,2,0 };
-			ComputePositionCircleRotate computeFunc;
-			//new Anime_Position(animator, desc, computeFunc);
-		}
-	}
-	if (0)
-	{
-		//test line collision
-		LineCollisionTester* lct = GameObjectManager::Create<LineCollisionTester>();
-
-		//test cube and collision
-		Cube* cb = GameObjectManager::Create<Cube>();
-		cb->GetTransform()->SetPosition(0, 3, -1);
-		cb->GetTransform()->SetRotation(PI / 3, PI / 3, 0);
-		cb->GetTransform()->SetScale(2, 2, 1);
-		//new LookAtCamera(cb, cmr->GetCamera());
-
-
-		//test ActSelection button
-		D3DXVECTOR3 actSelectPos = { 0,0,0.5f };
-		D3DXVECTOR3 actSelectScl = V3_ONE;
-		ActSelection* actSelect = new ActSelection(actSelectPos, actSelectScl);
 	}
 
 	//test particle system
@@ -321,16 +216,17 @@ void TestScene::MainLoad()
 	}
 #endif //  TEST_BEHAVIOUR
 
-	//test button
+	//test server client button
 	if(1)
 	{
 		ActSelection* buttonStartServer = new ActSelection();
 		ActSelection* buttonStartClient = new ActSelection();
 
-		buttonStartServer->GetTransform()->SetPosition(-2, 2, 0); 
+		//set up server button
+		buttonStartServer->GetTransform()->SetPosition(-2, 2, -2); 
 		buttonStartServer->m_Polygon2D->Texture = DrawManager::Textures[TEXID_UI_SERVER];
 		buttonStartServer->m_Polygon2D->Color =
-			buttonStartServer->OriginalColor = { 1,0,0,1 };
+			buttonStartServer->OriginalColor = { 1,0.5f,0.5f,1 };
 		buttonStartServer->m_Button->AddClickEvent([]()
 			{
 				//judgement work in server side
@@ -346,10 +242,11 @@ void TestScene::MainLoad()
 				SceneManager::ChangeScene<ServerSettingScene>();
 			});
 
-		buttonStartClient->GetTransform()->SetPosition(2, 2, 0); 
+		//set up client button
+		buttonStartClient->GetTransform()->SetPosition(2, 2, 2); 
 		buttonStartClient->m_Polygon2D->Texture = DrawManager::Textures[TEXID_UI_CLIENT];
 		buttonStartClient->m_Polygon2D->Color =
-			buttonStartClient->OriginalColor = { 0,0,1,1 };
+			buttonStartClient->OriginalColor = { 0.5f,0.5f,1,1 };
 		buttonStartClient->m_Button->AddClickEvent([]()
 			{
 				//create client
@@ -357,7 +254,6 @@ void TestScene::MainLoad()
 
 				//logic entrance
 				client->Init();
-				//client->StartBH(client->BH_Init);
 
 				//next bh start in next scene
 				SceneManager::ChangeScene<ClientWaitScene>();

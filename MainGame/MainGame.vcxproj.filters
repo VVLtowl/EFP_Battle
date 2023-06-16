@@ -1,18 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="源文件">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="头文件">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="资源文件">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="imgui">
       <UniqueIdentifier>{ef04673a-a387-4e83-9984-5eaa6394c415}</UniqueIdentifier>
     </Filter>
@@ -37,86 +25,8 @@
     <Filter Include="GameWork\GameLogic\State">
       <UniqueIdentifier>{13ee5b48-f2e5-462a-ad16-18c40ab03573}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameWork\GameLogic\ObjectPrefab">
-      <UniqueIdentifier>{0348ea27-6d70-482d-8bb6-346357c8123a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\GameLogic\ObjectPrefab\PieceObject">
-      <UniqueIdentifier>{fb0ae7b8-cf32-4dd6-9024-c9b3a0e1d3a4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\GameLogic\ObjectPrefab\UIObject">
-      <UniqueIdentifier>{e49b6276-0d5c-421e-8795-4311d84eb88b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\GameLogic\ObjectPrefab\SquareObject">
-      <UniqueIdentifier>{d1020698-4d01-4d9c-b897-5d53b95feef0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\GameLogic\ObjectPrefab\UIObject\Button">
-      <UniqueIdentifier>{e81c9d28-41f9-4da8-9478-f231269736a9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\GameLogic\ObjectPrefab\UIObject\Button\ButtonAnimeHelper">
-      <UniqueIdentifier>{c04a1d45-c023-42b1-ae85-bd3f9c07d5fe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\GameLogic\ObjectPrefab\UIObject\Image">
-      <UniqueIdentifier>{b91b9628-e557-48fe-9ce8-8bc92d5688c6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\GameLogic\ObjectPrefab\UIObject\GroupPanel">
-      <UniqueIdentifier>{d581295e-a1d4-405a-b8c6-514ff76682c2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIAnimeHelper">
-      <UniqueIdentifier>{a35956b3-d764-4a99-a848-cbe1677d301f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\Scene">
-      <UniqueIdentifier>{2506631c-73c8-4f1f-aec9-4fd500d2ea05}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\GameLogic\MainExecutor">
-      <UniqueIdentifier>{2c31c4f0-f93e-4ae5-b099-02b08b5da06d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\GameLogic\MainExecutor\Piece">
-      <UniqueIdentifier>{32f50801-a5ef-4a8a-9b01-48fc49f2449f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\GameLogic\MainExecutor\Piece\Character">
-      <UniqueIdentifier>{d6e4054f-3ed6-4327-b3c5-053b30ee364b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\GameLogic\MainExecutor\Player">
-      <UniqueIdentifier>{f064ed60-90b6-4f00-afdb-0b37d1391b2a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\GameLogic\MainExecutor\Judgement">
-      <UniqueIdentifier>{59784ae4-9ec0-4cd7-a468-b6991ec37688}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\GameLogic\MainExecutor\Server">
-      <UniqueIdentifier>{d349e31b-ef52-41f2-a477-74760c09d9d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\GameLogic\MainExecutor\Client">
-      <UniqueIdentifier>{84dd818d-5605-4d29-9560-50562a0e3023}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIMark">
-      <UniqueIdentifier>{20d16a71-d55c-42f2-840c-cc8bb1d95781}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIStepStart">
-      <UniqueIdentifier>{73b118d2-c30d-499f-bb11-03b697800a6c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIRPS">
-      <UniqueIdentifier>{20d586fe-22b3-49fe-aed6-e0e9f3f77311}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIActPoint">
-      <UniqueIdentifier>{047b6e97-75b5-4eb6-b12d-1a3ff5f40097}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\GameLogic\ObjectPrefab\UIObject\Image\UISelect">
-      <UniqueIdentifier>{05e6fcb2-44d0-4f12-a252-c001e1da5cd6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\GameLogic\ObjectPrefab\UIObject\Image\UINumber">
-      <UniqueIdentifier>{97bfc329-38a7-47a0-a88f-fa919a604ef8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIActSelection">
-      <UniqueIdentifier>{4bb83c01-3abe-4199-b7f4-49fdff3c857a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\GameLogic\ObjectPrefab\UIObject\Image\UISquare">
-      <UniqueIdentifier>{773e4c6e-2863-49af-a9bc-0615aca9d814}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameWork\GameLogic\State\SquareType">
       <UniqueIdentifier>{1744f1c7-3b1e-4477-8c10-fe0ab600808d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIGameOver">
-      <UniqueIdentifier>{85c8ef2d-34b7-40bb-90fc-fa8038f81248}</UniqueIdentifier>
     </Filter>
     <Filter Include="FrameWork\ComponentOriented">
       <UniqueIdentifier>{5d094695-d7ec-4bfb-93c1-6de094bb41fa}</UniqueIdentifier>
@@ -154,9 +64,6 @@
     <Filter Include="FrameWork\ComponentOriented\Manager">
       <UniqueIdentifier>{e47699d6-514d-4046-910c-b80d29218098}</UniqueIdentifier>
     </Filter>
-    <Filter Include="FrameWork\ComponentOriented\Manager\ResourceManager">
-      <UniqueIdentifier>{fc6a5780-bfa3-45f6-b9e6-f276569dac13}</UniqueIdentifier>
-    </Filter>
     <Filter Include="FrameWork\ComponentOriented\GameOject">
       <UniqueIdentifier>{b2ce0c2e-9c25-47c2-b793-448806309c0e}</UniqueIdentifier>
     </Filter>
@@ -168,21 +75,6 @@
     </Filter>
     <Filter Include="FrameWork\ComponentOriented\Component\MoveControl">
       <UniqueIdentifier>{cd397cd0-58d5-4818-8500-6fcf69669cb2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="FrameWork\ExtendTool">
-      <UniqueIdentifier>{8956d379-8f04-4721-a275-1e57004916ad}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\StandardGameObject">
-      <UniqueIdentifier>{75333966-10e0-4cba-8af0-6638b5c97c04}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\StandardGameObject\Particle">
-      <UniqueIdentifier>{ee45d979-8eb8-4ffe-af11-8621e1564eed}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\StandardGameObject\UI">
-      <UniqueIdentifier>{47c15d57-f2c6-4a46-8f3f-261429557e61}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\GameLogic\MainExecutor\Board">
-      <UniqueIdentifier>{f6357ea9-c2a0-4eb4-88c7-dd3b6fb4682d}</UniqueIdentifier>
     </Filter>
     <Filter Include="GameWork\GameLogic\ExecutorBehaviourSystem">
       <UniqueIdentifier>{bf3900f3-d290-4eec-9757-28d83cd545b4}</UniqueIdentifier>
@@ -196,34 +88,143 @@
     <Filter Include="GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteBehaviour\PieceBehaivour">
       <UniqueIdentifier>{ed7a3520-b3fe-4e2d-a6ff-c32b21cd5f09}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteBehaviour\ClientBehaviour">
-      <UniqueIdentifier>{488fd3e5-ec40-40d5-8f0c-e5c7dd8a48e7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteBehaviour\PlayerBehaviour">
       <UniqueIdentifier>{c3d38816-f599-40eb-8dc2-2c8f81d96d17}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteBehaviour\ServerBehaviour">
-      <UniqueIdentifier>{5b427a5d-6263-4174-afd7-1c6f48b8d4a9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteBehaviour\Helper">
-      <UniqueIdentifier>{95a88279-6a72-4e64-ad47-1fd552ec0fa2}</UniqueIdentifier>
     </Filter>
     <Filter Include="MyInput">
       <UniqueIdentifier>{ee7b3819-7b79-4435-9e0d-c66427b32391}</UniqueIdentifier>
     </Filter>
-    <Filter Include="NetworkSocket">
+    <Filter Include="Main">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="SocketNetwork">
       <UniqueIdentifier>{c5b19956-5cb3-4936-a44c-ea5613d15c62}</UniqueIdentifier>
     </Filter>
-    <Filter Include="NetworkSocket\MyNetwork">
+    <Filter Include="SocketNetwork\MyNetwork">
       <UniqueIdentifier>{25a01ea6-48af-4af4-86ac-c6bb7b2d141e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="NetworkSocket\SerializedTool">
+    <Filter Include="SocketNetwork\SerializedTool">
       <UniqueIdentifier>{adf126f9-f379-4198-a1d5-d96581a52926}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FrameWork\GameMath">
+      <UniqueIdentifier>{8956d379-8f04-4721-a275-1e57004916ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FrameWork\Singleton">
+      <UniqueIdentifier>{91ada71e-7fab-41ec-ab22-f3c26d295a4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FrameWork\Graphics">
+      <UniqueIdentifier>{93ac6b5c-61f8-4dcd-9da4-0d506e24026b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FrameWork\Graphics\ResourceManager">
+      <UniqueIdentifier>{fc6a5780-bfa3-45f6-b9e6-f276569dac13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FrameWork\Graphics\Renderer">
+      <UniqueIdentifier>{b98bdc48-6a07-4ecd-8c6e-97db7cf74e4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FrameWork\ComponentOriented\Scene">
+      <UniqueIdentifier>{5abca171-d705-4326-b0cc-55479063cbeb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FrameWork\ComponentOriented\Scene\ConcreteScene">
+      <UniqueIdentifier>{6a01ee83-d66d-4c07-bd4c-e541e5a8e7d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\EFPGameObject">
+      <UniqueIdentifier>{5e4c81db-74dc-44b9-becb-230c72e573ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\EFPGameObject\PieceObject">
+      <UniqueIdentifier>{fb0ae7b8-cf32-4dd6-9024-c9b3a0e1d3a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\EFPGameObject\SquareObject">
+      <UniqueIdentifier>{d1020698-4d01-4d9c-b897-5d53b95feef0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\EFPGameObject\UIObject">
+      <UniqueIdentifier>{e49b6276-0d5c-421e-8795-4311d84eb88b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\EFPGameObject\UIObject\Button">
+      <UniqueIdentifier>{e81c9d28-41f9-4da8-9478-f231269736a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\EFPGameObject\UIObject\Button\ButtonAnimeHelper">
+      <UniqueIdentifier>{c04a1d45-c023-42b1-ae85-bd3f9c07d5fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\EFPGameObject\UIObject\Image">
+      <UniqueIdentifier>{b91b9628-e557-48fe-9ce8-8bc92d5688c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\EFPGameObject\UIObject\Image\UIAnimeHelper">
+      <UniqueIdentifier>{a35956b3-d764-4a99-a848-cbe1677d301f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\EFPGameObject\UIObject\Image\UIMark">
+      <UniqueIdentifier>{20d16a71-d55c-42f2-840c-cc8bb1d95781}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\EFPGameObject\UIObject\Image\UIStepStart">
+      <UniqueIdentifier>{73b118d2-c30d-499f-bb11-03b697800a6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\EFPGameObject\UIObject\Image\UIRPS">
+      <UniqueIdentifier>{20d586fe-22b3-49fe-aed6-e0e9f3f77311}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\EFPGameObject\UIObject\Image\UIActPoint">
+      <UniqueIdentifier>{047b6e97-75b5-4eb6-b12d-1a3ff5f40097}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\EFPGameObject\UIObject\Image\UISelect">
+      <UniqueIdentifier>{05e6fcb2-44d0-4f12-a252-c001e1da5cd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\EFPGameObject\UIObject\Image\UINumber">
+      <UniqueIdentifier>{97bfc329-38a7-47a0-a88f-fa919a604ef8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\EFPGameObject\UIObject\Image\UIActSelection">
+      <UniqueIdentifier>{4bb83c01-3abe-4199-b7f4-49fdff3c857a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\EFPGameObject\UIObject\Image\UISquare">
+      <UniqueIdentifier>{773e4c6e-2863-49af-a9bc-0615aca9d814}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\EFPGameObject\UIObject\Image\UIGameOver">
+      <UniqueIdentifier>{85c8ef2d-34b7-40bb-90fc-fa8038f81248}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\EFPGameObject\UIObject\GroupPanel">
+      <UniqueIdentifier>{d581295e-a1d4-405a-b8c6-514ff76682c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteBehaviour\Helper">
+      <UniqueIdentifier>{95a88279-6a72-4e64-ad47-1fd552ec0fa2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteBehaviour\ServerClientBehaviour">
+      <UniqueIdentifier>{5b427a5d-6263-4174-afd7-1c6f48b8d4a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\GameLogic\ExecutorBehaviourSystem\Factory">
+      <UniqueIdentifier>{fde5bb71-b47f-456b-a35e-ec24cb0a2747}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteExecutor">
+      <UniqueIdentifier>{7c98627c-cef2-494f-ac11-2824d4cf851c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteExecutor\Board">
+      <UniqueIdentifier>{f6357ea9-c2a0-4eb4-88c7-dd3b6fb4682d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteExecutor\Judgement">
+      <UniqueIdentifier>{59784ae4-9ec0-4cd7-a468-b6991ec37688}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteExecutor\Piece">
+      <UniqueIdentifier>{32f50801-a5ef-4a8a-9b01-48fc49f2449f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteExecutor\Piece\Character">
+      <UniqueIdentifier>{d6e4054f-3ed6-4327-b3c5-053b30ee364b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteExecutor\Player">
+      <UniqueIdentifier>{f064ed60-90b6-4f00-afdb-0b37d1391b2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteExecutor\ServerClient">
+      <UniqueIdentifier>{d349e31b-ef52-41f2-a477-74760c09d9d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FrameWork\ComponentOriented\GameOject\StandardGameObject">
+      <UniqueIdentifier>{75333966-10e0-4cba-8af0-6638b5c97c04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FrameWork\ComponentOriented\GameOject\StandardGameObject\Particle">
+      <UniqueIdentifier>{ee45d979-8eb8-4ffe-af11-8621e1564eed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FrameWork\ComponentOriented\GameOject\StandardGameObject\UI">
+      <UniqueIdentifier>{47c15d57-f2c6-4a46-8f3f-261429557e61}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>源文件</Filter>
+      <Filter>Main</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui.cpp">
       <Filter>imgui</Filter>
@@ -247,10 +248,10 @@
       <Filter>imgui</Filter>
     </ClCompile>
     <ClCompile Include="resource.cpp">
-      <Filter>FrameWork\ComponentOriented\Manager\ResourceManager</Filter>
+      <Filter>FrameWork\Graphics\ResourceManager</Filter>
     </ClCompile>
     <ClCompile Include="model.cpp">
-      <Filter>FrameWork\ComponentOriented\Manager\ResourceManager</Filter>
+      <Filter>FrameWork\Graphics\ResourceManager</Filter>
     </ClCompile>
     <ClCompile Include="Component.cpp">
       <Filter>FrameWork\ComponentOriented\Component</Filter>
@@ -270,9 +271,6 @@
     <ClCompile Include="DrawObject.cpp">
       <Filter>FrameWork\ComponentOriented\Component\Draw</Filter>
     </ClCompile>
-    <ClCompile Include="renderer.cpp">
-      <Filter>FrameWork</Filter>
-    </ClCompile>
     <ClCompile Include="cameraManager.cpp">
       <Filter>FrameWork\ComponentOriented\Manager</Filter>
     </ClCompile>
@@ -283,16 +281,16 @@
       <Filter>FrameWork\ComponentOriented\Manager</Filter>
     </ClCompile>
     <ClCompile Include="EffectParticle.cpp">
-      <Filter>GameWork\StandardGameObject\Particle</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject\Particle</Filter>
     </ClCompile>
     <ClCompile Include="Emitter.cpp">
-      <Filter>GameWork\StandardGameObject\Particle</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject\Particle</Filter>
     </ClCompile>
     <ClCompile Include="PolygonUI.cpp">
       <Filter>FrameWork\ComponentOriented\Component\Draw</Filter>
     </ClCompile>
     <ClCompile Include="debugInfo.cpp">
-      <Filter>源文件</Filter>
+      <Filter>Main</Filter>
     </ClCompile>
     <ClCompile Include="MyLight.cpp">
       <Filter>FrameWork\ComponentOriented\Component\Light</Filter>
@@ -304,19 +302,19 @@
       <Filter>GameWork\GameLogic\ExecutorBehaviourSystem</Filter>
     </ClCompile>
     <ClCompile Include="Pawn_Normal.cpp">
-      <Filter>GameWork\GameLogic\ObjectPrefab\PieceObject</Filter>
+      <Filter>GameWork\EFPGameObject\PieceObject</Filter>
     </ClCompile>
     <ClCompile Include="SquareObject.cpp">
-      <Filter>GameWork\GameLogic\ObjectPrefab\SquareObject</Filter>
+      <Filter>GameWork\EFPGameObject\SquareObject</Filter>
     </ClCompile>
     <ClCompile Include="Judgement.cpp">
-      <Filter>GameWork\GameLogic\MainExecutor\Judgement</Filter>
+      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteExecutor\Judgement</Filter>
     </ClCompile>
     <ClCompile Include="Board.cpp">
-      <Filter>GameWork\GameLogic\MainExecutor\Board</Filter>
+      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteExecutor\Board</Filter>
     </ClCompile>
     <ClCompile Include="PieceObject.cpp">
-      <Filter>GameWork\GameLogic\ObjectPrefab\PieceObject</Filter>
+      <Filter>GameWork\EFPGameObject\PieceObject</Filter>
     </ClCompile>
     <ClCompile Include="Transform.cpp">
       <Filter>FrameWork\ComponentOriented\Component\Transform</Filter>
@@ -327,32 +325,29 @@
     <ClCompile Include="lightManager.cpp">
       <Filter>FrameWork\ComponentOriented\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="dlllib\Input.cpp">
-      <Filter>MyInput</Filter>
-    </ClCompile>
     <ClCompile Include="DepthUI.cpp">
-      <Filter>GameWork\StandardGameObject</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClCompile>
     <ClCompile Include="MainCamera.cpp">
-      <Filter>GameWork\StandardGameObject</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClCompile>
     <ClCompile Include="MainLight.cpp">
-      <Filter>GameWork\StandardGameObject</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClCompile>
     <ClCompile Include="Torus.cpp">
-      <Filter>GameWork\StandardGameObject</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClCompile>
     <ClCompile Include="Button.cpp">
       <Filter>FrameWork\ComponentOriented\Component\UI</Filter>
     </ClCompile>
     <ClCompile Include="Plane.cpp">
-      <Filter>GameWork\StandardGameObject</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClCompile>
     <ClCompile Include="inputManager.cpp">
       <Filter>FrameWork\ComponentOriented\Manager</Filter>
     </ClCompile>
     <ClCompile Include="UIPanel.cpp">
-      <Filter>GameWork\StandardGameObject\UI</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject\UI</Filter>
     </ClCompile>
     <ClCompile Include="uiSystem.cpp">
       <Filter>FrameWork\ComponentOriented\Manager</Filter>
@@ -370,7 +365,7 @@
       <Filter>FrameWork\ComponentOriented\Component\Draw</Filter>
     </ClCompile>
     <ClCompile Include="LinePainter.cpp">
-      <Filter>GameWork\StandardGameObject</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClCompile>
     <ClCompile Include="MoveControl.cpp">
       <Filter>FrameWork\ComponentOriented\Component\MoveControl</Filter>
@@ -379,10 +374,10 @@
       <Filter>FrameWork\ComponentOriented\Component\Collider</Filter>
     </ClCompile>
     <ClCompile Include="LineCollisionTester.cpp">
-      <Filter>GameWork\StandardGameObject</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClCompile>
     <ClCompile Include="Cube.cpp">
-      <Filter>GameWork\StandardGameObject</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClCompile>
     <ClCompile Include="colliderManager.cpp">
       <Filter>FrameWork\ComponentOriented\Manager</Filter>
@@ -400,25 +395,22 @@
       <Filter>FrameWork\ComponentOriented\Component\Animation</Filter>
     </ClCompile>
     <ClCompile Include="ActSelection.cpp">
-      <Filter>GameWork\StandardGameObject\UI</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject\UI</Filter>
     </ClCompile>
     <ClCompile Include="Polygon2DMany.cpp">
       <Filter>FrameWork\ComponentOriented\Component\Draw</Filter>
     </ClCompile>
     <ClCompile Include="ParticleSystem.cpp">
-      <Filter>GameWork\StandardGameObject</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClCompile>
     <ClCompile Include="Piece.cpp">
-      <Filter>GameWork\GameLogic\MainExecutor\Piece</Filter>
-    </ClCompile>
-    <ClCompile Include="BehaviourFactory.cpp">
-      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem</Filter>
+      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteExecutor\Piece</Filter>
     </ClCompile>
     <ClCompile Include="TransformObject.cpp">
-      <Filter>GameWork\StandardGameObject</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClCompile>
     <ClCompile Include="ButtonAnimeHelper.cpp">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Button\ButtonAnimeHelper</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Button\ButtonAnimeHelper</Filter>
     </ClCompile>
     <ClCompile Include="ButtonGroup.cpp">
       <Filter>FrameWork\ComponentOriented\Component\UI\UIGroupControl\ButtonGroup</Filter>
@@ -427,16 +419,16 @@
       <Filter>FrameWork\ComponentOriented\Component\UI\UIGroupControl\ButtonGroup</Filter>
     </ClCompile>
     <ClCompile Include="ButtonObject.cpp">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Button</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Button</Filter>
     </ClCompile>
     <ClCompile Include="ButtonsPanel.cpp">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\GroupPanel</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\GroupPanel</Filter>
     </ClCompile>
     <ClCompile Include="Character.cpp">
-      <Filter>GameWork\GameLogic\MainExecutor\Piece\Character</Filter>
+      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteExecutor\Piece\Character</Filter>
     </ClCompile>
     <ClCompile Include="UIAnimeHelper.cpp">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIAnimeHelper</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIAnimeHelper</Filter>
     </ClCompile>
     <ClCompile Include="WorldToScreen.cpp">
       <Filter>FrameWork\ComponentOriented\Component\UI\WorldToScreen</Filter>
@@ -444,29 +436,20 @@
     <ClCompile Include="RPS.cpp">
       <Filter>GameWork\GameLogic\RPS</Filter>
     </ClCompile>
-    <ClCompile Include="TitleScene.cpp">
-      <Filter>GameWork\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="GameScene.cpp">
-      <Filter>GameWork\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="MousePointRay.cpp">
-      <Filter>GameWork\StandardGameObject</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClCompile>
     <ClCompile Include="Sphere.cpp">
-      <Filter>GameWork\StandardGameObject</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClCompile>
     <ClCompile Include="FreeCamera.cpp">
-      <Filter>GameWork\StandardGameObject</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClCompile>
     <ClCompile Include="Executor.cpp">
       <Filter>GameWork\GameLogic\ExecutorBehaviourSystem</Filter>
     </ClCompile>
     <ClCompile Include="MouseMove.cpp">
-      <Filter>GameWork\StandardGameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="TestScene.cpp">
-      <Filter>GameWork\Scene</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClCompile>
     <ClCompile Include="PieceBehaviour.cpp">
       <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteBehaviour\PieceBehaivour</Filter>
@@ -475,118 +458,133 @@
       <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteBehaviour\JudgementBehaviour</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
-      <Filter>GameWork\GameLogic\MainExecutor\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Client.cpp">
-      <Filter>GameWork\GameLogic\MainExecutor\Client</Filter>
+      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteExecutor\Player</Filter>
     </ClCompile>
     <ClCompile Include="Server.cpp">
-      <Filter>GameWork\GameLogic\MainExecutor\Server</Filter>
+      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteExecutor\ServerClient</Filter>
     </ClCompile>
     <ClCompile Include="PlayerBehaviour.cpp">
       <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteBehaviour\PlayerBehaviour</Filter>
     </ClCompile>
     <ClCompile Include="ServerBehaviour.cpp">
-      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteBehaviour\ServerBehaviour</Filter>
-    </ClCompile>
-    <ClCompile Include="ClientBehaviour.cpp">
-      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteBehaviour\ClientBehaviour</Filter>
-    </ClCompile>
-    <ClCompile Include="WaitRoomScene.cpp">
-      <Filter>GameWork\Scene</Filter>
+      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteBehaviour\ServerClientBehaviour</Filter>
     </ClCompile>
     <ClCompile Include="SerializedTool.cpp">
-      <Filter>NetworkSocket\SerializedTool</Filter>
+      <Filter>SocketNetwork\SerializedTool</Filter>
     </ClCompile>
     <ClCompile Include="ShowUIHelper.cpp">
       <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteBehaviour\Helper</Filter>
     </ClCompile>
     <ClCompile Include="UIActMark.cpp">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIMark</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIMark</Filter>
     </ClCompile>
     <ClCompile Include="UIFinishMark.cpp">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIMark</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIMark</Filter>
     </ClCompile>
     <ClCompile Include="UIThinkMark.cpp">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIMark</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIMark</Filter>
     </ClCompile>
     <ClCompile Include="UIMark.cpp">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIMark</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIMark</Filter>
     </ClCompile>
     <ClCompile Include="UITurnStart.cpp">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIStepStart</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIStepStart</Filter>
     </ClCompile>
     <ClCompile Include="UIRPSStart.cpp">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIStepStart</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIStepStart</Filter>
     </ClCompile>
     <ClCompile Include="UIGameStart.cpp">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIStepStart</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIStepStart</Filter>
     </ClCompile>
     <ClCompile Include="UIActStart.cpp">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIStepStart</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIStepStart</Filter>
     </ClCompile>
     <ClCompile Include="UIRPS.cpp">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIRPS</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIRPS</Filter>
     </ClCompile>
     <ClCompile Include="UIActPoint.cpp">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIActPoint</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIActPoint</Filter>
     </ClCompile>
     <ClCompile Include="UISelect.cpp">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UISelect</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UISelect</Filter>
     </ClCompile>
     <ClCompile Include="UINumber.cpp">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UINumber</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UINumber</Filter>
     </ClCompile>
     <ClCompile Include="UINumbers.cpp">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UINumber</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UINumber</Filter>
     </ClCompile>
     <ClCompile Include="UIHand.cpp">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIRPS</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIRPS</Filter>
     </ClCompile>
     <ClCompile Include="UIActSelection.cpp">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIActSelection</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIActSelection</Filter>
     </ClCompile>
     <ClCompile Include="UISquareSelection.cpp">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UISquare</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UISquare</Filter>
     </ClCompile>
     <ClCompile Include="SquareType.cpp">
       <Filter>GameWork\GameLogic\State\SquareType</Filter>
     </ClCompile>
     <ClCompile Include="Square.cpp">
-      <Filter>GameWork\GameLogic\MainExecutor\Board</Filter>
+      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteExecutor\Board</Filter>
     </ClCompile>
     <ClCompile Include="UIGameOver.cpp">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIGameOver</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIGameOver</Filter>
     </ClCompile>
     <ClCompile Include="network\NetworkManager.cpp">
-      <Filter>NetworkSocket</Filter>
+      <Filter>SocketNetwork</Filter>
     </ClCompile>
     <ClCompile Include="network\NetworkObject.cpp">
-      <Filter>NetworkSocket</Filter>
+      <Filter>SocketNetwork</Filter>
     </ClCompile>
     <ClCompile Include="MyNetManager.cpp">
-      <Filter>NetworkSocket\MyNetwork</Filter>
+      <Filter>SocketNetwork\MyNetwork</Filter>
     </ClCompile>
     <ClCompile Include="NetworkSendFunc.cpp">
-      <Filter>NetworkSocket\MyNetwork</Filter>
+      <Filter>SocketNetwork\MyNetwork</Filter>
     </ClCompile>
     <ClCompile Include="LoopList.cpp">
-      <Filter>FrameWork\ExtendTool</Filter>
+      <Filter>FrameWork\GameMath</Filter>
     </ClCompile>
     <ClCompile Include="Math.cpp">
-      <Filter>FrameWork\ExtendTool</Filter>
+      <Filter>FrameWork\GameMath</Filter>
     </ClCompile>
     <ClCompile Include="Collision.cpp">
-      <Filter>FrameWork\ExtendTool</Filter>
+      <Filter>FrameWork\GameMath</Filter>
+    </ClCompile>
+    <ClCompile Include="input\Input.cpp">
+      <Filter>MyInput</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer.cpp">
+      <Filter>FrameWork\Graphics\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
-      <Filter>FrameWork\ComponentOriented\Manager</Filter>
+      <Filter>FrameWork\ComponentOriented\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>FrameWork\ComponentOriented\Scene\ConcreteScene</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScene.cpp">
+      <Filter>FrameWork\ComponentOriented\Scene\ConcreteScene</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleScene.cpp">
+      <Filter>FrameWork\ComponentOriented\Scene\ConcreteScene</Filter>
+    </ClCompile>
+    <ClCompile Include="WaitRoomScene.cpp">
+      <Filter>FrameWork\ComponentOriented\Scene\ConcreteScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ClientBehaviour.cpp">
+      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteBehaviour\ServerClientBehaviour</Filter>
+    </ClCompile>
+    <ClCompile Include="BehaviourFactory.cpp">
+      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="Client.cpp">
+      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteExecutor\ServerClient</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="main.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="imgui\imconfig.h">
       <Filter>imgui</Filter>
     </ClInclude>
@@ -612,10 +610,10 @@
       <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
-      <Filter>FrameWork\ComponentOriented\Manager\ResourceManager</Filter>
+      <Filter>FrameWork\Graphics\ResourceManager</Filter>
     </ClInclude>
     <ClInclude Include="model.h">
-      <Filter>FrameWork\ComponentOriented\Manager\ResourceManager</Filter>
+      <Filter>FrameWork\Graphics\ResourceManager</Filter>
     </ClInclude>
     <ClInclude Include="Component.h">
       <Filter>FrameWork\ComponentOriented\Component</Filter>
@@ -635,9 +633,6 @@
     <ClInclude Include="DrawObject.h">
       <Filter>FrameWork\ComponentOriented\Component\Draw</Filter>
     </ClInclude>
-    <ClInclude Include="renderer.h">
-      <Filter>FrameWork</Filter>
-    </ClInclude>
     <ClInclude Include="cameraManager.h">
       <Filter>FrameWork\ComponentOriented\Manager</Filter>
     </ClInclude>
@@ -648,22 +643,16 @@
       <Filter>FrameWork\ComponentOriented\Manager</Filter>
     </ClInclude>
     <ClInclude Include="EffectParticle.h">
-      <Filter>GameWork\StandardGameObject\Particle</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject\Particle</Filter>
     </ClInclude>
     <ClInclude Include="Emitter.h">
-      <Filter>GameWork\StandardGameObject\Particle</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject\Particle</Filter>
     </ClInclude>
     <ClInclude Include="PolygonUI.h">
       <Filter>FrameWork\ComponentOriented\Component\Draw</Filter>
     </ClInclude>
-    <ClInclude Include="debugInfo.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="MyLight.h">
       <Filter>FrameWork\ComponentOriented\Component\Light</Filter>
-    </ClInclude>
-    <ClInclude Include="Singleton.h">
-      <Filter>FrameWork</Filter>
     </ClInclude>
     <ClInclude Include="GameManager.h">
       <Filter>GameWork\GameLogic\GameManager</Filter>
@@ -674,20 +663,17 @@
     <ClInclude Include="Behaviour.h">
       <Filter>GameWork\GameLogic\ExecutorBehaviourSystem</Filter>
     </ClInclude>
-    <ClInclude Include="BehaviourFactory.h">
-      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem</Filter>
-    </ClInclude>
     <ClInclude Include="Judgement.h">
-      <Filter>GameWork\GameLogic\MainExecutor\Judgement</Filter>
+      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteExecutor\Judgement</Filter>
     </ClInclude>
     <ClInclude Include="Character.h">
-      <Filter>GameWork\GameLogic\MainExecutor\Piece\Character</Filter>
+      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteExecutor\Piece\Character</Filter>
     </ClInclude>
     <ClInclude Include="Piece.h">
-      <Filter>GameWork\GameLogic\MainExecutor\Piece</Filter>
+      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteExecutor\Piece</Filter>
     </ClInclude>
     <ClInclude Include="Square.h">
-      <Filter>GameWork\GameLogic\MainExecutor\Board</Filter>
+      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteExecutor\Board</Filter>
     </ClInclude>
     <ClInclude Include="RPS.h">
       <Filter>GameWork\GameLogic\RPS</Filter>
@@ -696,22 +682,22 @@
       <Filter>GameWork\GameLogic\ExecutorBehaviourSystem</Filter>
     </ClInclude>
     <ClInclude Include="Pawn_Normal.h">
-      <Filter>GameWork\GameLogic\ObjectPrefab\PieceObject</Filter>
+      <Filter>GameWork\EFPGameObject\PieceObject</Filter>
     </ClInclude>
     <ClInclude Include="SquareObject.h">
-      <Filter>GameWork\GameLogic\ObjectPrefab\SquareObject</Filter>
+      <Filter>GameWork\EFPGameObject\SquareObject</Filter>
     </ClInclude>
     <ClInclude Include="Character_NormalGood.h">
-      <Filter>GameWork\GameLogic\MainExecutor\Piece\Character</Filter>
+      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteExecutor\Piece\Character</Filter>
     </ClInclude>
     <ClInclude Include="Character_NormalBad.h">
-      <Filter>GameWork\GameLogic\MainExecutor\Piece\Character</Filter>
+      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteExecutor\Piece\Character</Filter>
     </ClInclude>
     <ClInclude Include="PieceObject.h">
-      <Filter>GameWork\GameLogic\ObjectPrefab\PieceObject</Filter>
+      <Filter>GameWork\EFPGameObject\PieceObject</Filter>
     </ClInclude>
     <ClInclude Include="Board.h">
-      <Filter>GameWork\GameLogic\MainExecutor\Board</Filter>
+      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteExecutor\Board</Filter>
     </ClInclude>
     <ClInclude Include="State.h">
       <Filter>GameWork\GameLogic\State</Filter>
@@ -731,32 +717,29 @@
     <ClInclude Include="lightManager.h">
       <Filter>FrameWork\ComponentOriented\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="dlllib\Input.h">
-      <Filter>MyInput</Filter>
-    </ClInclude>
     <ClInclude Include="DepthUI.h">
-      <Filter>GameWork\StandardGameObject</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClInclude>
     <ClInclude Include="MainCamera.h">
-      <Filter>GameWork\StandardGameObject</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClInclude>
     <ClInclude Include="MainLight.h">
-      <Filter>GameWork\StandardGameObject</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClInclude>
     <ClInclude Include="Torus.h">
-      <Filter>GameWork\StandardGameObject</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClInclude>
     <ClInclude Include="Button.h">
       <Filter>FrameWork\ComponentOriented\Component\UI</Filter>
     </ClInclude>
     <ClInclude Include="Plane.h">
-      <Filter>GameWork\StandardGameObject</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClInclude>
     <ClInclude Include="inputManager.h">
       <Filter>FrameWork\ComponentOriented\Manager</Filter>
     </ClInclude>
     <ClInclude Include="UIPanel.h">
-      <Filter>GameWork\StandardGameObject\UI</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject\UI</Filter>
     </ClInclude>
     <ClInclude Include="uiSystem.h">
       <Filter>FrameWork\ComponentOriented\Manager</Filter>
@@ -774,7 +757,7 @@
       <Filter>FrameWork\ComponentOriented\Component\Draw</Filter>
     </ClInclude>
     <ClInclude Include="LinePainter.h">
-      <Filter>GameWork\StandardGameObject</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClInclude>
     <ClInclude Include="MoveControl.h">
       <Filter>FrameWork\ComponentOriented\Component\MoveControl</Filter>
@@ -783,10 +766,10 @@
       <Filter>FrameWork\ComponentOriented\Component\Collider</Filter>
     </ClInclude>
     <ClInclude Include="LineCollisionTester.h">
-      <Filter>GameWork\StandardGameObject</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClInclude>
     <ClInclude Include="Cube.h">
-      <Filter>GameWork\StandardGameObject</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClInclude>
     <ClInclude Include="colliderManager.h">
       <Filter>FrameWork\ComponentOriented\Manager</Filter>
@@ -804,13 +787,13 @@
       <Filter>FrameWork\ComponentOriented\Component\Animation</Filter>
     </ClInclude>
     <ClInclude Include="ActSelection.h">
-      <Filter>GameWork\StandardGameObject\UI</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject\UI</Filter>
     </ClInclude>
     <ClInclude Include="Polygon2DMany.h">
       <Filter>FrameWork\ComponentOriented\Component\Draw</Filter>
     </ClInclude>
     <ClInclude Include="ParticleSystem.h">
-      <Filter>GameWork\StandardGameObject</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClInclude>
     <ClInclude Include="PieceBehaviour.h">
       <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteBehaviour\PieceBehaivour</Filter>
@@ -819,10 +802,10 @@
       <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteBehaviour\JudgementBehaviour</Filter>
     </ClInclude>
     <ClInclude Include="TransformObject.h">
-      <Filter>GameWork\StandardGameObject</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClInclude>
     <ClInclude Include="ButtonAnimeHelper.h">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Button\ButtonAnimeHelper</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Button\ButtonAnimeHelper</Filter>
     </ClInclude>
     <ClInclude Include="ButtonGroup.h">
       <Filter>FrameWork\ComponentOriented\Component\UI\UIGroupControl\ButtonGroup</Filter>
@@ -831,139 +814,157 @@
       <Filter>FrameWork\ComponentOriented\Component\UI\UIGroupControl\ButtonGroup</Filter>
     </ClInclude>
     <ClInclude Include="ButtonObject.h">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Button</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Button</Filter>
     </ClInclude>
     <ClInclude Include="ButtonsPanel.h">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\GroupPanel</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\GroupPanel</Filter>
     </ClInclude>
     <ClInclude Include="UIAnimeHelper.h">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIAnimeHelper</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIAnimeHelper</Filter>
     </ClInclude>
     <ClInclude Include="WorldToScreen.h">
       <Filter>FrameWork\ComponentOriented\Component\UI\WorldToScreen</Filter>
     </ClInclude>
-    <ClInclude Include="TitleScene.h">
-      <Filter>GameWork\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="GameScene.h">
-      <Filter>GameWork\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="MousePointRay.h">
-      <Filter>GameWork\StandardGameObject</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClInclude>
     <ClInclude Include="Sphere.h">
-      <Filter>GameWork\StandardGameObject</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClInclude>
     <ClInclude Include="FreeCamera.h">
-      <Filter>GameWork\StandardGameObject</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClInclude>
     <ClInclude Include="MouseMove.h">
-      <Filter>GameWork\StandardGameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="TestScene.h">
-      <Filter>GameWork\Scene</Filter>
+      <Filter>FrameWork\ComponentOriented\GameOject\StandardGameObject</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>GameWork\GameLogic\MainExecutor\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Client.h">
-      <Filter>GameWork\GameLogic\MainExecutor\Client</Filter>
+      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteExecutor\Player</Filter>
     </ClInclude>
     <ClInclude Include="Server.h">
-      <Filter>GameWork\GameLogic\MainExecutor\Server</Filter>
+      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteExecutor\ServerClient</Filter>
     </ClInclude>
     <ClInclude Include="PlayerBehaviour.h">
       <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteBehaviour\PlayerBehaviour</Filter>
     </ClInclude>
     <ClInclude Include="ServerBehaviour.h">
-      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteBehaviour\ServerBehaviour</Filter>
-    </ClInclude>
-    <ClInclude Include="ClientBehaviour.h">
-      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteBehaviour\ClientBehaviour</Filter>
-    </ClInclude>
-    <ClInclude Include="WaitRoomScene.h">
-      <Filter>GameWork\Scene</Filter>
+      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteBehaviour\ServerClientBehaviour</Filter>
     </ClInclude>
     <ClInclude Include="SerializedTool.h">
-      <Filter>NetworkSocket\SerializedTool</Filter>
+      <Filter>SocketNetwork\SerializedTool</Filter>
     </ClInclude>
     <ClInclude Include="ShowUIHelper.h">
       <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteBehaviour\Helper</Filter>
     </ClInclude>
     <ClInclude Include="UIActMark.h">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIMark</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIMark</Filter>
     </ClInclude>
     <ClInclude Include="UIFinishMark.h">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIMark</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIMark</Filter>
     </ClInclude>
     <ClInclude Include="UIThinkMark.h">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIMark</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIMark</Filter>
     </ClInclude>
     <ClInclude Include="UIMark.h">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIMark</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIMark</Filter>
     </ClInclude>
     <ClInclude Include="UITurnStart.h">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIStepStart</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIStepStart</Filter>
     </ClInclude>
     <ClInclude Include="UIRPSStart.h">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIStepStart</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIStepStart</Filter>
     </ClInclude>
     <ClInclude Include="UIGameStart.h">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIStepStart</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIStepStart</Filter>
     </ClInclude>
     <ClInclude Include="UIActStart.h">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIStepStart</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIStepStart</Filter>
     </ClInclude>
     <ClInclude Include="UIRPS.h">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIRPS</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIRPS</Filter>
     </ClInclude>
     <ClInclude Include="UIActPoint.h">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIActPoint</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIActPoint</Filter>
     </ClInclude>
     <ClInclude Include="UISelect.h">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UISelect</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UISelect</Filter>
     </ClInclude>
     <ClInclude Include="UINumbers.h">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UINumber</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UINumber</Filter>
     </ClInclude>
     <ClInclude Include="UINumber.h">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UINumber</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UINumber</Filter>
     </ClInclude>
     <ClInclude Include="UIHand.h">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIRPS</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIRPS</Filter>
     </ClInclude>
     <ClInclude Include="UIActSelection.h">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIActSelection</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIActSelection</Filter>
     </ClInclude>
     <ClInclude Include="UISquareSelection.h">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UISquare</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UISquare</Filter>
     </ClInclude>
     <ClInclude Include="UIGameOver.h">
-      <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIGameOver</Filter>
+      <Filter>GameWork\EFPGameObject\UIObject\Image\UIGameOver</Filter>
     </ClInclude>
     <ClInclude Include="network\NetworkManager.h">
-      <Filter>NetworkSocket</Filter>
+      <Filter>SocketNetwork</Filter>
     </ClInclude>
     <ClInclude Include="network\NetworkObject.h">
-      <Filter>NetworkSocket</Filter>
+      <Filter>SocketNetwork</Filter>
     </ClInclude>
     <ClInclude Include="MyNetManager.h">
-      <Filter>NetworkSocket\MyNetwork</Filter>
+      <Filter>SocketNetwork\MyNetwork</Filter>
     </ClInclude>
     <ClInclude Include="NetworkSendFunc.h">
-      <Filter>NetworkSocket\MyNetwork</Filter>
+      <Filter>SocketNetwork\MyNetwork</Filter>
     </ClInclude>
     <ClInclude Include="Math.h">
-      <Filter>FrameWork\ExtendTool</Filter>
+      <Filter>FrameWork\GameMath</Filter>
     </ClInclude>
     <ClInclude Include="LoopList.h">
-      <Filter>FrameWork\ExtendTool</Filter>
+      <Filter>FrameWork\GameMath</Filter>
     </ClInclude>
     <ClInclude Include="Collision.h">
-      <Filter>FrameWork\ExtendTool</Filter>
+      <Filter>FrameWork\GameMath</Filter>
+    </ClInclude>
+    <ClInclude Include="input\Input.h">
+      <Filter>MyInput</Filter>
+    </ClInclude>
+    <ClInclude Include="debugInfo.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Singleton.h">
+      <Filter>FrameWork\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer.h">
+      <Filter>FrameWork\Graphics\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="SceneManager.h">
-      <Filter>FrameWork\ComponentOriented\Manager</Filter>
+      <Filter>FrameWork\ComponentOriented\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene.h">
+      <Filter>FrameWork\ComponentOriented\Scene\ConcreteScene</Filter>
+    </ClInclude>
+    <ClInclude Include="TestScene.h">
+      <Filter>FrameWork\ComponentOriented\Scene\ConcreteScene</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleScene.h">
+      <Filter>FrameWork\ComponentOriented\Scene\ConcreteScene</Filter>
+    </ClInclude>
+    <ClInclude Include="WaitRoomScene.h">
+      <Filter>FrameWork\ComponentOriented\Scene\ConcreteScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientBehaviour.h">
+      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteBehaviour\ServerClientBehaviour</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviourFactory.h">
+      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="Client.h">
+      <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteExecutor\ServerClient</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

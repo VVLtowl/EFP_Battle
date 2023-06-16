@@ -35,19 +35,29 @@ enum TestBlockID
 
 class DebugInfo
 {
+	/*********************************************************
+	* @brief	debug infomation 
+	********************************************************/
 private:
 	static std::string m_Info[BDEBUG_INFO_MAX];
 	static bool m_NeedClear;
-	
 public:
-	static std::unordered_map<int, std::function<void()>> TestBlocks;
-	static void CloseBlock(int id);
 	static void Update();
 	static const int Print(std::string info);
 	static void PrintRow(int rowID, std::string info);
-	static int WriteInfoToLog(std::string fileName);
+	static int WriteInfoToLog(std::string fileName);//make log file
+	
+	/*********************************************************
+	* @brief	dynamic test panel
+	********************************************************/
+public:
+	static std::unordered_map<int, std::function<void()>> TestBlocks;
+	static void CloseBlock(int id);
 
-	//network chat
+	/*********************************************************
+	* @brief	net work chat panel
+	********************************************************/
+public:
 	static std::string m_NetMsg[BDEBUG_INFO_MAX];
 	static void DrawNetMsg();
 	static const int PrintNetMsg(std::string info);

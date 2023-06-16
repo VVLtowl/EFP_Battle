@@ -16,6 +16,7 @@ public:
 	SOCKADDR_IN* m_UDPAddr;
 	char m_MsgBuffer[LEN_MSG];
 };
+
 /*********************************************************
 * @brief	network manager (base)
 ********************************************************/

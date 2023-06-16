@@ -35,22 +35,26 @@ AppServer::~AppServer()
 	MyNetManager::Instance()->m_TargetAppServer = nullptr;
 }
 
-#pragma region ========== behaviour ==========
+#pragma region ========== method ==========
 
 void AppServer::Init()
 {
 	//set default val
 	{
 		m_JoinedClientNum = 0;
-		m_TargetClientNum = Judgement::Instance()->m_Mode.GetPlayerNum();
+		m_TargetClientNum = 2;
 		m_Port = 5555;
 		m_OpenGameRoom = false;
 		m_ResetGameRoom = false;
 		m_StartGame = false;
 	}
 
+	//set windows name
+	SetWinSubName(" server");
+
 	//test 
-	DebugInfo::TestBlocks.emplace(TESTBLOCKID_SERVER_WORK, [this]()
+	DebugInfo::TestBlocks.emplace(TESTBLOCKID_SERVER_WORK, 
+		[this]()
 		{
 			ImGui::Begin("Server Working...");
 			{
@@ -94,6 +98,7 @@ void AppServer::Uninit()
 		m_StartGame = false;
 	}
 
+	//disconnect clients
 	if (m_OpenGameRoom)
 	{
 		m_OpenGameRoom = false;

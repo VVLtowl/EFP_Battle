@@ -72,12 +72,6 @@ void DrawManager::Load()
 	Textures.emplace(
 		TEXID_UI_ACT_START,
 		TextureFactory::Load("asset\\texture\\ui_actStart.png"));
-	Textures.emplace(
-		TEXID_UI_ACT_START_BAD,
-		TextureFactory::Load("asset\\texture\\ui_badActStart.png"));
-	Textures.emplace(
-		TEXID_UI_ACT_START_GOOD,
-		TextureFactory::Load("asset\\texture\\ui_goodActStart.png"));
 
 
 	Textures.emplace(

@@ -77,32 +77,6 @@ public:
 	void SetPositionIncludeChilds(const D3DXVECTOR3& pos);
 };
 
-//template<typename ComponentType>
-//inline void GameObject::AddComponent<ComponentType>(Component* addCpn)
-//{
-//	// check this type component is only one in gameobject
-//	ComponentType* sameCpn = GetComponent<ComponentType>();
-//	if (sameCpn != nullptr)
-//	{
-//		delete sameCpn;
-//	}
-//
-//	// Find the insertion point in the sorted vector
-//	// (The first element with a order higher than me)
-//	int addCpnOrder = addCpn->GetUpdateOrder();
-//	auto iter = m_Components.begin();
-//	while (iter != m_Components.end())
-//	{
-//		if (addCpnOrder < (*iter)->GetUpdateOrder())
-//		{
-//			break;
-//		}
-//		iter++;
-//	}
-//
-//	// Inserts element before position of iterator
-//	m_Components.insert(iter, addCpn);
-//}
 
 template<typename ComponentType>
 inline ComponentType* GameObject::GetComponent()

@@ -151,11 +151,6 @@ void TitleScene::MainLoad()
 				}
 			}
 		}
-
-		//few
-		{
-
-		}
 	}
 
 	//test ActSelection button
@@ -188,11 +183,6 @@ void TitleScene::MainUnload()
 
 void TitleScene::MainUpdate()
 {
-	//test
-	{
-
-	}
-
 	//depth view draw
 	{
 		//shadow depth draw

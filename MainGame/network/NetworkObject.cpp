@@ -192,7 +192,7 @@ void Server::Launch()
 
 	//set IP by host
 	IN_ADDR inaddr;
-	memcpy(&inaddr, m_HostEnt->h_addr_list[0], 4);
+	memcpy(&inaddr, m_HostEnt->h_addr_list[1], 4);
 	m_IP = std::string(inet_ntoa(inaddr));
 
 	//create TCPListenSocket

@@ -72,23 +72,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.19041.0\shared;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\HAL\GM31\MyWork\EFP\MainGame\dlllib;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\HAL\GM31\MyWork\EFP_Battle\ExtendTool\DirectX11\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\HAL\GM31\MyWork\EFP_Battle\MainGame\input;D:\HAL\GM31\MyWork\EFP_Battle\ExtendTool\DirectX11\Lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.19041.0\shared;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\HAL\GM31\MyWork\EFP\MainGame\dlllib;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\HAL\GM31\MyWork\EFP_Battle\ExtendTool\DirectX11\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\HAL\GM31\MyWork\EFP_Battle\MainGame\input;D:\HAL\GM31\MyWork\EFP_Battle\ExtendTool\DirectX11\Lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.19041.0\shared;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\HAL\GM31\MyWork\EFP\MainGame\dlllib;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\HAL\GM31\MyWork\EFP_Battle\ExtendTool\DirectX11\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\HAL\GM31\MyWork\EFP_Battle\MainGame\input;D:\HAL\GM31\MyWork\EFP_Battle\ExtendTool\DirectX11\Lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.19041.0\shared;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\HAL\GM31\MyWork\EFP\MainGame\dlllib;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\HAL\GM31\MyWork\EFP_Battle\ExtendTool\DirectX11\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\HAL\GM31\MyWork\EFP_Battle\MainGame\input;D:\HAL\GM31\MyWork\EFP_Battle\ExtendTool\DirectX11\Lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -150,6 +150,7 @@
     <ClCompile Include="BehaviourFactory.cpp" />
     <ClCompile Include="ButtonAnimeHelper.cpp" />
     <ClCompile Include="ButtonObject.cpp" />
+    <ClCompile Include="input\Input.cpp" />
     <ClCompile Include="MyButtonHandGroup.cpp" />
     <ClCompile Include="ButtonsPanel.cpp" />
     <ClCompile Include="Character.cpp" />
@@ -179,7 +180,6 @@
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="debugInfo.cpp" />
     <ClCompile Include="DepthUI.cpp" />
-    <ClCompile Include="dlllib\Input.cpp" />
     <ClCompile Include="DrawLine.cpp" />
     <ClCompile Include="drawManager.cpp" />
     <ClCompile Include="DrawObject.cpp" />
@@ -271,6 +271,7 @@
   <ItemGroup>
     <ClInclude Include="ButtonAnimeHelper.h" />
     <ClInclude Include="ButtonObject.h" />
+    <ClInclude Include="input\Input.h" />
     <ClInclude Include="MyButtonGroup.h" />
     <ClInclude Include="ButtonsPanel.h" />
     <ClInclude Include="Client.h" />
@@ -302,12 +303,6 @@
     <ClInclude Include="Cube.h" />
     <ClInclude Include="debugInfo.h" />
     <ClInclude Include="DepthUI.h" />
-    <ClInclude Include="dlllib\Input.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="DrawLine.h" />
     <ClInclude Include="drawManager.h" />
     <ClInclude Include="DrawObject.h" />

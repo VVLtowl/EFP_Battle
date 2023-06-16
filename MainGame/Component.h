@@ -91,14 +91,6 @@ public:
 	void SetState(State state) { m_State = state; };
 private:
 	State m_State;
-
-//private:
-	// @brief	íœ”»’f
-	//bool m_Dead;
-//public:
-	// @brief	íœ‚Ìİ’è‚Ææ“¾
-	//void StartDestroy() { m_Dead = true; };
-	//bool IsDead() const { return m_Dead; };
 };
 
 

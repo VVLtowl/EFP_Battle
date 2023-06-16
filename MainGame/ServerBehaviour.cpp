@@ -30,7 +30,8 @@ void ServerInputGameRoom::Start()
 	m_AppServer->ClearMember();
 
 	//test
-	DebugInfo::TestBlocks.emplace(TESTBLOCKID_SERVER_INPUTGAMEROOM, [this]()
+	DebugInfo::TestBlocks.emplace(TESTBLOCKID_SERVER_INPUTGAMEROOM, 
+		[this]()
 		{
 			ImGui::Begin("Server Game Room Setting");
 			{
@@ -48,7 +49,7 @@ void ServerInputGameRoom::Start()
 				m_AppServer->m_MyServer->m_IP = std::string(ipBuf);
 
 				//confirm setting and start wait client
-				if (ImGui::Button("Comfirm & Open Room"))
+				if (ImGui::Button("Confirm & Open Room"))
 				{
 					m_AppServer->m_OpenGameRoom = true;
 				}
@@ -63,7 +64,7 @@ void ServerInputGameRoom::Update()
 	if (m_AppServer->m_OpenGameRoom)
 	{
 		//close panel
-		DebugInfo::TestBlocks.erase(TESTBLOCKID_SERVER_INPUTGAMEROOM);
+		DebugInfo::CloseBlock(TESTBLOCKID_SERVER_INPUTGAMEROOM);
 
 		//show chat panel
 		MyNetManager::Instance()->SetChatPanel(true);
@@ -400,7 +401,6 @@ void ServerCheckClientJoin::Start()
 }
 #pragma endregion
 
-
 #pragma region ========== set client camp piece ==========
 ServerSetClientCampPiece::ServerSetClientCampPiece(
 	AppServer* s, 
@@ -427,14 +427,20 @@ void ServerSetClientCampPiece::Start()
 			{
 				//set camp
 				const char* campTypeItems[] = { "none", "bad man", "good man" };
+				int campType = (int)&m_SetClient->Camp;
 				ImGui::Combo("camp", (int*)&m_SetClient->Camp, campTypeItems, IM_ARRAYSIZE(campTypeItems), 3);
 
 				//set pieces
 				if (m_SetClient->Camp == CampType::BAD)
 				{
-
 					for (int i = 0; i < 4; i++)
 					{
+						//set default bad normal
+						if (campType != (int)CampType::BAD)
+						{
+							m_SetClient->SelfPiece[i] = CharacterType::NORMALBAD;
+						}
+
 						const char* characterTypeItems[] = { "none","normal bad" };
 						std::string comboTitle = "piece" + std::to_string(i);
 						ImGui::Combo(comboTitle.c_str(), (int*)&m_SetClient->SelfPiece[i], characterTypeItems, IM_ARRAYSIZE(characterTypeItems));
@@ -442,8 +448,14 @@ void ServerSetClientCampPiece::Start()
 				}
 				else if (m_SetClient->Camp == CampType::GOOD)
 				{
-					for (int i = 0; i < 4; i++)
+					for (int i = 0; i < 2; i++)
 					{
+						//set default good normal
+						if (campType != (int)CampType::GOOD)
+						{
+							m_SetClient->SelfPiece[i] = CharacterType::NORMALGOOD;
+						}
+
 						const char* characterTypeItems[] = { "none","normal good" };
 						std::string comboTitle = "piece" + std::to_string(i);
 						int charaType = (int)m_SetClient->SelfPiece[i];
@@ -477,4 +489,5 @@ void ServerSetClientCampPiece::Update()
 	}
 }
 #pragma endregion
+
 

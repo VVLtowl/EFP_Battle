@@ -27,265 +27,6 @@ auto h = [&](float x)
 	return y;
 };
 
-#pragma region ========== usual anime ==========
-
-
-void ComputeFrameTransformDataFunc::InitData(TransformAnime* ani)
-{
-	StartPosition = ani->m_AnimePositions[1];
-	StartRotation = ani->m_AnimeRotations[1];
-	StartScale = ani->m_AnimeScales[1];
-
-	EndPosition = ani->m_AnimePositions[0];
-	EndRotation = ani->m_AnimeRotations[0];
-	EndScale = ani->m_AnimeScales[0];
-
-	NowPosition = StartPosition;
-	NowRotation = StartRotation;
-	NowScale = StartScale;
-}
-
-void UniformSpeedAnime::operator()(TransformAnime* ani)
-{
-	InitData(ani);
-	float ratio = 0;
-	float frameMax = ani->m_Duration;
-	for (float frameID = 0; frameID < frameMax; frameID += FRAME_STRIDE)
-	{
-		ratio = frameID / frameMax;
-
-		D3DXVec3Lerp(&NowPosition, &StartPosition, &EndPosition, ratio);
-		D3DXQuaternionSlerp(&NowRotation, &StartRotation, &EndRotation, ratio);
-		D3DXVec3Lerp(&NowScale, &StartScale, &EndScale, ratio);
-
-		ani->m_AnimePositions.emplace_back(NowPosition);
-		ani->m_AnimeRotations.emplace_back(NowRotation);
-		ani->m_AnimeScales.emplace_back(NowScale);
-	}
-}
-
-
-void SlowLerpAnime::operator()(TransformAnime* ani)
-{
-	InitData(ani);
-	float ratio = 0;
-	float frameMax = ani->m_Duration;
-	for (float frameID = 0; frameID < frameMax; frameID += FRAME_STRIDE)
-	{
-		ratio = frameID / frameMax;
-
-		D3DXVec3Lerp(&NowPosition, &NowPosition, &EndPosition, ratio);
-		D3DXQuaternionSlerp(&NowRotation, &NowRotation, &EndRotation, ratio);
-		D3DXVec3Lerp(&NowScale, &NowScale, &EndScale, ratio);
-
-		ani->m_AnimePositions.emplace_back(NowPosition);
-		ani->m_AnimeRotations.emplace_back(NowRotation);
-		ani->m_AnimeScales.emplace_back(NowScale);
-	}
-}
-
-HermiteCurveAnime::HermiteCurveAnime(
-	const D3DXVECTOR3& startTang,
-	const D3DXVECTOR3& endTang) :
-	m_StartTangent(startTang),
-	m_EndTangent(endTang)
-{
-}
-
-void HermiteCurveAnime::operator()(TransformAnime* ani)
-{
-	//compute frame data
-	{
-		float H00 = 0, H01 = 0, H10 = 0, H11 = 0;
-		float t = 0, x = 0;
-
-		InitData(ani);
-		float frameMax = ani->m_Duration;
-		for (float frameID = 0; frameID < frameMax; frameID += FRAME_STRIDE)
-		{
-			// sin(x),[-pi/2,pi/2]
-			x = frameID / frameMax * PI - PI * 0.5f;
-			t = (h(x) + 1.0f) / 2.0f;
-			//t = (sinf(x) + 1.0f) / 2.0f;
-			//t = frameID / ani->m_Duration;
-			//t = powf(t, 0.25f);
-
-			H00 = 2 * t * t * t - 3 * t * t + 1;
-			H01 = -2 * t * t * t + 3 * t * t;
-			H10 = t * t * t - 2 * t * t + t;
-			H11 = t * t * t - t * t;
-
-			// “_‚ÌÀ•W‚ð‹‚ßŠi”[
-			NowPosition =
-				H00 * StartPosition +
-				H01 * EndPosition +
-				H10 * m_StartTangent +
-				H11 * m_EndTangent;
-
-
-			ani->m_AnimePositions.emplace_back(NowPosition);
-			ani->m_AnimeRotations.emplace_back(NowRotation);
-			ani->m_AnimeScales.emplace_back(NowScale);
-		}
-	}
-}
-
-SineMoveAnime::SineMoveAnime(
-	const D3DXVECTOR3& minPos,
-	const D3DXVECTOR3& maxPos,
-	float min,
-	float max) :
-	m_MinPosition(minPos),
-	m_MaxPosition(maxPos),
-	m_XMin(min),
-	m_XMax(max)
-{
-}
-
-void SineMoveAnime::operator()(TransformAnime* ani)
-{
-	InitData(ani);
-	ani->m_AnimePositions[0] = m_MinPosition;
-
-	float xDist = m_XMax - m_XMin;
-	float x = 0;
-	float ratio = 0;
-	float frameMax = ani->m_Duration;
-	for (float frameID = 0; frameID < frameMax; frameID += FRAME_STRIDE)
-	{
-		x = m_XMin + frameID / frameMax * xDist;
-		ratio = (sinf(x) + 1.0f) / 2.0f;
-
-		D3DXVec3Lerp(&NowPosition, &m_MinPosition, &m_MaxPosition, ratio);
-		D3DXQuaternionSlerp(&NowRotation, &StartRotation, &EndRotation, ratio);
-		D3DXVec3Lerp(&NowScale, &StartScale, &EndScale, ratio);
-
-		ani->m_AnimePositions.emplace_back(NowPosition);
-		ani->m_AnimeRotations.emplace_back(NowRotation);
-		ani->m_AnimeScales.emplace_back(NowScale);
-	}
-}
-
-RotateMoveAnime::RotateMoveAnime(
-	const D3DXVECTOR3& center,
-	float radius,
-	float startRadian,
-	float endRadian) :
-	m_Center(center),
-	m_Radius(radius),
-	m_StartRadian(startRadian),
-	m_EndRadian(endRadian)
-{
-}
-
-void RotateMoveAnime::operator()(TransformAnime* ani)
-{
-	float radian = m_EndRadian;
-	float posX = cosf(radian) * m_Radius;
-	float posY = sinf(radian) * m_Radius;
-
-	InitData(ani);
-	ani->m_AnimePositions[0] = { posX,posY,0 };
-	float x = 0;
-	float ratio = 0;
-	float radianDist = m_EndRadian - m_StartRadian;
-	float frameMax = ani->m_Duration;
-	for (float frameID = 0; frameID < frameMax; frameID += FRAME_STRIDE)
-	{
-		// sin(x),[-pi/2,pi/2]
-		x = frameID / frameMax * PI - PI * 0.5f;
-		ratio = (h(x) + 1.0f) / 2.0f;
-		radian = m_StartRadian + ratio * radianDist;
-		posX = cosf(radian) * m_Radius;
-		posY = sinf(radian) * m_Radius;
-
-		NowPosition = { posX,posY,0 };
-		D3DXQuaternionSlerp(&NowRotation, &StartRotation, &EndRotation, ratio);
-		D3DXVec3Lerp(&NowScale, &StartScale, &EndScale, ratio);
-
-		ani->m_AnimePositions.emplace_back(NowPosition);
-		ani->m_AnimeRotations.emplace_back(NowRotation);
-		ani->m_AnimeScales.emplace_back(NowScale);
-	}
-}
-#pragma endregion
-
-#pragma region ========== old version ==========
-
-TransformAnime::TransformAnime(
-	GameObject* owner,
-	TransformAnimeDescripition desc,
-	int order) :
-	Component(owner, order),
-	m_LoopCount(desc.LoopCount),
-	m_Duration((float)desc.Duration),
-	m_EndEvent(desc.EndEvent),
-	m_FrameCount(0)
-{
-	//set end data
-	//index 0 is end
-	m_AnimePositions.emplace_back(desc.EndPosition);
-	m_AnimeRotations.emplace_back(desc.EndRotation);
-	m_AnimeScales.emplace_back(desc.EndScale);
-
-	//set start data
-	//index 1 is start
-	m_AnimePositions.emplace_back(desc.StartPosition);
-	m_AnimeRotations.emplace_back(desc.StartRotation);
-	m_AnimeScales.emplace_back(desc.StartScale);
-
-	//æŒvŽZ
-	(*desc.ComputeAniDataFunc)(this);
-}
-
-TransformAnime::~TransformAnime()
-{
-}
-
-void TransformAnime::Update()
-{
-	if (m_LoopCount > 0)
-	{
-		if (m_Duration - m_FrameCount > 0)
-		{
-			float ratio = m_FrameCount / m_Duration;
-
-			//set owner transform
-			int frameID = (int)(m_FrameCount / FRAME_STRIDE) + 1;
-			m_Owner->GetTransform()->SetPosition(m_AnimePositions[frameID]);
-			m_Owner->GetTransform()->SetRotation(m_AnimeRotations[frameID]);
-			m_Owner->GetTransform()->SetScale(m_AnimeScales[frameID]);
-			m_Owner->GetTransform()->UpdateTransform();
-			m_Owner->GetTransform()->DisableUpdateThisFrame();
-
-			m_FrameCount += FRAME_STRIDE;
-		}
-		else
-		{
-			m_LoopCount--;
-			m_FrameCount = 0;
-
-			m_Owner->GetTransform()->SetPosition(m_AnimePositions[0]);
-			m_Owner->GetTransform()->SetRotation(m_AnimeRotations[0]);
-			m_Owner->GetTransform()->SetScale(m_AnimeScales[0]);
-			m_Owner->GetTransform()->UpdateTransform();
-			m_Owner->GetTransform()->DisableUpdateThisFrame();
-		}
-	}
-	else
-	{
-		m_Owner->GetTransform()->SetPosition(m_AnimePositions[0]);
-		m_Owner->GetTransform()->SetRotation(m_AnimeRotations[0]);
-		m_Owner->GetTransform()->SetScale(m_AnimeScales[0]);
-		m_Owner->GetTransform()->UpdateTransform();
-		m_Owner->GetTransform()->DisableUpdateThisFrame();
-
-		m_EndEvent();
-		SetState(DEAD);
-	}
-}
-#pragma endregion
-
 
 
 
@@ -689,4 +430,264 @@ void ComputeHermiteVec3::operator()(Anime* anime, const AnimeDescripition& aniDe
 	//set frame max
 	ani->FrameMax = (float)ani->Vector3Datas.size();
 }
+
+#if 1
+#pragma region ========== usual anime ==========
+void ComputeFrameTransformDataFunc::InitData(TransformAnime* ani)
+{
+	StartPosition = ani->m_AnimePositions[1];
+	StartRotation = ani->m_AnimeRotations[1];
+	StartScale = ani->m_AnimeScales[1];
+
+	EndPosition = ani->m_AnimePositions[0];
+	EndRotation = ani->m_AnimeRotations[0];
+	EndScale = ani->m_AnimeScales[0];
+
+	NowPosition = StartPosition;
+	NowRotation = StartRotation;
+	NowScale = StartScale;
+}
+
+void UniformSpeedAnime::operator()(TransformAnime* ani)
+{
+	InitData(ani);
+	float ratio = 0;
+	float frameMax = ani->m_Duration;
+	for (float frameID = 0; frameID < frameMax; frameID += FRAME_STRIDE)
+	{
+		ratio = frameID / frameMax;
+
+		D3DXVec3Lerp(&NowPosition, &StartPosition, &EndPosition, ratio);
+		D3DXQuaternionSlerp(&NowRotation, &StartRotation, &EndRotation, ratio);
+		D3DXVec3Lerp(&NowScale, &StartScale, &EndScale, ratio);
+
+		ani->m_AnimePositions.emplace_back(NowPosition);
+		ani->m_AnimeRotations.emplace_back(NowRotation);
+		ani->m_AnimeScales.emplace_back(NowScale);
+	}
+}
+
+
+void SlowLerpAnime::operator()(TransformAnime* ani)
+{
+	InitData(ani);
+	float ratio = 0;
+	float frameMax = ani->m_Duration;
+	for (float frameID = 0; frameID < frameMax; frameID += FRAME_STRIDE)
+	{
+		ratio = frameID / frameMax;
+
+		D3DXVec3Lerp(&NowPosition, &NowPosition, &EndPosition, ratio);
+		D3DXQuaternionSlerp(&NowRotation, &NowRotation, &EndRotation, ratio);
+		D3DXVec3Lerp(&NowScale, &NowScale, &EndScale, ratio);
+
+		ani->m_AnimePositions.emplace_back(NowPosition);
+		ani->m_AnimeRotations.emplace_back(NowRotation);
+		ani->m_AnimeScales.emplace_back(NowScale);
+	}
+}
+
+HermiteCurveAnime::HermiteCurveAnime(
+	const D3DXVECTOR3& startTang,
+	const D3DXVECTOR3& endTang) :
+	m_StartTangent(startTang),
+	m_EndTangent(endTang)
+{
+}
+
+void HermiteCurveAnime::operator()(TransformAnime* ani)
+{
+	//compute frame data
+	{
+		float H00 = 0, H01 = 0, H10 = 0, H11 = 0;
+		float t = 0, x = 0;
+
+		InitData(ani);
+		float frameMax = ani->m_Duration;
+		for (float frameID = 0; frameID < frameMax; frameID += FRAME_STRIDE)
+		{
+			// sin(x),[-pi/2,pi/2]
+			x = frameID / frameMax * PI - PI * 0.5f;
+			t = (h(x) + 1.0f) / 2.0f;
+			//t = (sinf(x) + 1.0f) / 2.0f;
+			//t = frameID / ani->m_Duration;
+			//t = powf(t, 0.25f);
+
+			H00 = 2 * t * t * t - 3 * t * t + 1;
+			H01 = -2 * t * t * t + 3 * t * t;
+			H10 = t * t * t - 2 * t * t + t;
+			H11 = t * t * t - t * t;
+
+			// “_‚ÌÀ•W‚ð‹‚ßŠi”[
+			NowPosition =
+				H00 * StartPosition +
+				H01 * EndPosition +
+				H10 * m_StartTangent +
+				H11 * m_EndTangent;
+
+
+			ani->m_AnimePositions.emplace_back(NowPosition);
+			ani->m_AnimeRotations.emplace_back(NowRotation);
+			ani->m_AnimeScales.emplace_back(NowScale);
+		}
+	}
+}
+
+SineMoveAnime::SineMoveAnime(
+	const D3DXVECTOR3& minPos,
+	const D3DXVECTOR3& maxPos,
+	float min,
+	float max) :
+	m_MinPosition(minPos),
+	m_MaxPosition(maxPos),
+	m_XMin(min),
+	m_XMax(max)
+{
+}
+
+void SineMoveAnime::operator()(TransformAnime* ani)
+{
+	InitData(ani);
+	ani->m_AnimePositions[0] = m_MinPosition;
+
+	float xDist = m_XMax - m_XMin;
+	float x = 0;
+	float ratio = 0;
+	float frameMax = ani->m_Duration;
+	for (float frameID = 0; frameID < frameMax; frameID += FRAME_STRIDE)
+	{
+		x = m_XMin + frameID / frameMax * xDist;
+		ratio = (sinf(x) + 1.0f) / 2.0f;
+
+		D3DXVec3Lerp(&NowPosition, &m_MinPosition, &m_MaxPosition, ratio);
+		D3DXQuaternionSlerp(&NowRotation, &StartRotation, &EndRotation, ratio);
+		D3DXVec3Lerp(&NowScale, &StartScale, &EndScale, ratio);
+
+		ani->m_AnimePositions.emplace_back(NowPosition);
+		ani->m_AnimeRotations.emplace_back(NowRotation);
+		ani->m_AnimeScales.emplace_back(NowScale);
+	}
+}
+
+RotateMoveAnime::RotateMoveAnime(
+	const D3DXVECTOR3& center,
+	float radius,
+	float startRadian,
+	float endRadian) :
+	m_Center(center),
+	m_Radius(radius),
+	m_StartRadian(startRadian),
+	m_EndRadian(endRadian)
+{
+}
+
+void RotateMoveAnime::operator()(TransformAnime* ani)
+{
+	float radian = m_EndRadian;
+	float posX = cosf(radian) * m_Radius;
+	float posY = sinf(radian) * m_Radius;
+
+	InitData(ani);
+	ani->m_AnimePositions[0] = { posX,posY,0 };
+	float x = 0;
+	float ratio = 0;
+	float radianDist = m_EndRadian - m_StartRadian;
+	float frameMax = ani->m_Duration;
+	for (float frameID = 0; frameID < frameMax; frameID += FRAME_STRIDE)
+	{
+		// sin(x),[-pi/2,pi/2]
+		x = frameID / frameMax * PI - PI * 0.5f;
+		ratio = (h(x) + 1.0f) / 2.0f;
+		radian = m_StartRadian + ratio * radianDist;
+		posX = cosf(radian) * m_Radius;
+		posY = sinf(radian) * m_Radius;
+
+		NowPosition = { posX,posY,0 };
+		D3DXQuaternionSlerp(&NowRotation, &StartRotation, &EndRotation, ratio);
+		D3DXVec3Lerp(&NowScale, &StartScale, &EndScale, ratio);
+
+		ani->m_AnimePositions.emplace_back(NowPosition);
+		ani->m_AnimeRotations.emplace_back(NowRotation);
+		ani->m_AnimeScales.emplace_back(NowScale);
+	}
+}
+#pragma endregion
+
+#pragma region ========== old version ==========
+
+TransformAnime::TransformAnime(
+	GameObject* owner,
+	TransformAnimeDescripition desc,
+	int order) :
+	Component(owner, order),
+	m_LoopCount(desc.LoopCount),
+	m_Duration((float)desc.Duration),
+	m_EndEvent(desc.EndEvent),
+	m_FrameCount(0)
+{
+	//set end data
+	//index 0 is end
+	m_AnimePositions.emplace_back(desc.EndPosition);
+	m_AnimeRotations.emplace_back(desc.EndRotation);
+	m_AnimeScales.emplace_back(desc.EndScale);
+
+	//set start data
+	//index 1 is start
+	m_AnimePositions.emplace_back(desc.StartPosition);
+	m_AnimeRotations.emplace_back(desc.StartRotation);
+	m_AnimeScales.emplace_back(desc.StartScale);
+
+	//æŒvŽZ
+	(*desc.ComputeAniDataFunc)(this);
+}
+
+TransformAnime::~TransformAnime()
+{
+}
+
+void TransformAnime::Update()
+{
+	if (m_LoopCount > 0)
+	{
+		if (m_Duration - m_FrameCount > 0)
+		{
+			float ratio = m_FrameCount / m_Duration;
+
+			//set owner transform
+			int frameID = (int)(m_FrameCount / FRAME_STRIDE) + 1;
+			m_Owner->GetTransform()->SetPosition(m_AnimePositions[frameID]);
+			m_Owner->GetTransform()->SetRotation(m_AnimeRotations[frameID]);
+			m_Owner->GetTransform()->SetScale(m_AnimeScales[frameID]);
+			m_Owner->GetTransform()->UpdateTransform();
+			m_Owner->GetTransform()->DisableUpdateThisFrame();
+
+			m_FrameCount += FRAME_STRIDE;
+		}
+		else
+		{
+			m_LoopCount--;
+			m_FrameCount = 0;
+
+			m_Owner->GetTransform()->SetPosition(m_AnimePositions[0]);
+			m_Owner->GetTransform()->SetRotation(m_AnimeRotations[0]);
+			m_Owner->GetTransform()->SetScale(m_AnimeScales[0]);
+			m_Owner->GetTransform()->UpdateTransform();
+			m_Owner->GetTransform()->DisableUpdateThisFrame();
+		}
+	}
+	else
+	{
+		m_Owner->GetTransform()->SetPosition(m_AnimePositions[0]);
+		m_Owner->GetTransform()->SetRotation(m_AnimeRotations[0]);
+		m_Owner->GetTransform()->SetScale(m_AnimeScales[0]);
+		m_Owner->GetTransform()->UpdateTransform();
+		m_Owner->GetTransform()->DisableUpdateThisFrame();
+
+		m_EndEvent();
+		SetState(DEAD);
+	}
+}
+#pragma endregion
+#endif
+
 

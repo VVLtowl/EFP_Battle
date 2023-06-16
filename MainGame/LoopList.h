@@ -6,8 +6,6 @@
 template <typename T>
 class LoopList
 {
-public:
-
 private:
 	std::list<T> m_List;
 	typename std::list<T>::iterator m_Iterator;

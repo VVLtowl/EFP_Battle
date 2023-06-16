@@ -18,7 +18,7 @@
 #pragma comment (lib, "d3dx11.lib")
 #pragma comment (lib, "dxgi.lib")
 
-#include "dlllib/Input.h"
+#include "input/Input.h"
 //#pragma comment (lib, "IInput.lib")
 
 
@@ -59,7 +59,7 @@ const float FRAME_STRIDE = 1.0f;
 /*********************************************************
 * @brief
 ********************************************************/
-void SetSubName(const char* sub);
+void SetWinSubName(const char* sub);
 
 /*********************************************************
 * @brief	ウィンドウのハンドルを取得
