@@ -7,7 +7,7 @@
 class NetworkManager_AS;
 
 /*********************************************************
-* @brief	for async select
+* @brief	base class for async select
 ********************************************************/
 //interface
 class NetworkUpdateProc
@@ -53,28 +53,10 @@ public:
 };
 
 /*********************************************************
-* @brief	my net manager
+* @brief	make my net manager by 
+*			inheriting async select base class 
+*			and implementing async select interface
 ********************************************************/
-class SendOperate :
-	public TransportMsg
-{
-public:
-	SendOperate(SOCKET* sock,
-		const char* msg,
-		SOCKADDR_IN* addrin = nullptr,
-		int rowID = -1, 
-		std::string destInfo="",
-		std::string commend = "") :
-		TransportMsg(sock, msg, addrin),
-		m_PrintRowID(rowID),
-		m_DestInfo(destInfo),
-		m_Comment(commend) {};
-public:
-	int m_PrintRowID;
-	std::string m_DestInfo;
-	std::string m_Comment;
-};
-
 class MyServer :
 	public Server_AS
 {
@@ -99,6 +81,27 @@ private:
 	class MyNetManager* m_MyNetManager;
 };
 
+//ëóêMèàóù
+class SendOperate :
+	public TransportMsg
+{
+public:
+	SendOperate(SOCKET* sock,
+		const char* msg,
+		SOCKADDR_IN* addrin = nullptr,
+		int rowID = -1,
+		std::string destInfo = "",
+		std::string commend = "") :
+		TransportMsg(sock, msg, addrin),
+		m_PrintRowID(rowID),
+		m_DestInfo(destInfo),
+		m_Comment(commend) {};
+public:
+	int m_PrintRowID;
+	std::string m_DestInfo;
+	std::string m_Comment;
+};
+//my net manager
 class MyNetManager :
 	public NetworkManager_AS,
 	public Singleton<MyNetManager>
