@@ -64,9 +64,6 @@
     <Filter Include="GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIAnimeHelper">
       <UniqueIdentifier>{a35956b3-d764-4a99-a848-cbe1677d301f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="input">
-      <UniqueIdentifier>{ee7b3819-7b79-4435-9e0d-c66427b32391}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameWork\Scene">
       <UniqueIdentifier>{2506631c-73c8-4f1f-aec9-4fd500d2ea05}</UniqueIdentifier>
     </Filter>
@@ -120,15 +117,6 @@
     </Filter>
     <Filter Include="GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIGameOver">
       <UniqueIdentifier>{85c8ef2d-34b7-40bb-90fc-fa8038f81248}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="network">
-      <UniqueIdentifier>{c5b19956-5cb3-4936-a44c-ea5613d15c62}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="network\MyNetwork">
-      <UniqueIdentifier>{25a01ea6-48af-4af4-86ac-c6bb7b2d141e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="network\SerializedTool">
-      <UniqueIdentifier>{adf126f9-f379-4198-a1d5-d96581a52926}</UniqueIdentifier>
     </Filter>
     <Filter Include="FrameWork\ComponentOriented">
       <UniqueIdentifier>{5d094695-d7ec-4bfb-93c1-6de094bb41fa}</UniqueIdentifier>
@@ -219,6 +207,18 @@
     </Filter>
     <Filter Include="GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteBehaviour\Helper">
       <UniqueIdentifier>{95a88279-6a72-4e64-ad47-1fd552ec0fa2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MyInput">
+      <UniqueIdentifier>{ee7b3819-7b79-4435-9e0d-c66427b32391}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetworkSocket">
+      <UniqueIdentifier>{c5b19956-5cb3-4936-a44c-ea5613d15c62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetworkSocket\MyNetwork">
+      <UniqueIdentifier>{25a01ea6-48af-4af4-86ac-c6bb7b2d141e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetworkSocket\SerializedTool">
+      <UniqueIdentifier>{adf126f9-f379-4198-a1d5-d96581a52926}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -328,7 +328,7 @@
       <Filter>FrameWork\ComponentOriented\Manager</Filter>
     </ClCompile>
     <ClCompile Include="dlllib\Input.cpp">
-      <Filter>input</Filter>
+      <Filter>MyInput</Filter>
     </ClCompile>
     <ClCompile Include="DepthUI.cpp">
       <Filter>GameWork\StandardGameObject</Filter>
@@ -496,7 +496,7 @@
       <Filter>GameWork\Scene</Filter>
     </ClCompile>
     <ClCompile Include="SerializedTool.cpp">
-      <Filter>network\SerializedTool</Filter>
+      <Filter>NetworkSocket\SerializedTool</Filter>
     </ClCompile>
     <ClCompile Include="ShowUIHelper.cpp">
       <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteBehaviour\Helper</Filter>
@@ -559,16 +559,16 @@
       <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIGameOver</Filter>
     </ClCompile>
     <ClCompile Include="network\NetworkManager.cpp">
-      <Filter>network</Filter>
+      <Filter>NetworkSocket</Filter>
     </ClCompile>
     <ClCompile Include="network\NetworkObject.cpp">
-      <Filter>network</Filter>
+      <Filter>NetworkSocket</Filter>
     </ClCompile>
     <ClCompile Include="MyNetManager.cpp">
-      <Filter>network\MyNetwork</Filter>
+      <Filter>NetworkSocket\MyNetwork</Filter>
     </ClCompile>
     <ClCompile Include="NetworkSendFunc.cpp">
-      <Filter>network\MyNetwork</Filter>
+      <Filter>NetworkSocket\MyNetwork</Filter>
     </ClCompile>
     <ClCompile Include="LoopList.cpp">
       <Filter>FrameWork\ExtendTool</Filter>
@@ -732,7 +732,7 @@
       <Filter>FrameWork\ComponentOriented\Manager</Filter>
     </ClInclude>
     <ClInclude Include="dlllib\Input.h">
-      <Filter>input</Filter>
+      <Filter>MyInput</Filter>
     </ClInclude>
     <ClInclude Include="DepthUI.h">
       <Filter>GameWork\StandardGameObject</Filter>
@@ -885,7 +885,7 @@
       <Filter>GameWork\Scene</Filter>
     </ClInclude>
     <ClInclude Include="SerializedTool.h">
-      <Filter>network\SerializedTool</Filter>
+      <Filter>NetworkSocket\SerializedTool</Filter>
     </ClInclude>
     <ClInclude Include="ShowUIHelper.h">
       <Filter>GameWork\GameLogic\ExecutorBehaviourSystem\ConcreteBehaviour\Helper</Filter>
@@ -942,16 +942,16 @@
       <Filter>GameWork\GameLogic\ObjectPrefab\UIObject\Image\UIGameOver</Filter>
     </ClInclude>
     <ClInclude Include="network\NetworkManager.h">
-      <Filter>network</Filter>
+      <Filter>NetworkSocket</Filter>
     </ClInclude>
     <ClInclude Include="network\NetworkObject.h">
-      <Filter>network</Filter>
+      <Filter>NetworkSocket</Filter>
     </ClInclude>
     <ClInclude Include="MyNetManager.h">
-      <Filter>network\MyNetwork</Filter>
+      <Filter>NetworkSocket\MyNetwork</Filter>
     </ClInclude>
     <ClInclude Include="NetworkSendFunc.h">
-      <Filter>network\MyNetwork</Filter>
+      <Filter>NetworkSocket\MyNetwork</Filter>
     </ClInclude>
     <ClInclude Include="Math.h">
       <Filter>FrameWork\ExtendTool</Filter>
