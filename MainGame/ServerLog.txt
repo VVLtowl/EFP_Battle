@@ -1,189 +1,142 @@
+[start] BH-ServerInputGameRoom(end event[StartWaitClientsJoin])
+[update] BH-ServerInputGameRoom(end event[StartWaitClientsJoin])
+server_as launch ok
+TCPListenSocket bind port[5555] ok
+UDPSocket bind port[5556] ok
+TCPListenSocket start listen ok
+[end] BH-ServerInputGameRoom(end event[StartWaitClientsJoin])
+[start] BH-ServerWaitClientsJoin(end event[StartWaitClientsCreatePlayer])
+[update] BH-ServerWaitClientsJoin(end event[StartWaitClientsCreatePlayer])
+accept client by socket[0] ok
+[success] to client[0] command set id 
+check new client[nameless] join
+[start] BH-ServerCheckClientJoin(next[ServerWaitClientsJoin])
+[success] to client[0] response agree join 
+[success] to client[0] send info of other member[0] 
+[success] to client[0] command update client member info 
+[success] to client[0] broadcast chat msg 
+[update] BH-ServerCheckClientJoin(next[ServerWaitClientsJoin])
+[end] BH-ServerCheckClientJoin(next[ServerWaitClientsJoin])
+set client[0] ready [true]
+[success] to client[0] command update client member info 
+accept client by socket[1] ok
+[success] to client[1] command set id 
+check new client[nameless] join
+[start] BH-ServerCheckClientJoin(next[ServerWaitClientsJoin])
+[success] to client[1] response agree join 
+[success] to client[1] send info of other member[0] 
+[success] to client[1] send info of other member[1] 
+[success] to client[0] command update client member info 
+[success] to client[1] command update client member info 
+[success] to client[0] broadcast chat msg 
+[success] to client[1] broadcast chat msg 
+[update] BH-ServerCheckClientJoin(next[ServerWaitClientsJoin])
+[end] BH-ServerCheckClientJoin(next[ServerWaitClientsJoin])
+set client[1] ready [true]
+[success] to client[0] command update client member info 
+[success] to client[1] command update client member info 
+[start] BH-ServerSetClientCampPiece(next[ServerWaitClientsJoin])(end event[ServerWaitClientsJoin WAIT_CLIENT_REQUEST])
+[update] BH-ServerSetClientCampPiece(next[ServerWaitClientsJoin])(end event[ServerWaitClientsJoin WAIT_CLIENT_REQUEST])
+[end] BH-ServerSetClientCampPiece(next[ServerWaitClientsJoin])(end event[ServerWaitClientsJoin WAIT_CLIENT_REQUEST])
+[start] BH-ServerSetClientCampPiece(next[ServerWaitClientsJoin])(end event[ServerWaitClientsJoin WAIT_CLIENT_REQUEST])
+[update] BH-ServerSetClientCampPiece(next[ServerWaitClientsJoin])(end event[ServerWaitClientsJoin WAIT_CLIENT_REQUEST])
+[end] BH-ServerSetClientCampPiece(next[ServerWaitClientsJoin])(end event[ServerWaitClientsJoin WAIT_CLIENT_REQUEST])
+[start] BH-ServerSetClientCampPiece(next[ServerWaitClientsJoin])(end event[ServerWaitClientsJoin WAIT_CLIENT_REQUEST])
+[update] BH-ServerSetClientCampPiece(next[ServerWaitClientsJoin])(end event[ServerWaitClientsJoin WAIT_CLIENT_REQUEST])
+[end] BH-ServerSetClientCampPiece(next[ServerWaitClientsJoin])(end event[ServerWaitClientsJoin WAIT_CLIENT_REQUEST])
+[start] BH-ServerSetClientCampPiece(next[ServerWaitClientsJoin])(end event[ServerWaitClientsJoin WAIT_CLIENT_REQUEST])
+[update] BH-ServerSetClientCampPiece(next[ServerWaitClientsJoin])(end event[ServerWaitClientsJoin WAIT_CLIENT_REQUEST])
+[end] BH-ServerSetClientCampPiece(next[ServerWaitClientsJoin])(end event[ServerWaitClientsJoin WAIT_CLIENT_REQUEST])
+set client[0] ready [false]
+[success] to client[0] command update client member info 
+[success] to client[1] command update client member info 
+set client[1] ready [false]
+[success] to client[0] command update client member info 
+[success] to client[1] command update client member info 
+[finish wait] BH-ServerWaitClientsJoin(end event[StartWaitClientsCreatePlayer])
+[end] BH-ServerWaitClientsJoin(end event[StartWaitClientsCreatePlayer])
+
+- start WaitCreatePlayer
+[success] to client[0] command create self player 
+[success] to client[1] command create self player 
+[success] to client[0] command create self player 
+[success] to client[1] command create self player 
+[start] BH-JudgementWaitPlayersFinish(end event[StartWaitClients SetTargetPieceNum])
+[update] BH-JudgementWaitPlayersFinish(end event[StartWaitClients SetTargetPieceNum])
+[2/2]count player finish
+[end] BH-JudgementWaitPlayersFinish(end event[StartWaitClients SetTargetPieceNum])
+- finish WaitCreatePlayer
+
+- start WaitSetPieceNum
+[success] to client[0] command set piece num 6
+[success] to client[1] command set piece num 6
+[start] BH-JudgementWaitPlayersFinish
 [update] BH-JudgementWaitPlayersFinish
 [2/2]count player finish
 [end] BH-JudgementWaitPlayersFinish
-- finish WaitClientsShowRPSStart
+- finish WaitSetPieceNum
 
-- start WaitClientsInputRPS
-[success] to client[0] command start input rps
-[success] to client[1] command start input rps
+- start WaitCreatePieces
+[success] to client[0] command create piece[0] 
+[success] to client[1] command create piece[0] 
+[success] to client[0] command create piece[1] 
+[success] to client[1] command create piece[1] 
+[success] to client[0] command create piece[2] 
+[success] to client[1] command create piece[2] 
+[success] to client[0] command create piece[3] 
+[success] to client[1] command create piece[3] 
+[success] to client[0] command create piece[4] 
+[success] to client[1] command create piece[4] 
+[success] to client[0] command create piece[5] 
+[success] to client[1] command create piece[5] 
 [start] BH-JudgementWaitPlayersFinish
 [update] BH-JudgementWaitPlayersFinish
-exceptionÅFnormal test exception
-----------------------
-[start] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-[update] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
 [2/2]count player finish
-[end] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-[success] to client[0] command piece[2] show check actpoint
-[success] to client[1] command piece[2] show check actpoint
-[start] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-[update] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-[2/2]count player finish
-[end] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-[success] to client[0] command piece[3] show check actpoint
-[success] to client[1] command piece[3] show check actpoint
-[start] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-[update] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-[2/2]count player finish
-[end] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-[success] to client[0] command piece[4] show check actpoint
-[success] to client[1] command piece[4] show check actpoint
-[start] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-[update] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-[2/2]count player finish
-[end] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-[success] to client[0] command piece[5] show check actpoint
-[success] to client[1] command piece[5] show check actpoint
-[start] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-[update] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-[2/2]count player finish
-[end] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-[end] BH-JudgementWaitPiecesFinishCommand(end event[StartWaitClients ShowStepActStart])
+[end] BH-JudgementWaitPlayersFinish
+- finish WaitCreatePieces
 
-- start WaitClientsShowActStart
-[success] to client[0] command show step[act start]
-[success] to client[1] command show step[act start]
-[start] BH-JudgementWaitPlayersFinish(end event[StartIteratePieces InputAct])
-[update] BH-JudgementWaitPlayersFinish(end event[StartIteratePieces InputAct])
+- start WaitLoadGameScene
+[success] to client[0] command load game scene 
+[success] to client[1] command load game scene 
+[start] BH-JudgementWaitPlayersFinish
+[update] BH-JudgementWaitPlayersFinish
 [2/2]count player finish
-[end] BH-JudgementWaitPlayersFinish(end event[StartIteratePieces InputAct])
-- finish WaitClientsShowActStart
-[start] BH-JudgementWaitPiecesFinishCommand(end event[StartCommandPiecesClearActpt])
-[update] BH-JudgementWaitPiecesFinishCommand(end event[StartCommandPiecesClearActpt])
-[success] to client[0] command piece[0] input act
-[success] to client[1] command piece[0] input act
+[end] BH-JudgementWaitPlayersFinish
+- finish WaitLoadGameScene
 
-- start WaitClientsPieceFinishAct
-[success] to client[0] command piece[0] finish act 
-[success] to client[1] command piece[0] finish act 
-[start] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[PieceFinishCmd InputAct])
-[update] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[PieceFinishCmd InputAct])
-[2/2]count player finish
-[end] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[PieceFinishCmd InputAct])
-- finish WaitClientsPieceFinishAct
-[5/6]piece finish command
-[success] to client[0] command piece[1] input act
-[success] to client[1] command piece[1] input act
-check piece move...
+- start WaitPrepareBoard
+- finish WaitPrepareBoard
+[start] BH-JudgementCommandShowPieces(end event[StartWaitClients ShowPiecesEntry])
+[update] BH-JudgementCommandShowPieces(end event[StartWaitClients ShowPiecesEntry])
+[success] to client[0] command show piece[0] entry to square[15] 
+[success] to client[1] command show piece[0] entry to square[15] 
+[success] to client[0] command show piece[1] entry to square[19] 
+[success] to client[1] command show piece[1] entry to square[19] 
+[success] to client[0] command show piece[2] entry to square[21] 
+[success] to client[1] command show piece[2] entry to square[21] 
+[success] to client[0] command show piece[3] entry to square[23] 
+[success] to client[1] command show piece[3] entry to square[23] 
+[success] to client[0] command show piece[4] entry to square[6] 
+[success] to client[1] command show piece[4] entry to square[6] 
+[success] to client[0] command show piece[5] entry to square[8] 
+[success] to client[1] command show piece[5] entry to square[8] 
+[end] BH-JudgementCommandShowPieces(end event[StartWaitClients ShowPiecesEntry])
 
-- start WaitClientsPieceMove
-[success] to client[0] command piece[1] move to square[14]
-[success] to client[1] command piece[1] move to square[14]
-[start] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-[update] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
+- start WaitClients ShowPiecesEntry
+[start] BH-JudgementWaitPlayersFinish(end event[StartWaitClients ShowStepGameStart])
+[update] BH-JudgementWaitPlayersFinish(end event[StartWaitClients ShowStepGameStart])
 [2/2]count player finish
-[end] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-- finish WaitClientsPieceMove
-[success] to client[0] command piece[1] input act
-[success] to client[1] command piece[1] input act
+[end] BH-JudgementWaitPlayersFinish(end event[StartWaitClients ShowStepGameStart])
+- finish WaitClientsShowPiecesEntry
 
-- start WaitClientsPieceFinishAct
-[success] to client[0] command piece[1] finish act 
-[success] to client[1] command piece[1] finish act 
-[start] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[PieceFinishCmd InputAct])
-[update] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[PieceFinishCmd InputAct])
+- start WaitClientsShowStep
+[success] to client[0] command show step[game start]
+[success] to client[1] command show step[game start]
+[start] BH-JudgementWaitPlayersFinish
+[update] BH-JudgementWaitPlayersFinish
 [2/2]count player finish
-[end] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[PieceFinishCmd InputAct])
-- finish WaitClientsPieceFinishAct
-[success] to client[0] command piece[2] input act
-[success] to client[1] command piece[2] input act
-check piece move...
-
-- start WaitClientsPieceMove
-[success] to client[0] command piece[2] move to square[16]
-[success] to client[1] command piece[2] move to square[16]
-[start] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-[update] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-[2/2]count player finish
-[end] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-- finish WaitClientsPieceMove
-[success] to client[0] command piece[2] input act
-[success] to client[1] command piece[2] input act
-
-- start WaitClientsPieceFinishAct
-[success] to client[0] command piece[2] finish act 
-[success] to client[1] command piece[2] finish act 
-[start] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[PieceFinishCmd InputAct])
-[update] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[PieceFinishCmd InputAct])
-[2/2]count player finish
-[end] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[PieceFinishCmd InputAct])
-- finish WaitClientsPieceFinishAct
-[success] to client[0] command piece[3] input act
-[success] to client[1] command piece[3] input act
-check piece move...
-
-- start WaitClientsPieceMove
-[success] to client[0] command piece[3] move to square[18]
-[success] to client[1] command piece[3] move to square[18]
-[start] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-[update] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-[2/2]count player finish
-[end] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-- finish WaitClientsPieceMove
-[success] to client[0] command piece[3] input act
-[success] to client[1] command piece[3] input act
-
-- start WaitClientsPieceFinishAct
-[success] to client[0] command piece[3] finish act 
-[success] to client[1] command piece[3] finish act 
-[start] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[PieceFinishCmd InputAct])
-[update] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[PieceFinishCmd InputAct])
-[2/2]count player finish
-[end] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[PieceFinishCmd InputAct])
-- finish WaitClientsPieceFinishAct
-[success] to client[0] command piece[4] input act
-[success] to client[1] command piece[4] input act
-check piece move...
-
-- start WaitClientsPieceMove
-[success] to client[0] command piece[4] move to square[7]
-[success] to client[1] command piece[4] move to square[7]
-[start] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-[update] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-[2/2]count player finish
-[end] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-- finish WaitClientsPieceMove
-[success] to client[0] command piece[4] input act
-[success] to client[1] command piece[4] input act
-
-- start WaitClientsPieceFinishAct
-[success] to client[0] command piece[4] finish act 
-[success] to client[1] command piece[4] finish act 
-[start] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[PieceFinishCmd InputAct])
-[update] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[PieceFinishCmd InputAct])
-[2/2]count player finish
-[end] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[PieceFinishCmd InputAct])
-- finish WaitClientsPieceFinishAct
-[success] to client[0] command piece[5] input act
-[success] to client[1] command piece[5] input act
-check piece move...
-
-- start WaitClientsPieceMove
-[success] to client[0] command piece[5] move to square[3]
-[success] to client[1] command piece[5] move to square[3]
-[start] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-[update] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-[2/2]count player finish
-[end] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[StartWaitClients ShowPiecesEntry])
-- finish WaitClientsPieceMove
-[success] to client[0] command piece[5] input act
-[success] to client[1] command piece[5] input act
-
-- start WaitClientsPieceFinishAct
-[success] to client[0] command piece[5] finish act 
-[success] to client[1] command piece[5] finish act 
-[start] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[PieceFinishCmd InputAct])
-[update] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[PieceFinishCmd InputAct])
-[2/2]count player finish
-[end] BH-JudgementWaitPlayersFinish(next[JudgementWaitPiecesFinishCommand])(end event[PieceFinishCmd InputAct])
-- finish WaitClientsPieceFinishAct
-[end] BH-JudgementWaitPiecesFinishCommand(end event[StartCommandPiecesClearActpt])
-[success] to client[0] command clear hand and actpoint 
-[success] to client[1] command clear hand and actpoint 
-[start] BH-JudgementWaitPlayersFinish(end event[StartWaitClients ShowStepTurnStart])
-[update] BH-JudgementWaitPlayersFinish(end event[StartWaitClients ShowStepTurnStart])
-[2/2]count player finish
-[end] BH-JudgementWaitPlayersFinish(end event[StartWaitClients ShowStepTurnStart])
+[end] BH-JudgementWaitPlayersFinish
+- finish WaitClientsShowStep
 
 - start WaitClientsShowTurnStart
 [success] to client[0] command show step[turn start]
@@ -198,3 +151,50 @@ check piece move...
 [success] to client[0] command show step[rps start]
 [success] to client[1] command show step[rps start]
 [start] BH-JudgementWaitPlayersFinish
+[update] BH-JudgementWaitPlayersFinish
+[2/2]count player finish
+[end] BH-JudgementWaitPlayersFinish
+- finish WaitClientsShowRPSStart
+
+- start WaitClientsInputRPS
+[success] to client[0] command start input rps
+[success] to client[1] command start input rps
+[start] BH-JudgementWaitPlayersFinish
+[update] BH-JudgementWaitPlayersFinish
+exceptionÅFnormal test exception
+----------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
